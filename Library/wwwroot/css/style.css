@@ -1,0 +1,62 @@
+﻿.card-deck .cw-20 {
+    flex: 1 1 20%;
+    max-width: 20%;
+}
+
+.jfy-c {
+    justify-content: center;
+}
+
+
+.topHeader {
+    display: inline-block;
+    width: 100%;
+    margin: 5px;
+}
+
+.name_ {
+    font-family: cursive;
+    font-size: 36px;
+}
+
+.login_ {
+    float: right;
+    border: gray;
+    border: 1px;
+    border-radius: 2px;
+}
+
+    .login_ input {
+        float: right;
+    }
+
+    .login_ label {
+        float: left;
+    }
+
+    .login_ button {
+        width: 100%
+    }
+
+.books {
+    background: lightgray;
+    border: 5px;
+    padding: 3px;
+    display: block;
+    border-radius: 3px;
+    font-family: cursive
+}
+
+.book {
+    background: lightcyan;
+    margin: 5px;
+    border: gray;
+    border-radius: 3px;
+    display: inline-block;
+    width: 32%
+}
+
+.SummaryDescription {
+    display: inline-list-item;
+    margin: 3px;
+}
