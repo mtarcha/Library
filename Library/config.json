@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "LibraryConnectionString": "Server=(localdb)\\mssqllocaldb;Database=lybrarydb;Trusted_Connection=True;"
+  } 
+}

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Library.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Library
@@ -14,11 +16,35 @@ namespace Library
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            RunSeed(host);
+
+            host.Run();
+        }
+
+        private static void RunSeed(IWebHost host)
+        {
+            var scoupeFactory = host.Services.GetService<IServiceScopeFactory>();
+
+            using (var scoupe = scoupeFactory.CreateScope())
+            {
+                var seeder = scoupe.ServiceProvider.GetService<LibrarySeeder>();
+                seeder.Seed();
+            }
+          
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(AddConfigurations)
                 .UseStartup<Startup>();
+
+        private static void AddConfigurations(WebHostBuilderContext arg1, IConfigurationBuilder builder)
+        {
+            builder.Sources.Clear();
+
+            builder.AddJsonFile("config.json");
+        }
     }
 }
