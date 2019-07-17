@@ -21,6 +21,7 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            var a = _repository.GetAllBooksIncludingAuthors();
             return View(_repository.GetAllBooksIncludingAuthors().Select(book => new BookDescription(
                 book.Name, 
                 book.Date, 
