@@ -30,16 +30,11 @@ namespace Library.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<BookDescription>> Get()
+        public ActionResult<IEnumerable<Book>> Get()
         {
             try
             {
-                return Ok(_repository.GetAllBooksIncludingAuthors().Select(book => new BookDescription(
-                book.Name,
-                book.Date,
-                book.Authors.Select(author => new Author(author.Author.Name, author.Author.SurName)).ToArray(),
-                book.Summary,
-                10)));
+                return Ok(_repository.GetAllBooksIncludingAuthors());
             }
             catch (Exception e)
             {
