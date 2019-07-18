@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Library.Data;
 using Library.Data.Entities;
 using Library.ViewModels;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Author = Library.ViewModels.Author;
 
 namespace Library.Controllers
 {
@@ -19,11 +19,13 @@ namespace Library.Controllers
     public class BooksController : ControllerBase
     {
         private readonly ILibraryRepository _repository;
+        private readonly IMapper _mapper;
         private readonly ILogger<BooksController> _logger;
 
-        public BooksController(ILibraryRepository repository, ILogger<BooksController> logger)
+        public BooksController(ILibraryRepository repository, IMapper mapper, ILogger<BooksController> logger)
         {
             _repository = repository;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -34,14 +36,45 @@ namespace Library.Controllers
         {
             try
             {
-                return Ok(_repository.GetAllBooksIncludingAuthors());
+                return Ok(_repository.GetAllBooks());
             }
             catch (Exception e)
             {
                 _logger.LogError($"Exception: {e}");
                 return BadRequest("failed to get boogs");
             }
-           
+        }
+
+        [HttpGet("{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<BookViewModel>> Get(string name)
+        {
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetBooksByName(name)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception: {e}");
+                return BadRequest("failed to get boogs");
+            }
+        }
+
+        [HttpGet("author/{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<Book>> GetByAuthor(string name)
+        {
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetBooksByAuthorName(name)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception: {e}");
+                return BadRequest("failed to get boogs");
+            }
         }
     }
 }

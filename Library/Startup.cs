@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Library.Data;
 using Library.Data.Entities;
+using Library.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,7 @@ namespace Library
                 cfg.UseSqlServer(_configuration.GetConnectionString("LibraryConnectionString"));
             });
 
+            services.AddAutoMapper();
             services.AddTransient<LibrarySeeder>();
             services.AddScoped<ILibraryRepository, LibraryRepository>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);

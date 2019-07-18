@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Library.Data;
+using Library.Data.Entities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,22 +14,18 @@ namespace Library.Controllers
     public class DefaultController : Controller
     {
         private readonly ILibraryRepository _repository;
-        
-        public DefaultController(ILibraryRepository repository)
+        private readonly IMapper _mapper;
+
+        public DefaultController(ILibraryRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var a = _repository.GetAllBooksIncludingAuthors();
-            return View(_repository.GetAllBooksIncludingAuthors().Select(book => new BookDescription(
-                book.Name, 
-                book.Date, 
-                book.Authors.Select(author => new Author(author.Author.Name, author.Author.SurName)).ToArray(), 
-                book.Summary, 
-                10)));
+            return View(_mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetAllBooks()));
         }
 
         [HttpGet]
@@ -37,7 +35,7 @@ namespace Library.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignIn(SignInInformation info)
+        public IActionResult SignIn(SignInViewModel signInViewModel)
         {
             if (ModelState.IsValid)
             {
