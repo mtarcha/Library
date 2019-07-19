@@ -29,10 +29,12 @@ namespace Library
 
             using (var scoupe = scoupeFactory.CreateScope())
             {
-                var seeder = scoupe.ServiceProvider.GetService<LibrarySeeder>();
-                seeder.Seed();
+                var lubrarySeeder = scoupe.ServiceProvider.GetService<LibrarySeeder>();
+                lubrarySeeder.Seed();
+
+                var userSeeder = scoupe.ServiceProvider.GetService<UserSeeder>();
+                userSeeder.Seed();
             }
-          
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

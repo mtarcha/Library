@@ -9,6 +9,7 @@ using Library.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +36,16 @@ namespace Library
                 cfg.UseSqlServer(_configuration.GetConnectionString("LibraryConnectionString"));
             });
 
+            services.AddDbContext<UserContext>(cfg =>
+            {
+                cfg.UseSqlServer(_configuration.GetConnectionString("UserDBConnectionString"));
+            });
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<UserContext>();
+
             services.AddAutoMapper();
+            services.AddTransient<UserSeeder>();
             services.AddTransient<LibrarySeeder>();
             services.AddScoped<ILibraryRepository, LibraryRepository>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -51,6 +61,7 @@ namespace Library
 
             app.UseStaticFiles();
             app.UseNodeModules(env);
+            app.UseAuthentication();
 
             app.UseMvc(configuration =>
             {
