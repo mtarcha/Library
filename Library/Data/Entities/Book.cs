@@ -13,6 +13,8 @@ namespace Library.Data.Entities
 
         public string Summary { get; set; }
 
+        public byte[] Avatar { get; set; }
+
         public IEnumerable<BookAuthor> Authors { get; set; }
     }
 }
