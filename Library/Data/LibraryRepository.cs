@@ -44,5 +44,11 @@ namespace Library.Data
             _ctx.Author.Add(authorModel);
             _ctx.SaveChanges();
         }
+
+        public void AddNewBook(Book bookModel)
+        {
+            _ctx.Books.Add(bookModel);
+            _ctx.SaveChanges();
+        }
     }
 }

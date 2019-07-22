@@ -13,10 +13,7 @@ using Newtonsoft.Json;
 
 namespace Library.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Produces("application/json")]
-    public class BooksController : ControllerBase
+    public class BooksController : Controller
     {
         private readonly ILibraryRepository _repository;
         private readonly IMapper _mapper;
@@ -75,6 +72,27 @@ namespace Library.Controllers
                 _logger.LogError($"Exception: {e}");
                 return BadRequest("failed to get boogs");
             }
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new BookViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult Create(BookViewModel bookViewModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var bookModel = _mapper.Map<BookViewModel, Book>(bookViewModel);
+                _repository.AddNewBook(bookModel);
+
+                return RedirectToAction("Index", "Default");
+            }
+
+            return View(bookViewModel);
         }
     }
 }

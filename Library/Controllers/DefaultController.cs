@@ -25,6 +25,7 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            var a = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetAllBooks());
             return View(_mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetAllBooks()));
         }
 

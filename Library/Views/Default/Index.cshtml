@@ -11,13 +11,15 @@
             </form>
 
             <div class="dropdown align-self-center ">
-                <button class="btn bg-dark dropdown-toggle text-success" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="m-2 btn btn-outline-success my-2 my-sm-0 float-lg-right dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @User.Identity.Name
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     <button class="dropdown-item" type="button">Favourite Books</button>
                     <button class="dropdown-item" type="button">Favourite Reviewers</button>
                 </div>
+
+                <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-lg-right" asp-controller="Books" asp-action="Create">+</a>
             </div>
         }
         else
@@ -36,21 +38,29 @@
 <div class="card-deck m-4 jfy-c flex-fill">
     @foreach (var book in Model)
     {
-        <div class="card cw-20">
+    <div class="card cw-20">
+        @if (book.Picture != null && book.Picture.Length > 0)
+        {
+            <img src="data:image;base64,@(Convert.ToBase64String(book.Picture))" class="card-img-top" />
+        }
+        else
+        {
             <img src="img/Book.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Name: @book.Name</h5>
-                <p class="card-text">Rate: @book.Rate</p>
-                <p class="card-text">Date: @book.Date</p>
-                @foreach (var author in book.Authors)
-                {
-                    <p class="card-text">Author: @author.FirstName</p>
-                }
-                <p class="card-text">
-                    Summary: <small class="text-muted">@book.Summary</small>
-                </p>
-            </div>
+        }
+        
+        <div class="card-body">
+            <h5 class="card-title">Name: @book.Name</h5>
+            <p class="card-text">Rate: @book.Rate</p>
+            <p class="card-text">Date: @book.Date</p>
+            @foreach (var author in book.Authors)
+            {
+                <p class="card-text">Author: @author.FirstName</p>
+            }
+            <p class="card-text">
+                Summary: <small class="text-muted">@book.Summary</small>
+            </p>
         </div>
+    </div>
     }
 </div>
 

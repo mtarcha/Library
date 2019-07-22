@@ -12,5 +12,6 @@ namespace Library.Data
         IEnumerable<Author> GetAllAuthors();
         Author GetAuthor(int id);
         void AddNewAuthor(Author authorModel);
+        void AddNewBook(Book bookModel);
     }
 }
