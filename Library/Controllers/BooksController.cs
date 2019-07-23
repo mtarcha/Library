@@ -41,11 +41,20 @@ namespace Library.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetBooks([FromQuery(Name = "search")]string search)
+        [HttpGet("{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<BookViewModel>> Get(string name)
         {
-            return PartialView("BooksSearchResult",
-                _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetBooksByName(search)));
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(_repository.GetBooksByName(name)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception: {e}");
+                return BadRequest("failed to get boogs");
+            }
         }
 
         [HttpGet("author/{name}")]
