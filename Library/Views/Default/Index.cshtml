@@ -1,71 +1,68 @@
 ﻿@using Library.Data
 @model IEnumerable<Library.ViewModels.BookViewModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *,  Microsoft.jQuery.Unobtrusive.Ajax
 
-<nav class="navbar navbar-expand navbar-dark bg-dark align-items-center">
-    <a class="navbar-brand text-success font-weight-bold" style="font-size: 45px">Home Library</a>
-    <div class="d-flex flex-row-reverse flex-fill">
-        @if (User.Identity.IsAuthenticated)
-        {
-            <form method="post" class="m-2 float-right d-flex justify-content-center" asp-controller="Account" asp-action="LogOff">
-                <input class="btn btn-outline-success" type="submit" value="Log Off" />
-            </form>
-
-            <div class="dropdown align-self-center ">
-                <button class="m-2 btn btn-outline-success my-2 my-sm-0 float-right dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    @User.Identity.Name
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <button class="dropdown-item" type="button">Favourite Books</button>
-                    <button class="dropdown-item" type="button">Favourite Reviewers</button>
-                </div>
-
-                <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Books" asp-action="Create">+</a>
-            </div>
-        }
-        else
-        {
-            <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Account" asp-action="Login">Login</a>
-            <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Account" asp-action="Register">Register</a>
-        }
-    </div>
-</nav>
-
-<form class="form-inline m-2">
-    <input class="form-control form-control-sm w-100" type="text" placeholder="Search"
-           aria-label="Search">
-</form>
-
-<div class="card-deck m-4 jfy-c flex-fill">
-    @foreach (var book in Model)
-    {
-        <div class="card cw-20 mb-3">
-            @if (book.Picture != null && book.Picture.Length > 0)
+ <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="~/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/node_modules/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.js"></script>
+        <script src="~/node_modules/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+       
+        
+    @*<script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="~/node_modules/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.js"></script>*@
+    <nav class="navbar navbar-expand navbar-dark bg-dark align-items-center">
+        <a class="navbar-brand text-success font-weight-bold" style="font-size: 45px">Home Library</a>
+        <div class="d-flex flex-row-reverse flex-fill">
+            @if (User.Identity.IsAuthenticated)
             {
-                <img src="data:image;base64,@(Convert.ToBase64String(book.Picture))" class="card-img-top" />
+                <form method="post" class="m-2 float-right d-flex justify-content-center" asp-controller="Account" asp-action="LogOff">
+                    <input class="btn btn-outline-success" type="submit" value="Log Off" />
+                </form>
+
+                <div class="dropdown align-self-center ">
+                    <button class="m-2 btn btn-outline-success my-2 my-sm-0 float-right dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @User.Identity.Name
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <button class="dropdown-item" type="button">Favourite Books</button>
+                        <button class="dropdown-item" type="button">Favourite Reviewers</button>
+                    </div>
+
+                    <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Books" asp-action="Create">+</a>
+                </div>
             }
             else
             {
-                <img src="img/Book.jpg" class="card-img-top" alt="...">
+                <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Account" asp-action="Login">Login</a>
+                <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Account" asp-action="Register">Register</a>
             }
-
-            <div class="card-body">
-                <h5 class="card-title">@book.Name</h5>
-                <p class="card-text">@book.Summary</p>
-                @foreach (var author in book.Authors)
-                {
-                    <p class="card-text text-success font-weight-bold">@author.FirstName  @author.LastName </p>
-                }
-            </div>
-            <div class="card-footer">
-                <span class="card-text">Rate: @book.Rate</span>
-                @if (User.IsInRole(Roles.Admin))
-                {
-                    <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">Edit</a>
-                }
-            </div>
         </div>
-    }
-</div>
+    </nav>
 
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+
+    <form class="form-inline m-2">
+        <input id="search" class="form-control form-control-sm w-100" type="text" placeholder="Search"
+               aria-label="Search" onchange="onChangedBooks()">
+    </form>
+
+    <form asp-action="GetBooks" asp-controller="Books" method="GET" data-ajax="true" data-ajax-update="#searchResult">
+        <input id="search" class="form-control form-control-sm w-100" type="text" placeholder="Search" name="search"
+               aria-label="Search">
+
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
+    <div id="searchResult">
+        @Html.Partial("~/Views/Books/BooksSearchResult.cshtml", Model)
+    </div>
+
+    <script>
+
+
+        function onChangedBooks() {
+            var a = 3;
+        }
+    </script>
 

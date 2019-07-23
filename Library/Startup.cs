@@ -66,7 +66,7 @@ namespace Library
 
             app.UseMvc(configuration =>
             {
-                configuration.MapRoute("Default", "{controller=Default}/{action=Index}/{id?}");
+                configuration.MapRoute("Default", "{controller=Default}/{action=Index}/{search=''}/{page=1}");
             });
 
             //app.Run(async (context) =>
