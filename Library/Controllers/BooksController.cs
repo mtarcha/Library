@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Library.Data;
 using Library.Data.Entities;
 using Library.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Library.Controllers
 {
+    [Authorize(Roles = Roles.User + "," + Roles.Admin)]
     public class BooksController : Controller
     {
         private readonly ILibraryRepository _repository;
@@ -77,17 +76,65 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new BookViewModel());
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Create(BookViewModel bookViewModel)
+        public IActionResult Create(CreateBookViewModel bookViewModel)
         {
-
             if (ModelState.IsValid)
             {
-                var bookModel = _mapper.Map<BookViewModel, Book>(bookViewModel);
+                var bookModel = _mapper.Map<CreateBookViewModel, Book>(bookViewModel);
+
+                foreach (var author in bookModel.Authors)
+                {
+                    var saved = _repository.GetAuthor(author.Author.Name, author.Author.SurName);
+                    if (saved != null)
+                    {
+                        author.Author = saved;
+                    }
+                }
+
                 _repository.AddNewBook(bookModel);
+
+                return RedirectToAction("Index", "Default");
+            }
+
+            return View(bookViewModel);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult Edit(int id)
+        {
+            var book = _repository.GetBook(id);
+            var editBook = _mapper.Map<Book, EditBookViewModel>(book);
+
+            return View(editBook);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult Edit(EditBookViewModel bookViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var bookModel = _mapper.Map<EditBookViewModel, Book>(bookViewModel);
+                foreach (var author in bookModel.Authors)
+                {
+                    var saved = _repository.GetAuthor(author.Author.Name, author.Author.SurName);
+                    if (saved != null)
+                    {
+                        author.Author = saved;
+                    }
+                }
+
+                if (bookModel.Avatar?.Length == 0 && bookViewModel.Picture?.Length > 0)
+                {
+                    bookModel.Avatar = bookViewModel.Picture;
+                }
+
+                _repository.EditBook(bookModel);
 
                 return RedirectToAction("Index", "Default");
             }

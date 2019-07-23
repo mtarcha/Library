@@ -14,8 +14,10 @@ namespace Library.ViewModels
         public string LastName { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
-
+        
+        [DataType(DataType.Date)]
         public DateTime? DateOfDeath { get; set; }
     }
 }

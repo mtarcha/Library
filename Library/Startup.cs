@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Library.Data;
 using Library.Data.Entities;
+using Library.Data.Seeders;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,8 +46,8 @@ namespace Library
                 .AddEntityFrameworkStores<UserContext>();
 
             services.AddAutoMapper();
-            services.AddTransient<UserSeeder>();
-            services.AddTransient<LibrarySeeder>();
+            services.AddTransient<ISeeder, RolesSeeder>();
+            services.AddTransient<ISeeder, LibrarySeeder>();
             services.AddScoped<ILibraryRepository, LibraryRepository>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }

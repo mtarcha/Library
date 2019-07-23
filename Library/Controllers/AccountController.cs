@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Library.Data;
 using Library.Data.Entities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -36,6 +37,7 @@ namespace Library.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, Roles.User);
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Default");
                 }

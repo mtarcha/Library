@@ -50,5 +50,25 @@ namespace Library.Data
             _ctx.Books.Add(bookModel);
             _ctx.SaveChanges();
         }
+
+        public Book GetBook(int id)
+        {
+            return _ctx.Books.Include(x => x.Authors).ThenInclude(x => x.Author).Single(x => x.Id == id);
+        }
+
+        public void EditBook(Book bookModel)
+        {
+            _ctx.Books.Update(bookModel);
+            foreach (var author in bookModel.Authors)
+            {
+                _ctx.BookAuthor.Update(author);
+            }
+            _ctx.SaveChanges();
+        }
+
+        public Author GetAuthor(string name, string surName)
+        {
+            return _ctx.Author.Single(x => x.Name == name && x.SurName == surName);
+        }
     }
 }

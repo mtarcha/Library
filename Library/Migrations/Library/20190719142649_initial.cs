@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Library.Migrations
+namespace Library.Migrations.Library
 {
     public partial class initial : Migration
     {

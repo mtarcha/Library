@@ -9,13 +9,22 @@ namespace Library.ViewModels
         public AutoMapperProfile()
         {
             CreateMap<Book, BookViewModel>()
+                .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
                 .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
                 .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
-                .ForMember(b => b.Picture, o => o.MapFrom(b => b.Avatar))
-                .ForMember(b => b.Avatar, o => o.Ignore());
+                .ForMember(b => b.Picture, o => o.MapFrom(b => b.Avatar));
+            //.ForMember(b => b.Rate, o => o.MapFrom(b => b.));
 
-            CreateMap<BookViewModel, Book>()
+            CreateMap<Book, EditBookViewModel>()
+               .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
+               .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
+               .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
+               .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
+               .ForMember(b => b.Picture, o => o.MapFrom(b => b.Avatar))
+               .ForMember(b => b.Avatar, o => o.Ignore());
+
+            CreateMap<CreateBookViewModel, Book>()
                .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
                .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
@@ -30,6 +39,28 @@ namespace Library.ViewModels
                     
                     return imageData;
                 }));
+
+            CreateMap<EditBookViewModel, Book>()
+              .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
+              .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
+              .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
+              .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
+              .ForMember(b => b.Avatar, o => o.MapFrom((b, c, d) =>
+              {
+                  if (b.Avatar?.Length > 0)
+                  {
+                      byte[] imageData = null;
+
+                      using (var binaryReader = new BinaryReader(b.Avatar.OpenReadStream()))
+                      {
+                          imageData = binaryReader.ReadBytes((int)b.Avatar.Length);
+                      }
+
+                      return imageData;
+                  }
+                  
+                  return null;
+              }));
 
             CreateMap<Author, AuthorViewModel>()
                 .ForMember(b => b.FirstName, o => o.MapFrom(b => b.Name))
@@ -49,8 +80,7 @@ namespace Library.ViewModels
                 .ForMember(b => b.Date, o => o.MapFrom(b => b.Book.Date))
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Book.Name))
                 .ForMember(b => b.Summary, o => o.MapFrom(b => b.Book.Summary))
-                .ForMember(b => b.Picture, o => o.MapFrom(b => b.Book.Avatar))
-                .ForMember(b => b.Avatar, o => o.Ignore());
+                .ForMember(b => b.Picture, o => o.MapFrom(b => b.Book.Avatar));
         }
     }
 }

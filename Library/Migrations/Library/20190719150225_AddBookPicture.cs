@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Library.Migrations
+namespace Library.Migrations.Library
 {
     public partial class AddBookPicture : Migration
     {
