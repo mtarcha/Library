@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Library.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,7 +70,12 @@ namespace Library.Data
 
         public Author GetAuthor(string name, string surName)
         {
-            return _ctx.Author.Single(x => x.Name == name && x.SurName == surName);
+            return _ctx.Author.FirstOrDefault(x => x.Name == name && x.SurName == surName);
+        }
+
+        public IQueryable<Book> Get(Expression<Func<Book, bool>> predicate)
+        {
+            return _ctx.Books.Where(predicate);
         }
     }
 }

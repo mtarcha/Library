@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using Library.Data.Entities;
 
 namespace Library.Data
@@ -9,6 +12,7 @@ namespace Library.Data
         Book GetBook(int id);
         IEnumerable<Book> GetBooksByName(string name);
         IEnumerable<Book> GetBooksByAuthorName(string name);
+        IQueryable<Book> Get(Expression<Func<Book, bool>> predicate);
 
         IEnumerable<Author> GetAllAuthors();
         Author GetAuthor(int id);
