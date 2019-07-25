@@ -10,18 +10,19 @@ namespace Library.Data
     public sealed class AuthorsRepository : IAuthorsRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly Repository<AuthorEntity> _internalRepository;
+        private readonly Repository<BookEntity> _booksRepository;
+        private readonly Repository<AuthorEntity> _authorsRepository;
 
         public AuthorsRepository(LibraryContext ctx)
         {
             _ctx = ctx;
-            ;
-            _internalRepository = new Repository<AuthorEntity>(ctx);
+            _booksRepository = new Repository<BookEntity>(ctx);
+            _authorsRepository = new Repository<AuthorEntity>(ctx);
         }
 
         public void Create(Author author)
         {
-            _internalRepository.Create(author.ToEntity());
+            _authorsRepository.Create(author.ToEntity());
         }
 
         public Author GetById(int id)
@@ -31,18 +32,28 @@ namespace Library.Data
 
         public void Update(Author author)
         {
+            var books = author.Books;
+
             author.Books = null;
-            _internalRepository.UpdateProperties(author.ToEntity());
+            _authorsRepository.UpdateProperties(author.ToEntity());
+
+            if (books != null)
+            {
+                foreach (var book in books)
+                {
+                    _booksRepository.UpdateProperties(book.ToEntity(false));
+                }
+            }
         }
 
         public void Delete(int id)
         {
-            _internalRepository.Delete(id);
+            _authorsRepository.Delete(id);
         }
 
         public IQueryable<Author> Get(Predicate<Author> predicate)
         {
-            return _internalRepository.Get(a => predicate(a.ToAuthor(true))).Include(x => x.Books).ThenInclude(x => x.Book).Select(x => x.ToAuthor(true));
+            return _authorsRepository.Get(a => predicate(a.ToAuthor(true))).Include(x => x.Books).ThenInclude(x => x.Book).Select(x => x.ToAuthor(true));
         }
     }
 }

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Presentation.Controllers
 {
-    [Authorize(Roles = Roles.User + "," + Roles.Admin)]
     public class BooksController : Controller
     {
         public const int BooksOnPage = 8;
@@ -29,10 +28,11 @@ namespace Library.Presentation.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
         {
             var pattern = search ?? string.Empty;
-            var totalCount = _booksRepository.Get(x => x.Name.Contains(pattern)).Count();
+            var totalCount = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase)).Count();
 
             var totalPages = (int)Math.Ceiling(totalCount / (decimal)BooksOnPage);
 
@@ -41,7 +41,7 @@ namespace Library.Presentation.Controllers
                 return NotFound($"Invalid page '{page}'! Should be in range from 1 to {totalPages}");
             }
 
-            var books = _booksRepository.Get(x => x.Name.Contains(pattern)).Skip((page - 1) * BooksOnPage).Take(BooksOnPage).ToList();
+            var books = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase)).Skip((page - 1) * BooksOnPage).Take(BooksOnPage).ToList();
 
             var vm = new BooksViewModel
             {
@@ -55,12 +55,14 @@ namespace Library.Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public IActionResult Create(CreateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
@@ -104,12 +106,6 @@ namespace Library.Presentation.Controllers
                 var bookModel = _mapper.Map<EditBookViewModel, Book>(bookViewModel);
                
                 _booksRepository.Update(bookModel);
-
-                foreach (var authorViewModel in bookViewModel.Authors)
-                {
-                    var authorModel = _mapper.Map<AuthorViewModel, Author>(authorViewModel);
-                    _authorsRepository.Update(authorModel);
-                }
 
                 return RedirectToAction("Get");
             }
