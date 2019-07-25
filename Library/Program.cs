@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library
+namespace Library.Presentation
 {
     public class Program
     {
@@ -22,11 +22,8 @@ namespace Library
             var scoupeFactory = host.Services.GetService<IServiceScopeFactory>();
             using (var scoupe = scoupeFactory.CreateScope())
             {
-                var seeders = scoupe.ServiceProvider.GetServices<ISeeder>();
-                foreach (var seeder in seeders)
-                {
-                    seeder.Seed().Wait();
-                }
+                var dbInitializer = scoupe.ServiceProvider.GetService<DbInitializer>();
+                dbInitializer.Initialize().Wait();
             }
         }
 

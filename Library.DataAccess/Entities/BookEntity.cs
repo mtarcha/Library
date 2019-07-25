@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.Presentation.ViewModels
+namespace Library.DataAccess.Entities
 {
-    public class BookViewModel
+    internal sealed class BookEntity : IEntity
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public byte[] Picture { get; set; }
-
         public DateTime Date { get; set; }
-
-        public IEnumerable<AuthorViewModel> Authors { get; set; }
 
         public string Summary { get; set; }
 
-        public int Rate { get; set; }
+        public byte[] Picture { get; set; }
+
+        public IEnumerable<BookAuthorEntity> Authors { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Library.ViewModels
+namespace Library.Presentation.ViewModels
 {
     public class CreateBookViewModel
     {

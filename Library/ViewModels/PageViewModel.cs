@@ -1,4 +1,4 @@
-﻿namespace Library.ViewModels
+﻿namespace Library.Presentation.ViewModels
 {
     public class PageViewModel
     {

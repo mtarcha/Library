@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Library.ViewModels
+namespace Library.Presentation.ViewModels
 {
     public class EditBookViewModel
     {

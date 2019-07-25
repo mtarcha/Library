@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Library.Data;
+﻿using System.Threading.Tasks;
 using Library.Data.Entities;
-using Library.ViewModels;
+using Library.Domain;
+using Library.Presentation.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.Controllers
+namespace Library.Presentation.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<UserEntity> _userManager;
+        private readonly SignInManager<UserEntity> _signInManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -32,14 +29,14 @@ namespace Library.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { PhoneNumber = model.PhoneNumber, UserName = model.UserName, DateOfBirth = model.DateOfBirth };
+                UserEntity user = new UserEntity { UserName = model.UserName, DateOfBirth = model.DateOfBirth };
                 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, Roles.User);
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Default");
+                    return RedirectToAction("Get", "Books");
                 }
                 else
                 {
@@ -73,7 +70,7 @@ namespace Library.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Default");
+                        return RedirectToAction("Get", "Books");
                     }
                 }
                 else
@@ -89,7 +86,7 @@ namespace Library.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Default");
+            return RedirectToAction("Get", "Books");
         }
     }
 }

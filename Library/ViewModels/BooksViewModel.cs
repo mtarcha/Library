@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Library.ViewModels
+namespace Library.Presentation.ViewModels
 {
     public class BooksViewModel
     {

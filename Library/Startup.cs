@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Library.Data;
 using Library.Data.Entities;
-using Library.Data.Seeders;
-using Library.ViewModels;
+using Library.Data.Internal;
+using Library.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Library
+namespace Library.Presentation
 {
     public class Startup
     {
@@ -37,19 +32,18 @@ namespace Library
                 cfg.UseSqlServer(_configuration.GetConnectionString("LibraryConnectionString"));
             });
 
-            services.AddDbContext<UserContext>(cfg =>
-            {
-                cfg.UseSqlServer(_configuration.GetConnectionString("UserDBConnectionString"));
-            });
-
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<UserContext>();
+            services.AddIdentity<UserEntity, IdentityRole>()
+                .AddEntityFrameworkStores<LibraryContext>();
 
             services.AddAutoMapper();
-            services.AddTransient<ISeeder, RolesSeeder>();
-            services.AddTransient<ISeeder, LibrarySeeder>();
-            services.AddScoped<ILibraryRepository, LibraryRepository>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+           
+            services.AddScoped<IBooksRepository, BooksRepository>();
+            services.AddScoped<IAuthorsRepository, AuthorsRepository>();
+            services.AddTransient<DbInitializer>();
+
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Latest)
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,13 +60,8 @@ namespace Library
 
             app.UseMvc(configuration =>
             {
-                configuration.MapRoute("Default", "{controller=Default}/{action=Index}/{id?}");
+                configuration.MapRoute("Default", "{controller=Books}/{action=Get}/{id?}");
             });
-
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
         }
     }
 }

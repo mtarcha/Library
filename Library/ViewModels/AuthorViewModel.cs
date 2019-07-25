@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Library.ViewModels
+namespace Library.Presentation.ViewModels
 {
     public class AuthorViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
