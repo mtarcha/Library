@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Library.Domain
 {
     public interface IRepository<TEntity, in TId>
+        where TEntity : Entity<TId>, IAggregateRoot
     {
         void Create(TEntity entity);
 
@@ -12,13 +14,17 @@ namespace Library.Domain
         void Update(TEntity entity);
 
         void Delete(TId id);
-
-        IQueryable<TEntity> Get(Predicate<TEntity> predicate);
     }
 
-    public interface IBooksRepository : IRepository<Book, int>
-    { }
+    public interface IBooksRepository : IRepository<Book, Guid>
+    {
+        int GetCount(Predicate<Book> predicate);
 
-    public interface IAuthorsRepository : IRepository<Author, int>
-    { }
+        IEnumerable<Book> Get(Predicate<Book> predicate, int skipCount, int takeCount);
+    }
+
+    public interface IAuthorsRepository : IRepository<Author, Guid>
+    {
+        IEnumerable<Author> GetByName(string firstName, string lastName);
+    }
 }

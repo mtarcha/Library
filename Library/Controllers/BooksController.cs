@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AutoMapper;
 using Library.Domain;
 using Library.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -32,7 +34,7 @@ namespace Library.Presentation.Controllers
         public IActionResult Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
         {
             var pattern = search ?? string.Empty;
-            var totalCount = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase)).Count();
+            var totalCount = _booksRepository.GetCount(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase));
 
             var totalPages = (int)Math.Ceiling(totalCount / (decimal)BooksOnPage);
 
@@ -41,7 +43,7 @@ namespace Library.Presentation.Controllers
                 return NotFound($"Invalid page '{page}'! Should be in range from 1 to {totalPages}");
             }
 
-            var books = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase)).Skip((page - 1) * BooksOnPage).Take(BooksOnPage).ToList();
+            var books = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase), (page - 1) * BooksOnPage, BooksOnPage).ToList();
 
             var vm = new BooksViewModel
             {
@@ -67,17 +69,22 @@ namespace Library.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                // todo: move to repository??
+                var imageData = ReadImageData(bookViewModel.Avatar);
+                var bookModel = new Book(bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+
                 foreach (var author in bookViewModel.Authors)
                 {
-                    var saved = _authorsRepository.Get(x => x.Name == author.FirstName && x.SurName == author.LastName).FirstOrDefault();
+                    var saved = _authorsRepository.GetByName(author.FirstName, author.LastName).FirstOrDefault();
+                    
                     if (saved != null)
                     {
-                        author.Id = saved.Id;
+                        bookModel.AddAuthor(saved);
+                    }
+                    else
+                    {
+                        bookModel.AddAuthor(new Author(author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath)));
                     }
                 }
-
-                var bookModel = _mapper.Map<CreateBookViewModel, Book>(bookViewModel);
 
                 _booksRepository.Create(bookModel);
 
@@ -89,7 +96,7 @@ namespace Library.Presentation.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(Guid id)
         {
             var book = _booksRepository.GetById(id);
             var editBook = _mapper.Map<Book, EditBookViewModel>(book);
@@ -103,7 +110,15 @@ namespace Library.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                var bookModel = _mapper.Map<EditBookViewModel, Book>(bookViewModel);
+                var imageData =  bookViewModel.Avatar != null ? ReadImageData(bookViewModel.Avatar) : bookViewModel.Picture;
+
+                var bookModel = new Book(bookViewModel.Id, bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+
+                foreach (var author in bookViewModel.Authors)
+                {
+                    var authorModel = new Author(author.Id, author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath));
+                    bookModel.AddAuthor(authorModel);
+                }
                
                 _booksRepository.Update(bookModel);
 
@@ -111,6 +126,17 @@ namespace Library.Presentation.Controllers
             }
 
             return View(bookViewModel);
+        }
+
+        private byte[] ReadImageData(IFormFile formFile)
+        {
+            byte[] imageData = null;
+            using (var binaryReader = new BinaryReader(formFile.OpenReadStream()))
+            {
+                imageData = binaryReader.ReadBytes((int)formFile.Length);
+            }
+
+            return imageData;
         }
     }
 }

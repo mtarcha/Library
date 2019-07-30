@@ -3,18 +3,42 @@ using System.Collections.Generic;
 
 namespace Library.Domain
 {
-    public class Author
+    public class Author : Entity<Guid>, IAggregateRoot
     {
-        public int Id { get; set; }
+        private readonly List<Book> _books;
 
-        public string Name { get; set; }
+        public Author(string name, string surName, LifePeriod lifePeriod)
+            : this(Guid.NewGuid(), name, surName, lifePeriod)
+        {
+        }
 
-        public string SurName { get; set; }
+        public Author(Guid id, string name, string surName, LifePeriod lifePeriod)
+            : base(id)
+        {
+            Name = name;
+            SurName = surName;
+            LifePeriod = lifePeriod;
+            _books = new List<Book>();
+        }
 
-        public DateTime DateOfBirth { get; set; }
+        public string Name { get; }
 
-        public DateTime? DateOfDeath { get; set; }
+        public string SurName { get; }
 
-        public IEnumerable<Book> Books { get; set; }
+        public LifePeriod LifePeriod { get; }
+
+        public IReadOnlyList<Book> Books
+        {
+            get { return _books; }
+        }
+
+        public void AddBook(Book book)
+        {
+            if (!_books.Exists(x => x.Id == book.Id))
+            {
+                _books.Add(book);
+                book.AddAuthor(this);
+            }
+        }
     }
 }

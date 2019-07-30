@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Library.Data.Entities;
@@ -11,50 +12,81 @@ namespace Library.Data
     public sealed class BooksRepository : IBooksRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly Repository<BookEntity> _booksRepository;
-        private readonly Repository<AuthorEntity> _authorsRepository;
 
         public BooksRepository(LibraryContext ctx)
         {
             _ctx = ctx;
-            _booksRepository = new Repository<BookEntity>(ctx);
-            _authorsRepository = new Repository<AuthorEntity>(ctx);
+
         }
 
         public void Create(Book book)
         {
-            _booksRepository.Create(book.ToEntity());
+            _ctx.Books.Add(book.ToEntity());
+
+            _ctx.SaveChanges();
         }
 
-        public Book GetById(int id)
+        public Book GetById(Guid id)
         {
-            return _ctx.Books.Where(x => x.Id == id).Include(x => x.Authors).ThenInclude(x => x.Author).Single().ToBook();
+            return _ctx.Books.Where(x => x.ReferenceId == id).Include(x => x.Authors).ThenInclude(x => x.Author).Single().ToBook();
+        }
+
+        public void Delete(Guid id)
+        {
+            var entity = _ctx.Books.Single(x => x.ReferenceId == id);
+            _ctx.Books.Remove(entity);
+
+            _ctx.SaveChanges();
         }
 
         public void Update(Book book)
         {
-            var authors = book.Authors;
+            var entity = _ctx.Books.Where(x => x.ReferenceId == book.Id).Include(x => x.Authors).ThenInclude(x => x.Author).Single();
+            entity.Name = book.Name;
+            entity.Date = book.Date;
+            entity.Summary = book.Summary;
+            entity.Picture = book.Picture;
 
-            book.Authors = null;
-            _booksRepository.UpdateProperties(book.ToEntity());
-
-            if (authors != null)
+            if (book.Authors != null)
             {
-                foreach (var author in authors)
+                var savedAuthors = entity.Authors.ToList();
+                var currentAuthors = book.Authors.ToList();
+
+                var updatedAuthors = savedAuthors.Where(x => currentAuthors.Exists(b => b.Id == x.Author.ReferenceId)).ToList();
+                var newAuthors = currentAuthors.Where(x => !savedAuthors.Exists(b => b.Author.ReferenceId == x.Id)).ToList();
+                var deletedAuthors = savedAuthors.Except(updatedAuthors);
+
+                foreach (var deletedAuthor in deletedAuthors)
                 {
-                    _authorsRepository.UpdateProperties(author.ToEntity(false));
+                    entity.Authors.Remove(deletedAuthor);
+                }
+
+                foreach (var updatedAuthor in updatedAuthors)
+                {
+                    var update = currentAuthors.Single(x => x.Id == updatedAuthor.Author.ReferenceId);
+                    updatedAuthor.Author.Name = update.Name;
+                    updatedAuthor.Author.SurName = update.SurName;
+                    updatedAuthor.Author.DateOfBirth = update.LifePeriod.DateOfBirth;
+                    updatedAuthor.Author.DateOfDeath = update.LifePeriod.DateOfDeath;
+                }
+
+                foreach (var newAuthor in newAuthors)
+                {
+                    entity.Authors.Add(new BookAuthorEntity { Author = newAuthor.ToEntity() });
                 }
             }
+
+            _ctx.SaveChanges();
         }
 
-        public void Delete(int id)
+        public IEnumerable<Book> Get(Predicate<Book> predicate, int skipCount, int takeCount)
         {
-            _booksRepository.Delete(id);
+            return _ctx.Books.Where(x => predicate(x.ToBook(true))).Include(x => x.Authors).ThenInclude(x => x.Author).Select(x => x.ToBook(true));
         }
 
-        public IQueryable<Book> Get(Predicate<Book> predicate)
+        public int GetCount(Predicate<Book> predicate)
         {
-            return _booksRepository.Get(b => predicate(b.ToBook(true))).Include(x => x.Authors).ThenInclude(x => x.Author).Select(x => x.ToBook(true));
+            return _ctx.Books.Count(x => predicate(x.ToBook(true)));
         }
     }
 }

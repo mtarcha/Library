@@ -12,7 +12,7 @@ namespace Library.Presentation.ViewModels
             Authors = new List<AuthorViewModel>();
         } 
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(100)]

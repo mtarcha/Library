@@ -1,20 +1,117 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Library.Domain
 {
-    public class Book
+    public class Book : Entity<Guid>, IAggregateRoot
     {
-        public int Id { get; set; }
+        private const double RateChangeTollerance = 0.01;
 
-        public string Name { get; set; }
+        private readonly List<BookRate> _rates;
+        private readonly List<Author> _authors;
 
-        public DateTime Date { get; set; }
+        public Book(string name, DateTime date, string summary)
+           : this(Guid.NewGuid(), name, date, summary, null)
+        { }
 
-        public string Summary { get; set; }
+        public Book(string name, DateTime date, string summary, byte[] picture)
+           : this(Guid.NewGuid(), name, date, summary, picture)
+        { }
 
-        public byte[] Picture { get; set; }
+        public Book(Guid id, string name, DateTime date, string summary, byte[] picture)
+            : base(id)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException("Id cannot be empty.", nameof(id));
+            }
 
-        public IEnumerable<Author> Authors { get; set; }
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Name cannot be empty.", nameof(name));
+            }
+
+            if (string.IsNullOrEmpty(summary))
+            {
+                throw new ArgumentException("Summary cannot be empty.", nameof(summary));
+            }
+
+            if (date > DateTime.Now)
+            {
+                throw new ArgumentException("Only existing books are valid. Date must be today or less", nameof(date));
+            }
+
+            Id = id;
+            Name = name;
+            Date = date;
+            Summary = summary;
+            Picture = picture;
+            Rate = 0;
+
+            _rates = new List<BookRate>();
+            _authors = new List<Author>();
+        }
+        
+        public string Name { get; }
+
+        public double Rate { get; private set; }
+
+        public DateTime Date { get; }
+
+        public string Summary { get; }
+
+        public byte[] Picture { get; }
+
+        public IReadOnlyList<BookRate> Rates => _rates;
+        public IReadOnlyList<Author> Authors => _authors;
+        
+        // todo: how update DB????
+        public void SetRate(BookRate rate)
+        {
+            AddOrUpdateRate(rate);
+            EvaluateRate();
+        }
+
+        public void SetRates(IEnumerable<BookRate> rates)
+        {
+            foreach (var rate in rates)
+            {
+                AddOrUpdateRate(rate);
+            }
+            
+            EvaluateRate();
+        }
+
+        public void AddAuthor(Author author)
+        {
+            if (!_authors.Exists(x => x.Id == author.Id))
+            {
+                _authors.Add(author);
+                author.AddBook(this);
+            }
+        }
+
+        private void AddOrUpdateRate(BookRate rate)
+        {
+            var existing = _rates.SingleOrDefault(x => x.Id == rate.Id);
+            if (existing != null)
+            {
+                _rates.Remove(existing);
+            }
+
+            _rates.Add(rate);
+        }
+
+        private void EvaluateRate()
+        {
+            var averageRate = _rates.Average(x => x.Rate);
+            if (Math.Abs(averageRate - Rate) > RateChangeTollerance)
+            {
+                Rate = averageRate;
+
+                // todo: raise domain event
+            }
+        }
     }
 }

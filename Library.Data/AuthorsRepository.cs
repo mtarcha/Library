@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Library.Domain;
 using System.Linq;
 using Library.Data.Entities;
@@ -10,50 +11,68 @@ namespace Library.Data
     public sealed class AuthorsRepository : IAuthorsRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly Repository<BookEntity> _booksRepository;
-        private readonly Repository<AuthorEntity> _authorsRepository;
-
+        
         public AuthorsRepository(LibraryContext ctx)
         {
             _ctx = ctx;
-            _booksRepository = new Repository<BookEntity>(ctx);
-            _authorsRepository = new Repository<AuthorEntity>(ctx);
         }
 
         public void Create(Author author)
         {
-            _authorsRepository.Create(author.ToEntity());
+            _ctx.Authors.Add(author.ToEntity());
         }
 
-        public Author GetById(int id)
+        public Author GetById(Guid id)
         {
-            return _ctx.Authors.Where(x => x.Id == id).Include(x => x.Books).ThenInclude(x => x.Book).Single().ToAuthor();
+            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == id).ToAuthor();
+        }
+
+        public void Delete(Guid id)
+        {
+            var author = _ctx.Authors.Single(x => x.ReferenceId == id);
+            _ctx.Remove(author);
         }
 
         public void Update(Author author)
         {
-            var books = author.Books;
-
-            author.Books = null;
-            _authorsRepository.UpdateProperties(author.ToEntity());
-
-            if (books != null)
+            var entity = _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == author.Id);
+            entity.Name = author.Name;
+            entity.SurName = author.SurName;
+            entity.DateOfBirth = author.LifePeriod.DateOfBirth;
+            entity.DateOfDeath = author.LifePeriod.DateOfDeath;
+            
+            if (author.Books != null)
             {
-                foreach (var book in books)
+                var savedBooks = entity.Books.ToList();
+                var currentBooks = author.Books.ToList();
+
+                var updatedBooks = savedBooks.Where(x => currentBooks.Exists(b => b.Id == x.Book.ReferenceId)).ToList();
+                var newBooks = currentBooks.Where(x => !savedBooks.Exists(b => b.Book.ReferenceId == x.Id)).ToList();
+                var deletedBooks = savedBooks.Except(updatedBooks);
+
+                foreach (var deletedBook in deletedBooks)
                 {
-                    _booksRepository.UpdateProperties(book.ToEntity(false));
+                    entity.Books.Remove(deletedBook);
+                }
+
+                foreach (var updatedBook in updatedBooks)
+                {
+                    var update = currentBooks.Single(x => x.Id == updatedBook.Book.ReferenceId);
+                    updatedBook.Book.Name = update.Name;
+                    updatedBook.Book.Date = update.Date;
+                    updatedBook.Book.Picture = update.Picture;
+                }
+
+                foreach (var newBook in newBooks)
+                {
+                    entity.Books.Add(new BookAuthorEntity { Book = newBook.ToEntity()});
                 }
             }
         }
 
-        public void Delete(int id)
+        public IEnumerable<Author> GetByName(string firstName, string lastName)
         {
-            _authorsRepository.Delete(id);
-        }
-
-        public IQueryable<Author> Get(Predicate<Author> predicate)
-        {
-            return _authorsRepository.Get(a => predicate(a.ToAuthor(true))).Include(x => x.Books).ThenInclude(x => x.Book).Select(x => x.ToAuthor(true));
+            return _ctx.Authors.Where(x => x.Name == firstName && x.SurName == lastName).Select(x => x.ToAuthor(false)).ToList();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Library.Presentation.ViewModels
 {
     public class BookViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -17,6 +17,6 @@ namespace Library.Presentation.ViewModels
 
         public string Summary { get; set; }
 
-        public int Rate { get; set; }
+        public double Rate { get; set; }
     }
 }

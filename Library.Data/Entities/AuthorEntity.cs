@@ -7,6 +7,8 @@ namespace Library.Data.Entities
     {
         public int Id { get; set; }
 
+        public Guid ReferenceId { get; set; }
+
         public string Name { get; set; }
 
         public string SurName { get; set; }
@@ -15,6 +17,6 @@ namespace Library.Data.Entities
 
         public DateTime? DateOfDeath { get; set; }
 
-        public IEnumerable<BookAuthorEntity> Books { get; set; }
+        public List<BookAuthorEntity> Books { get; set; }
     }
 }

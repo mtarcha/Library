@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Library.Data.Entities;
@@ -36,6 +37,7 @@ namespace Library.Data
                 {
                     var ivanko = new AuthorEntity
                     {
+                        ReferenceId = Guid.NewGuid(),
                         Name = "Ivan",
                         SurName = "Ivchenko",
                         DateOfBirth = new DateTime(1988, 1, 11)
@@ -43,6 +45,7 @@ namespace Library.Data
 
                     var slavko = new AuthorEntity
                     {
+                        ReferenceId = Guid.NewGuid(),
                         Name = "Slavka",
                         SurName = "Tarcha",
                         DateOfBirth = new DateTime(1993, 5, 5)
@@ -54,12 +57,13 @@ namespace Library.Data
                     {
                         var book = new BookEntity()
                         {
+                            ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Вівчика й Тарчавки " + i,
                             Date = DateTime.Now,
                             Summary = "Книга пригод про Вівчика й Тарчавку " + i,
                         };
 
-                        book.Authors = new[]
+                        book.Authors = new List<BookAuthorEntity>
                         {
                             new BookAuthorEntity() { Book = book, Author = ivanko },
                             new BookAuthorEntity() { Book = book, Author = slavko }
@@ -72,12 +76,13 @@ namespace Library.Data
                     {
                         var book = new BookEntity()
                         {
+                            ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Вівчика " + i,
                             Date = DateTime.Now,
                             Summary = "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i,
                         };
 
-                        book.Authors = new[]
+                        book.Authors = new List<BookAuthorEntity>
                         {
                             new BookAuthorEntity() { Book = book, Author = ivanko }
                         };
@@ -89,12 +94,13 @@ namespace Library.Data
                     {
                         var book = new BookEntity()
                         {
+                            ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Тарчавки " + i,
                             Date = DateTime.Now,
                             Summary = "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i,
                         };
 
-                        book.Authors = new[]
+                        book.Authors = new List<BookAuthorEntity>
                         {
                             new BookAuthorEntity() { Book = book, Author = slavko }
                         };

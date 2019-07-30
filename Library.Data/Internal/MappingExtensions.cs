@@ -28,53 +28,77 @@ namespace Library.Data.Internal
 
         public static Book ToBook(this BookEntity entity, bool recurcive = true)
         {
-            return new Book
+            var book = new Book(entity.ReferenceId, entity.Name, entity.Date, entity.Summary, entity.Picture);
+            if (recurcive && entity.Authors != null)
             {
-                Id = entity.Id,
-                Name = entity.Name,
-                Date = entity.Date,
-                Summary = entity.Summary,
-                Picture = entity.Picture,
-                Authors = recurcive ? entity.Authors?.Select(x => x.Author.ToAuthor(false)).ToArray() : null
+                foreach (var author in entity.Authors)
+                {
+                    book.AddAuthor(author.Author.ToAuthor(false));
+                }
+            }
+
+            if (entity.Rates != null)
+            {
+                book.SetRates(entity.Rates.Select(x => x.ToRate()));
+
+            }
+
+            return book;
+        }
+
+        public static BookRateEntity ToEntity(this BookRate rate, BookEntity book)
+        {
+            return new BookRateEntity
+            {
+                ReferenceId = rate.Id,
+                User = rate.User.ToEntity(),
+                Rate = rate.Rate,
+                Book = book
             };
+        }
+
+        public static BookRate ToRate(this BookRateEntity entity)
+        {
+            return new BookRate(entity.ReferenceId, entity.User.ToUser(), entity.Rate);
         }
 
         public static BookEntity ToEntity(this Book book, bool recurcive = true)
         {
             return new BookEntity
             {
-                Id = book.Id,
+                ReferenceId = book.Id,
                 Name = book.Name,
                 Date = book.Date,
                 Summary = book.Summary,
                 Picture = book.Picture,
-                Authors = recurcive ? book.Authors?.Select(x => new BookAuthorEntity { Author = x.ToEntity(false) }).ToArray() : null
+                Authors = recurcive ? book.Authors?.Select(x => new BookAuthorEntity { Author = x.ToEntity(false) }).ToList() : null
             };
         }
 
         public static Author ToAuthor(this AuthorEntity entity, bool recurcive = true)
         {
-            return new Author
+            var author = new Author(entity.ReferenceId, entity.Name, entity.SurName, new LifePeriod(entity.DateOfBirth, entity.DateOfDeath));
+            if (entity.Books != null && recurcive)
             {
-                Id = entity.Id,
-                Name = entity.Name,
-                SurName = entity.SurName,
-                DateOfBirth = entity.DateOfBirth,
-                DateOfDeath = entity.DateOfDeath,
-                Books = recurcive ? entity.Books?.Select(x => x.Book.ToBook(false)).ToArray() : null
-            };
+                foreach (var book in entity.Books)
+                {
+                    author.AddBook(book.Book.ToBook(false));
+                }
+            }
+
+            return author;
         }
 
         public static AuthorEntity ToEntity(this Author author, bool recurcive = true)
         {
             return new AuthorEntity
             {
-                Id = author.Id,
+                ReferenceId = author.Id,
                 Name = author.Name,
                 SurName = author.SurName,
-                DateOfBirth = author.DateOfBirth,
-                DateOfDeath = author.DateOfDeath,
-                Books = recurcive ? author.Books?.Select(x => new BookAuthorEntity { Book = x.ToEntity(false) }).ToArray() : null
+                DateOfBirth = author.LifePeriod.DateOfBirth,
+                DateOfDeath = author.LifePeriod.DateOfDeath,
+                Books = recurcive ? author.Books?.Select(x => new BookAuthorEntity { Book = x.ToEntity(false) }).ToList() : null
             };
         }
     }

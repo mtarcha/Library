@@ -7,11 +7,6 @@ namespace Library.Presentation.ViewModels
 {
     public class CreateBookViewModel
     {
-        public CreateBookViewModel()
-        {
-            
-        }
-         
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
