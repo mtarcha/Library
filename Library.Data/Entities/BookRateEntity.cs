@@ -12,6 +12,8 @@ namespace Library.Data.Entities
 
         public int Rate { get; set; }
 
+        //public int BookId { get; set; }
+
         public BookEntity Book { get; set; }
     }
 }

@@ -28,7 +28,10 @@ namespace Library.Data
 
         public Book GetById(Guid id)
         {
-            return _ctx.Books.Where(x => x.ReferenceId == id).Include(x => x.Authors).ThenInclude(x => x.Author).Single().ToBook();
+            return _ctx.Books.Where(x => x.ReferenceId == id)
+                .Include(x => x.Authors).ThenInclude(x => x.Author)
+                .Include(x => x.Rates).ThenInclude(x => x.User)
+                .Single().ToBook();
         }
 
         public void Delete(Guid id)
@@ -41,8 +44,11 @@ namespace Library.Data
 
         public void Update(Book book)
         {
-            var entity = _ctx.Books.Where(x => x.ReferenceId == book.Id).Include(x => x.Authors).ThenInclude(x => x.Author).Single();
+            var entity = _ctx.Books.Where(x => x.ReferenceId == book.Id)
+                .Include(x => x.Authors).ThenInclude(x => x.Author)
+                .Include(x => x.Rates).Single();
             entity.Name = book.Name;
+            entity.Rate = book.Rate;
             entity.Date = book.Date;
             entity.Summary = book.Summary;
             entity.Picture = book.Picture;
@@ -76,12 +82,38 @@ namespace Library.Data
                 }
             }
 
+            if (book.Rates != null)
+            {
+                var saved = entity.Rates.ToList();
+                var current = book.Rates.ToList();
+
+                var updatedRates = saved.Where(x => current.Exists(r => r.Id == x.ReferenceId)).ToList();
+                var newRates = current.Where(x => !saved.Exists(b => b.ReferenceId == x.Id)).ToList();
+
+                foreach (var rate in updatedRates)
+                {
+                    var update = current.Single(x => x.Id == rate.ReferenceId);
+                    rate.Rate = update.Rate;
+                }
+
+                foreach (var rate in newRates)
+                {
+                    var user = _ctx.Users.Single(x => x.ReferenceId == rate.User.Id);
+                    entity.Rates.Add(new BookRateEntity {ReferenceId = rate.Id, User = user, Rate = rate.Rate});
+                }
+            }
+
             _ctx.SaveChanges();
         }
 
         public IEnumerable<Book> Get(Predicate<Book> predicate, int skipCount, int takeCount)
         {
-            return _ctx.Books.Where(x => predicate(x.ToBook(true))).Include(x => x.Authors).ThenInclude(x => x.Author).Select(x => x.ToBook(true));
+            return _ctx.Books.Where(x => predicate(x.ToBook(true)))
+                .Include(x => x.Authors).ThenInclude(x => x.Author)
+                .Include(x => x.Rates).ThenInclude(x => x.User)
+                .OrderByDescending(x => x.Rate)
+                .Skip(skipCount).Take(takeCount)
+                .Select(x => x.ToBook(true));
         }
 
         public int GetCount(Predicate<Book> predicate)

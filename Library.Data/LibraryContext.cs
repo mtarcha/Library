@@ -29,6 +29,7 @@ namespace Library.Data.Internal
             modelBuilder.Entity<BookEntity>().Property(p => p.Summary).IsRequired().HasMaxLength(1000);
             modelBuilder.Entity<BookEntity>().Property(p => p.ReferenceId).IsRequired();
             modelBuilder.Entity<BookEntity>().Property(p => p.Date).IsRequired();
+            modelBuilder.Entity<BookEntity>().Property(p => p.Rate).IsRequired();
             modelBuilder.Entity<BookEntity>().HasMany(x => x.Rates).WithOne(x => x.Book);
 
             // many-to-many relationship. EF Core does not support it automatically.

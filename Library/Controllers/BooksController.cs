@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AutoMapper;
+using Library.Data.Entities;
 using Library.Domain;
 using Library.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -20,11 +22,13 @@ namespace Library.Presentation.Controllers
         private readonly ILogger<BooksController> _logger;
         private readonly IBooksRepository _booksRepository;
         private readonly IAuthorsRepository _authorsRepository;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public BooksController(IBooksRepository booksRepository, IAuthorsRepository authorsRepository, IMapper mapper, ILogger<BooksController> logger)
+        public BooksController(IBooksRepository booksRepository, IAuthorsRepository authorsRepository, UserManager<UserEntity> userManager, IMapper mapper, ILogger<BooksController> logger)
         {
             _booksRepository = booksRepository;
             _authorsRepository = authorsRepository;
+            _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
         }
@@ -126,6 +130,28 @@ namespace Library.Presentation.Controllers
             }
 
             return View(bookViewModel);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult SetRate(SetRateViewModel setRateViewModel)
+        {
+            var userName = User.Identity.Name;
+            var userEntity = _userManager.FindByNameAsync(userName).Result;
+            var user = new User()
+            {
+                Id = userEntity.ReferenceId,
+                Login = userName,
+                DateOfBirth = userEntity.DateOfBirth
+            };
+
+            var book = _booksRepository.GetById(setRateViewModel.BookId);
+
+            book.SetRate(user, setRateViewModel.Rate);
+
+            _booksRepository.Update(book);
+
+            return RedirectToAction("Get");
         }
 
         private byte[] ReadImageData(IFormFile formFile)

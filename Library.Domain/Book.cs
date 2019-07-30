@@ -67,9 +67,9 @@ namespace Library.Domain
         public IReadOnlyList<Author> Authors => _authors;
         
         // todo: how update DB????
-        public void SetRate(BookRate rate)
+        public void SetRate(User user, int rate)
         {
-            AddOrUpdateRate(rate);
+            AddOrUpdateRate(new BookRate(user, rate));
             EvaluateRate();
         }
 
@@ -94,21 +94,29 @@ namespace Library.Domain
 
         private void AddOrUpdateRate(BookRate rate)
         {
-            var existing = _rates.SingleOrDefault(x => x.Id == rate.Id);
+            var existing = _rates.SingleOrDefault(x => x.User.Id == rate.User.Id);
             if (existing != null)
             {
-                _rates.Remove(existing);
+                existing.ChangeRate(rate.Rate);
             }
-
-            _rates.Add(rate);
+            else
+            {
+                _rates.Add(rate);
+            }
         }
 
         private void EvaluateRate()
         {
-            var averageRate = _rates.Average(x => x.Rate);
-            if (Math.Abs(averageRate - Rate) > RateChangeTollerance)
+            double rate = 0;
+
+            if (_rates.Any())
             {
-                Rate = averageRate;
+                rate = _rates.Average(x => x.Rate);
+            }
+
+            if (Math.Abs(rate - Rate) > RateChangeTollerance)
+            {
+                Rate = rate;
 
                 // todo: raise domain event
             }

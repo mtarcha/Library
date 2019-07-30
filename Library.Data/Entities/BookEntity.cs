@@ -11,6 +11,8 @@ namespace Library.Data.Entities
 
         public string Name { get; set; }
 
+        public double Rate { get; set; }
+
         public DateTime Date { get; set; }
 
         public string Summary { get; set; }

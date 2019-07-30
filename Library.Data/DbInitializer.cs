@@ -60,6 +60,7 @@ namespace Library.Data
                             ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Вівчика й Тарчавки " + i,
                             Date = DateTime.Now,
+                            Rate = 0,
                             Summary = "Книга пригод про Вівчика й Тарчавку " + i,
                         };
 
@@ -79,6 +80,7 @@ namespace Library.Data
                             ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Вівчика " + i,
                             Date = DateTime.Now,
+                            Rate = 0,
                             Summary = "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i,
                         };
 
@@ -97,6 +99,7 @@ namespace Library.Data
                             ReferenceId = Guid.NewGuid(),
                             Name = "Пригоди Тарчавки " + i,
                             Date = DateTime.Now,
+                            Rate = 0,
                             Summary = "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i,
                         };
 
@@ -133,6 +136,7 @@ namespace Library.Data
                 var poweruser = new UserEntity()
                 {
                     UserName = name,
+                    ReferenceId = Guid.NewGuid(),
                     DateOfBirth = new DateTime(1993, 5, 5)
                 };
 

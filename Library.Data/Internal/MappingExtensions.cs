@@ -10,7 +10,7 @@ namespace Library.Data.Internal
         {
             return new User
             {
-                Id = int.Parse(entity.Id),
+                Id =entity.ReferenceId,
                 Login = entity.UserName,
                 DateOfBirth = entity.DateOfBirth
             };
