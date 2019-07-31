@@ -1,4 +1,5 @@
 ﻿using Library.Data;
+using Library.Infrastucture.Core;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,8 +23,11 @@ namespace Library.Presentation
             var scoupeFactory = host.Services.GetService<IServiceScopeFactory>();
             using (var scoupe = scoupeFactory.CreateScope())
             {
-                var dbInitializer = scoupe.ServiceProvider.GetService<DbInitializer>();
-                dbInitializer.Initialize().Wait();
+                var seeders = scoupe.ServiceProvider.GetServices<IStorageSeeder>();
+                foreach (var storageSeeder in seeders)
+                {
+                    storageSeeder.Seed();
+                }
             }
         }
 

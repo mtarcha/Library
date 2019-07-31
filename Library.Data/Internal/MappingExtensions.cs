@@ -8,12 +8,7 @@ namespace Library.Data.Internal
     {
         public static User ToUser(this UserEntity entity)
         {
-            return new User
-            {
-                Id =entity.ReferenceId,
-                Login = entity.UserName,
-                DateOfBirth = entity.DateOfBirth
-            };
+            return new User(entity.ReferenceId, entity.UserName, null);
         }
 
         public static UserEntity ToEntity(this User user)
@@ -21,8 +16,7 @@ namespace Library.Data.Internal
             return new UserEntity
             {
                 Id = user.Id.ToString(),
-                UserName = user.Login,
-                DateOfBirth = user.DateOfBirth
+                UserName = user.UserName,
             };
         }
 

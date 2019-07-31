@@ -27,4 +27,15 @@ namespace Library.Domain
     {
         IEnumerable<Author> GetByName(string firstName, string lastName);
     }
+
+    public interface IUsersRepository : IRepository<User, Guid>
+    {
+        User GetByName(string userName);
+
+        void SignOut();
+
+        bool TrySignIn(string userName, string password, bool isPersistent);
+
+        void CreateRoleIfNotExists(Role role);
+    }
 }

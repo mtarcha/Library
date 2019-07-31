@@ -18,17 +18,14 @@ namespace Library.Presentation.Controllers
     {
         public const int BooksOnPage = 8;
 
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IMapper _mapper;
         private readonly ILogger<BooksController> _logger;
-        private readonly IBooksRepository _booksRepository;
-        private readonly IAuthorsRepository _authorsRepository;
-        private readonly UserManager<UserEntity> _userManager;
 
-        public BooksController(IBooksRepository booksRepository, IAuthorsRepository authorsRepository, UserManager<UserEntity> userManager, IMapper mapper, ILogger<BooksController> logger)
+
+        public BooksController(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, ILogger<BooksController> logger)
         {
-            _booksRepository = booksRepository;
-            _authorsRepository = authorsRepository;
-            _userManager = userManager;
+            _unitOfWorkFactory = unitOfWorkFactory;
             _mapper = mapper;
             _logger = logger;
         }
@@ -37,96 +34,110 @@ namespace Library.Presentation.Controllers
         [AllowAnonymous]
         public IActionResult Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
         {
-            var pattern = search ?? string.Empty;
-            var totalCount = _booksRepository.GetCount(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase));
-
-            var totalPages = (int)Math.Ceiling(totalCount / (decimal)BooksOnPage);
-
-            if (page < 1 || (page > totalPages && totalPages > 0))
+            using (var uow = _unitOfWorkFactory.Create())
             {
-                return NotFound($"Invalid page '{page}'! Should be in range from 1 to {totalPages}");
+                var pattern = search ?? string.Empty;
+                var totalCount = uow.Books.GetCount(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase));
+
+                var totalPages = (int)Math.Ceiling(totalCount / (decimal)BooksOnPage);
+
+                if (page < 1 || (page > totalPages && totalPages > 0))
+                {
+                    return NotFound($"Invalid page '{page}'! Should be in range from 1 to {totalPages}");
+                }
+
+                var books = uow.Books.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase), (page - 1) * BooksOnPage, BooksOnPage).ToList();
+
+                var vm = new BooksViewModel
+                {
+                    TotalBooksCount = totalCount,
+                    Pagination = new PaginationViewModel(totalPages, totalPages, page),
+                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books),
+                    SearchPattern = pattern
+                };
+
+                return View(vm);
             }
 
-            var books = _booksRepository.Get(x => x.Name.Contains(pattern, StringComparison.OrdinalIgnoreCase), (page - 1) * BooksOnPage, BooksOnPage).ToList();
-
-            var vm = new BooksViewModel
-            {
-                TotalBooksCount = totalCount,
-                Pagination = new PaginationViewModel(totalPages, totalPages, page),
-                BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books),
-                SearchPattern = pattern
-            };
-
-            return View(vm);
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public IActionResult Create(CreateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var imageData = ReadImageData(bookViewModel.Avatar);
-                var bookModel = new Book(bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
-
-                foreach (var author in bookViewModel.Authors)
+                using (var uow = _unitOfWorkFactory.Create())
                 {
-                    var saved = _authorsRepository.GetByName(author.FirstName, author.LastName).FirstOrDefault();
-                    
-                    if (saved != null)
+                    var imageData = ReadImageData(bookViewModel.Avatar);
+                    var bookModel = new Book(bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+
+                    foreach (var author in bookViewModel.Authors)
                     {
-                        bookModel.AddAuthor(saved);
+                        var saved = uow.Authors.GetByName(author.FirstName, author.LastName).FirstOrDefault();
+
+                        if (saved != null)
+                        {
+                            bookModel.AddAuthor(saved);
+                        }
+                        else
+                        {
+                            bookModel.AddAuthor(new Author(author.FirstName, author.LastName,
+                                new LifePeriod(author.DateOfBirth, author.DateOfDeath)));
+                        }
                     }
-                    else
-                    {
-                        bookModel.AddAuthor(new Author(author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath)));
-                    }
+
+                    uow.Books.Create(bookModel);
+
+                    return RedirectToAction("Get");
                 }
-
-                _booksRepository.Create(bookModel);
-
-                return RedirectToAction("Get");
             }
 
             return View(bookViewModel);
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Role.AdminRoleName)]
         public IActionResult Edit(Guid id)
         {
-            var book = _booksRepository.GetById(id);
-            var editBook = _mapper.Map<Book, EditBookViewModel>(book);
+            using (var uow = _unitOfWorkFactory.Create())
+            {
+                var book = uow.Books.GetById(id);
+                var editBook = _mapper.Map<Book, EditBookViewModel>(book);
 
-            return View(editBook);
+                return View(editBook);
+            }
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Role.AdminRoleName)]
         public IActionResult Edit(EditBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var imageData =  bookViewModel.Avatar != null ? ReadImageData(bookViewModel.Avatar) : bookViewModel.Picture;
-
-                var bookModel = new Book(bookViewModel.Id, bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
-
-                foreach (var author in bookViewModel.Authors)
+                using (var uow = _unitOfWorkFactory.Create())
                 {
-                    var authorModel = new Author(author.Id, author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath));
-                    bookModel.AddAuthor(authorModel);
-                }
-               
-                _booksRepository.Update(bookModel);
+                    var imageData = bookViewModel.Avatar != null ? ReadImageData(bookViewModel.Avatar) : bookViewModel.Picture;
 
-                return RedirectToAction("Get");
+                    var bookModel = new Book(bookViewModel.Id, bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+
+                    foreach (var author in bookViewModel.Authors)
+                    {
+                        var authorModel = new Author(author.Id, author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath));
+                        bookModel.AddAuthor(authorModel);
+                    }
+
+                    uow.Books.Update(bookModel);
+
+                    return RedirectToAction("Get");
+                }
             }
 
             return View(bookViewModel);
@@ -136,22 +147,19 @@ namespace Library.Presentation.Controllers
         [Authorize]
         public IActionResult SetRate(SetRateViewModel setRateViewModel)
         {
-            var userName = User.Identity.Name;
-            var userEntity = _userManager.FindByNameAsync(userName).Result;
-            var user = new User()
+            using (var uow = _unitOfWorkFactory.Create())
             {
-                Id = userEntity.ReferenceId,
-                Login = userName,
-                DateOfBirth = userEntity.DateOfBirth
-            };
+                var userName = User.Identity.Name;
+                var user = uow.Users.GetByName(userName);
 
-            var book = _booksRepository.GetById(setRateViewModel.BookId);
+                var book = uow.Books.GetById(setRateViewModel.BookId);
 
-            book.SetRate(user, setRateViewModel.Rate);
+                book.SetRate(user, setRateViewModel.Rate);
 
-            _booksRepository.Update(book);
+                uow.Books.Update(book);
 
-            return RedirectToAction("Get");
+                return RedirectToAction("Get");
+            }
         }
 
         private byte[] ReadImageData(IFormFile formFile)

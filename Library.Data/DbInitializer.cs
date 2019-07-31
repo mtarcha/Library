@@ -5,145 +5,80 @@ using System.Threading.Tasks;
 using Library.Data.Entities;
 using Library.Data.Internal;
 using Library.Domain;
+using Library.Infrastucture.Core;
 using Microsoft.AspNetCore.Identity;
 
 namespace Library.Data
 {
-    public class DbInitializer
+    public class DbInitializer : IStorageSeeder
     {
         private readonly LibraryContext _ctx;
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DbInitializer(LibraryContext ctx, UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager)
+        public DbInitializer(LibraryContext ctx, IUnitOfWorkFactory unitOfWorkFactory)
         {
-            _ctx = ctx;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
-        public async Task Initialize()
+        public void Seed()
         {
             _ctx.Database.EnsureCreated();
-            await SeedLibrary();
-            await SeedRoles();
+            SeedLibrary();
+            SeedRoles();
         }
 
-        public Task SeedLibrary()
+        public void SeedLibrary()
         {
-            return Task.Run(() =>
+            if (!_ctx.Authors.Any() || !_ctx.Books.Any())
             {
-                if (!_ctx.Authors.Any() || !_ctx.Books.Any())
+                using (var unitOfWork = _unitOfWorkFactory.Create())
                 {
-                    var ivanko = new AuthorEntity
-                    {
-                        ReferenceId = Guid.NewGuid(),
-                        Name = "Ivan",
-                        SurName = "Ivchenko",
-                        DateOfBirth = new DateTime(1988, 1, 11)
-                    };
+                    var ivanko = new Author("Ivan", "Ivchenko", new LifePeriod(new DateTime(1988, 1, 11)));
+                    var slavko = new Author("Myroslava", "Tarcha", new LifePeriod(new DateTime(1993, 5, 5)));
 
-                    var slavko = new AuthorEntity
-                    {
-                        ReferenceId = Guid.NewGuid(),
-                        Name = "Slavka",
-                        SurName = "Tarcha",
-                        DateOfBirth = new DateTime(1993, 5, 5)
-                    };
-
-                    _ctx.Authors.AddRange(ivanko, slavko);
+                    unitOfWork.Authors.Create(ivanko);
+                    unitOfWork.Authors.Create(slavko);
 
                     for (var i = 1; i < 25; i++)
                     {
-                        var book = new BookEntity()
-                        {
-                            ReferenceId = Guid.NewGuid(),
-                            Name = "Пригоди Вівчика й Тарчавки " + i,
-                            Date = DateTime.Now,
-                            Rate = 0,
-                            Summary = "Книга пригод про Вівчика й Тарчавку " + i,
-                        };
+                        var book = new Book("Пригоди Вівчика й Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика й Тарчавку " + i);
 
-                        book.Authors = new List<BookAuthorEntity>
-                        {
-                            new BookAuthorEntity() { Book = book, Author = ivanko },
-                            new BookAuthorEntity() { Book = book, Author = slavko }
-                        };
-
-                        _ctx.Books.Add(book);
+                        book.AddAuthor(ivanko);
+                        book.AddAuthor(slavko);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
-                        var book = new BookEntity()
-                        {
-                            ReferenceId = Guid.NewGuid(),
-                            Name = "Пригоди Вівчика " + i,
-                            Date = DateTime.Now,
-                            Rate = 0,
-                            Summary = "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i,
-                        };
-
-                        book.Authors = new List<BookAuthorEntity>
-                        {
-                            new BookAuthorEntity() { Book = book, Author = ivanko }
-                        };
-
-                        _ctx.Books.Add(book);
+                        var book = new Book("Пригоди Вівчика " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
+                        book.AddAuthor(ivanko);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
-                        var book = new BookEntity()
-                        {
-                            ReferenceId = Guid.NewGuid(),
-                            Name = "Пригоди Тарчавки " + i,
-                            Date = DateTime.Now,
-                            Rate = 0,
-                            Summary = "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i,
-                        };
-
-                        book.Authors = new List<BookAuthorEntity>
-                        {
-                            new BookAuthorEntity() { Book = book, Author = slavko }
-                        };
-
-                        _ctx.Books.Add(book);
+                        var book = new Book("Пригоди Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i);
+                        book.AddAuthor(slavko);
                     }
-
-                    _ctx.SaveChanges();
-                }
-            });
-
-        }
-
-        public async Task SeedRoles()
-        {
-            string[] roleNames = { Roles.Admin, Roles.User };
-            foreach (var roleName in roleNames)
-            {
-                var roleExist = await _roleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
+        }
 
-            var name = "AdminMyroslava";
-            var user = await _userManager.FindByNameAsync(name);
-            if (user == null)
+        public void SeedRoles()
+        {
+            using (var unitOfWork = _unitOfWorkFactory.Create())
             {
-                var poweruser = new UserEntity()
+                var roles = new [] { Role.User, Role.Admin };
+                foreach (var role in roles)
                 {
-                    UserName = name,
-                    ReferenceId = Guid.NewGuid(),
-                    DateOfBirth = new DateTime(1993, 5, 5)
-                };
+                    unitOfWork.Users.CreateRoleIfNotExists(role);
+                }
 
-                var createPowerUser = await _userManager.CreateAsync(poweruser, "K.,k. ;bnnz1");
-                if (createPowerUser.Succeeded)
+                var name = "AdminMyroslava";
+                var user = unitOfWork.Users.GetByName(name);
+                if (user == null)
                 {
-                    await _userManager.AddToRoleAsync(poweruser, Roles.Admin);
+                    user = new User(name, Role.Admin);
+                    user.SetPassword("K.,k. ;bnnz1");
+                    unitOfWork.Users.Create(user);
                 }
             }
         }

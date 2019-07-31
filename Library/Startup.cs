@@ -27,20 +27,9 @@ namespace Library.Presentation
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<LibraryContext>(cfg =>
-            {
-                cfg.UseSqlServer(_configuration.GetConnectionString("LibraryConnectionString"));
-            });
-
-            services.AddIdentity<UserEntity, IdentityRole>()
-                .AddEntityFrameworkStores<LibraryContext>();
-
-            services.AddAutoMapper();
+            services.AddEntityFramework(_configuration.GetConnectionString("LibraryConnectionString"));
            
-            services.AddScoped<IBooksRepository, BooksRepository>();
-            services.AddScoped<IAuthorsRepository, AuthorsRepository>();
-            services.AddTransient<DbInitializer>();
-
+            services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);

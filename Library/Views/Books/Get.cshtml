@@ -66,15 +66,17 @@
                 {
                     <form class="float-right" asp-action="SetRate" method="post">
                         <input type="hidden" value="@book.Id" name="BookId" />
-                        <input name="Rate" type="number" min="@BookRate.MinValue" max="@BookRate.MaxValue" step="1">
+                        <input class="border border-success rounded" name="Rate" type="number" min="@BookRate.MinValue" max="@BookRate.MaxValue" step="1">
                         <span class="fa fa-star"></span>
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Set</button>
                     </form>
                 }
 
 
-                @if (User.IsInRole(Roles.Admin))
+                @if (User.IsInRole(Role.AdminRoleName))
                 {
+                    <br />
+                    <br />
                     <a class="mt-2 btn btn-outline-success btn-block my-sm-0 float-right" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">Edit Book</a>
                 }
             </div>
