@@ -1,0 +1,169 @@
+﻿@using Library.Presentation.MVC.ViewModels
+@model Library.Presentation.MVC.ViewModels.CreateBookViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="row">
+    <div class="col-4 offset-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="custom-file">
+                <input asp-for="Avatar" type="file" class="custom-file-input" id="validatedCustomFile">
+                <label asp-for="Avatar" class="custom-file-label" for="validatedCustomFile">Choose picture...</label>
+                <span asp-validation-for="Avatar" class="text-danger "></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Summary" class="control-label"></label>
+                <textarea asp-for="Summary" class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+                <span asp-validation-for="Summary" class="text-danger"></span>
+            </div>
+
+            <ul id="authors" class="list-group" asp-for="Authors">
+                Authors:
+            </ul>
+            <button id="AddAuthor" type="button" class="btn btn-outline-success my-2 my-sm-0 float-lg-right" onclick="addAuthor()">+</button>
+            <br class="m-4">
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary btn-block" />
+            </div>
+            <br>
+        </form>
+
+        <script>
+            function addAuthor() {
+                var authors = document.getElementById("authors");
+                var i = authors.childElementCount;
+                
+                var li = document.createElement("li");
+                li.setAttribute("class", "list-group-item");
+
+                var nameDiv = document.createElement("div");
+                nameDiv.setAttribute("class", "form-group");
+
+                var nameLabel = document.createElement("label");
+                nameLabel.setAttribute("class", "control-label");
+                nameLabel.setAttribute("for", "Authors_" + i + "__FirstName");
+                nameLabel.appendChild(document.createTextNode("FirstName"));
+                nameDiv.appendChild(nameLabel);
+
+                var nameInput = document.createElement("input");
+                nameInput.setAttribute("class", "form-control");
+                nameInput.setAttribute("type", "text");
+                nameInput.setAttribute("data-val", "true");
+                nameInput.setAttribute("data-val-maxlength", "The field FirstName must be a string or array type with a maximum length of '50'.");
+                nameInput.setAttribute("data-val-maxlength-max", "50");
+                nameInput.setAttribute("data-val-required", "The FirstName field is required.");
+                nameInput.setAttribute("id", "Authors_" + i + "__FirstName");
+                nameInput.setAttribute("name", "Authors[" + i + "].FirstName");
+                nameInput.setAttribute("maxlength", "50");
+                nameInput.setAttribute("value", "");
+                nameDiv.appendChild(nameInput);
+
+                var nameValidation = document.createElement("span");
+                nameValidation.setAttribute("class", "text-danger field-validation-valid");
+                nameValidation.setAttribute("data-valmsg-for", "Authors[" + i + "].FirstName");
+                nameValidation.setAttribute("data-valmsg-replace", "true");
+                nameDiv.appendChild(nameValidation);
+
+                li.appendChild(nameDiv);
+
+
+                var lastNameDiv = document.createElement("div");
+                lastNameDiv.setAttribute("class", "form-group");
+
+                var lastNameLabel = document.createElement("label");
+                lastNameLabel.setAttribute("class", "control-label");
+                lastNameLabel.setAttribute("for", "Authors_" + i + "__LastName");
+                lastNameLabel.appendChild(document.createTextNode("LastName"));
+                lastNameDiv.appendChild(lastNameLabel);
+
+                var lastNameInput = document.createElement("input");
+                lastNameInput.setAttribute("class", "form-control");
+                lastNameInput.setAttribute("type", "text");
+                lastNameInput.setAttribute("data-val", "true");
+                lastNameInput.setAttribute("data-val-maxlength", "The field FirstName must be a string or array type with a maximum length of '50'.");
+                lastNameInput.setAttribute("data-val-maxlength-max", "50");
+                lastNameInput.setAttribute("data-val-required", "The LastName field is required.");
+                lastNameInput.setAttribute("id", "Authors_" + i + "__LastName");
+                lastNameInput.setAttribute("name", "Authors[" + i + "].LastName");
+                lastNameInput.setAttribute("maxlength", "50");
+                lastNameInput.setAttribute("value", "");
+                lastNameDiv.appendChild(lastNameInput);
+
+                var lastNameValidation = document.createElement("span");
+                lastNameValidation.setAttribute("class", "text-danger field-validation-valid");
+                lastNameValidation.setAttribute("data-valmsg-for", "Authors[" + i + "].LastName");
+                lastNameValidation.setAttribute("data-valmsg-replace", "true");
+                lastNameDiv.appendChild(lastNameValidation);
+
+                li.appendChild(lastNameDiv);
+                
+                var dateOfBirthDiv = document.createElement("div");
+                dateOfBirthDiv.setAttribute("class", "form-group");
+
+                var dateOfBirthLabel = document.createElement("label");
+                dateOfBirthLabel.setAttribute("class", "control-label");
+                dateOfBirthLabel.setAttribute("for", "Authors_" + i + "__DateOfBirth");
+                dateOfBirthLabel.appendChild(document.createTextNode("DateOfBirth"));
+                dateOfBirthDiv.appendChild(dateOfBirthLabel);
+
+                var dateOfBirthInput = document.createElement("input");
+                dateOfBirthInput.setAttribute("class", "form-control");
+                dateOfBirthInput.setAttribute("type", "date");
+                dateOfBirthInput.setAttribute("data-val", "true");
+                dateOfBirthInput.setAttribute("data-val-required", "The DateOfBirth field is required.");
+                dateOfBirthInput.setAttribute("id", "Authors_" + i + "__DateOfBirth");
+                dateOfBirthInput.setAttribute("name", "Authors[" + i +"].DateOfBirth");
+                dateOfBirthInput.setAttribute("value", "");
+                dateOfBirthDiv.appendChild(dateOfBirthInput);
+
+                var dateOfBirthValidation = document.createElement("span");
+                dateOfBirthValidation.setAttribute("class", "text-danger field-validation-valid");
+                dateOfBirthValidation.setAttribute("data-valmsg-for", "Authors[" + i + "].DateOfBirth");
+                dateOfBirthValidation.setAttribute("data-valmsg-replace", "true");
+                dateOfBirthDiv.appendChild(dateOfBirthValidation);
+
+                li.appendChild(dateOfBirthDiv);
+
+                var dateOfDeathDiv = document.createElement("div");
+                dateOfDeathDiv.setAttribute("class", "form-group");
+
+                var dateOfDeathLabel = document.createElement("label");
+                dateOfDeathLabel.setAttribute("class", "control-label");
+                dateOfDeathLabel.setAttribute("for", "Authors_" + i + "__DateOfDeath");
+                dateOfDeathLabel.appendChild(document.createTextNode("DateOfDeath"));
+                dateOfDeathDiv.appendChild(dateOfDeathLabel);
+
+                var dateOfDeathInput = document.createElement("input");
+                dateOfDeathInput.setAttribute("class", "form-control");
+                dateOfDeathInput.setAttribute("type", "date");
+                dateOfDeathInput.setAttribute("id", "Authors_" + i + "__DateOfDeath");
+                dateOfDeathInput.setAttribute("name", "Authors[" + i +"].DateOfDeath");
+                dateOfDeathInput.setAttribute("value", "");
+                dateOfDeathDiv.appendChild(dateOfDeathInput);
+
+                var dateOfDeathValidation = document.createElement("span");
+                dateOfDeathValidation.setAttribute("class", "text-danger field-validation-valid");
+                dateOfDeathValidation.setAttribute("data-valmsg-for", "Authors[" + i + "].DateOfDeath");
+                dateOfDeathValidation.setAttribute("data-valmsg-replace", "true");
+                dateOfDeathDiv.appendChild(dateOfDeathValidation);
+
+                li.appendChild(dateOfDeathDiv);
+
+                authors.appendChild(li);
+            }
+        </script>
+    </div>
+</div>
