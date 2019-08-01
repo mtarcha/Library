@@ -11,10 +11,12 @@ namespace Library.Infrastucture.Data
     public sealed class AuthorsRepository : IAuthorsRepository
     {
         private readonly LibraryContext _ctx;
-        
-        public AuthorsRepository(LibraryContext ctx)
+        private readonly EntityFactory _entityFactory;
+
+        public AuthorsRepository(LibraryContext ctx, EntityFactory entityFactory)
         {
             _ctx = ctx;
+            _entityFactory = entityFactory;
         }
 
         public void Create(Author author)
@@ -24,7 +26,7 @@ namespace Library.Infrastucture.Data
 
         public Author GetById(Guid id)
         {
-            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == id).ToAuthor();
+            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == id).ToAuthor(_entityFactory);
         }
 
         public void Delete(Guid id)
@@ -72,7 +74,7 @@ namespace Library.Infrastucture.Data
 
         public IEnumerable<Author> GetByName(string firstName, string lastName)
         {
-            return _ctx.Authors.Where(x => x.Name == firstName && x.SurName == lastName).Select(x => x.ToAuthor(false)).ToList();
+            return _ctx.Authors.Where(x => x.Name == firstName && x.SurName == lastName).Select(x => x.ToAuthor(_entityFactory, false)).ToList();
         }
     }
 }

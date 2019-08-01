@@ -9,10 +9,12 @@ namespace Library.Presentation.MVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        private readonly EntityFactory _entityFactory;
 
-        public AccountController(IUnitOfWorkFactory unitOfWorkFactory)
+        public AccountController(IUnitOfWorkFactory unitOfWorkFactory, EntityFactory entityFactory)
         {
             _unitOfWorkFactory = unitOfWorkFactory;
+            _entityFactory = entityFactory;
         }
 
         [HttpGet]
@@ -31,7 +33,7 @@ namespace Library.Presentation.MVC.Controllers
                     try
                     {
 
-                        var user = new User(model.UserName, Role.User);
+                        var user = _entityFactory.CreateUser(model.UserName, Role.User);
                         user.SetPassword(model.Password);
                         uow.Users.Create(user);
                         uow.Users.TrySignIn(model.UserName, model.Password, false);

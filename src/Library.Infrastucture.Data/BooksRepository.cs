@@ -11,11 +11,12 @@ namespace Library.Infrastucture.Data
     public sealed class BooksRepository : IBooksRepository
     {
         private readonly LibraryContext _ctx;
+        private readonly EntityFactory _entityFactory;
 
-        public BooksRepository(LibraryContext ctx)
+        public BooksRepository(LibraryContext ctx, EntityFactory entityFactory)
         {
             _ctx = ctx;
-
+            _entityFactory = entityFactory;
         }
 
         public void Create(Book book)
@@ -30,7 +31,7 @@ namespace Library.Infrastucture.Data
             return _ctx.Books.Where(x => x.ReferenceId == id)
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
-                .Single().ToBook();
+                .Single().ToBook(_entityFactory);
         }
 
         public void Delete(Guid id)
@@ -107,17 +108,17 @@ namespace Library.Infrastucture.Data
 
         public IEnumerable<Book> Get(Predicate<Book> predicate, int skipCount, int takeCount)
         {
-            return _ctx.Books.Where(x => predicate(x.ToBook(true)))
+            return _ctx.Books.Where(x => predicate(x.ToBook(_entityFactory, true)))
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
                 .OrderByDescending(x => x.Rate)
                 .Skip(skipCount).Take(takeCount)
-                .Select(x => x.ToBook(true));
+                .Select(x => x.ToBook(_entityFactory, true));
         }
 
         public int GetCount(Predicate<Book> predicate)
         {
-            return _ctx.Books.Count(x => predicate(x.ToBook(true)));
+            return _ctx.Books.Count(x => predicate(x.ToBook(_entityFactory, true)));
         }
     }
 }

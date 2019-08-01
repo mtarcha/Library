@@ -17,13 +17,15 @@ namespace Library.Presentation.MVC.Controllers
         public const int BooksOnPage = 8;
 
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        private readonly EntityFactory _entityFactory;
         private readonly IMapper _mapper;
         private readonly ILogger<BooksController> _logger;
 
 
-        public BooksController(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, ILogger<BooksController> logger)
+        public BooksController(IUnitOfWorkFactory unitOfWorkFactory, EntityFactory entityFactory, IMapper mapper, ILogger<BooksController> logger)
         {
             _unitOfWorkFactory = unitOfWorkFactory;
+            _entityFactory = entityFactory;
             _mapper = mapper;
             _logger = logger;
         }
@@ -75,7 +77,7 @@ namespace Library.Presentation.MVC.Controllers
                 using (var uow = _unitOfWorkFactory.Create())
                 {
                     var imageData = ReadImageData(bookViewModel.Avatar);
-                    var bookModel = new Book(bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+                    var bookModel = _entityFactory.CreateBook(bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
 
                     foreach (var author in bookViewModel.Authors)
                     {
@@ -87,7 +89,7 @@ namespace Library.Presentation.MVC.Controllers
                         }
                         else
                         {
-                            bookModel.AddAuthor(new Author(author.FirstName, author.LastName,
+                            bookModel.AddAuthor(_entityFactory.CreateAuthor(author.FirstName, author.LastName,
                                 new LifePeriod(author.DateOfBirth, author.DateOfDeath)));
                         }
                     }
@@ -124,11 +126,11 @@ namespace Library.Presentation.MVC.Controllers
                 {
                     var imageData = bookViewModel.Avatar != null ? ReadImageData(bookViewModel.Avatar) : bookViewModel.Picture;
 
-                    var bookModel = new Book(bookViewModel.Id, bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
+                    var bookModel = _entityFactory.CreateBook(bookViewModel.Id, bookViewModel.Name, bookViewModel.Date, bookViewModel.Summary, imageData);
 
                     foreach (var author in bookViewModel.Authors)
                     {
-                        var authorModel = new Author(author.Id, author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath));
+                        var authorModel = _entityFactory.CreateAuthor(author.Id, author.FirstName, author.LastName, new LifePeriod(author.DateOfBirth, author.DateOfDeath));
                         bookModel.AddAuthor(authorModel);
                     }
 

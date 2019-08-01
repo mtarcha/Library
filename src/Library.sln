@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastucture.Data"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastucture.Core", "Library.Infrastucture.Core\Library.Infrastucture.Core.csproj", "{7B82FCF3-E9CF-4E6B-B720-DB3C0F67E7F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.Common", "Library.Domain.Common\Library.Domain.Common.csproj", "{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain.Common", "Library.Domain.Common\Library.Domain.Common.csproj", "{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastucture.EventDispatching.MediatR", "Library.Infrastucture.EventDispatching.MediatR\Library.Infrastucture.EventDispatching.MediatR.csproj", "{2B494FB5-D3EB-41A9-95D4-C5084D137112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B494FB5-D3EB-41A9-95D4-C5084D137112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B494FB5-D3EB-41A9-95D4-C5084D137112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B494FB5-D3EB-41A9-95D4-C5084D137112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B494FB5-D3EB-41A9-95D4-C5084D137112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

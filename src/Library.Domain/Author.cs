@@ -8,12 +8,12 @@ namespace Library.Domain
     {
         private readonly List<Book> _books;
 
-        public Author(string name, string surName, LifePeriod lifePeriod)
+        internal Author(string name, string surName, LifePeriod lifePeriod)
             : this(Guid.NewGuid(), name, surName, lifePeriod)
         {
         }
 
-        public Author(Guid id, string name, string surName, LifePeriod lifePeriod)
+        internal Author(Guid id, string name, string surName, LifePeriod lifePeriod)
             : base(id)
         {
             Name = name;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Domain;
 using Library.Infrastucture.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,8 +23,8 @@ namespace Library.Presentation.MVC
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<EntityFactory>();
             services.AddEntityFramework(_configuration.GetConnectionString("LibraryConnectionString"));
-           
             services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)

@@ -9,17 +9,17 @@ namespace Library.Domain
         private readonly List<Book> _favoriteBooks;
         private readonly List<User> _favoriteReviewers;
 
-        public User(string userName)
+        internal User(string userName)
             : this(Guid.NewGuid(), userName, null)
         {
         }
 
-        public User(string userName, Role role)
+        internal User(string userName, Role role)
             : this(Guid.NewGuid(), userName, role)
         {
         }
 
-        public User(Guid id, string userName, Role role) : base(id)
+        internal User(Guid id, string userName, Role role) : base(id)
         {
             if (string.IsNullOrEmpty(userName))
             {

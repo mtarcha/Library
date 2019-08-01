@@ -6,9 +6,9 @@ namespace Library.Infrastucture.Data.Internal
 {
     internal static class MappingExtensions
     {
-        public static User ToUser(this UserEntity entity)
+        public static User ToUser(this UserEntity entity, EntityFactory entityFactory)
         {
-            return new User(entity.ReferenceId, entity.UserName, null);
+            return entityFactory.CreateUser(entity.ReferenceId, entity.UserName, null);
         }
 
         public static UserEntity ToEntity(this User user)
@@ -20,20 +20,20 @@ namespace Library.Infrastucture.Data.Internal
             };
         }
 
-        public static Book ToBook(this BookEntity entity, bool recurcive = true)
+        public static Book ToBook(this BookEntity entity, EntityFactory entityFactory, bool recurcive = true)
         {
-            var book = new Book(entity.ReferenceId, entity.Name, entity.Date, entity.Summary, entity.Picture);
+            var book = entityFactory.CreateBook(entity.ReferenceId, entity.Name, entity.Date, entity.Summary, entity.Picture);
             if (recurcive && entity.Authors != null)
             {
                 foreach (var author in entity.Authors)
                 {
-                    book.AddAuthor(author.Author.ToAuthor(false));
+                    book.AddAuthor(author.Author.ToAuthor(entityFactory, false));
                 }
             }
 
             if (entity.Rates != null)
             {
-                book.SetRates(entity.Rates.Select(x => x.ToRate()));
+                book.SetRates(entity.Rates.Select(x => x.ToRate(entityFactory)));
 
             }
 
@@ -51,9 +51,9 @@ namespace Library.Infrastucture.Data.Internal
             };
         }
 
-        public static BookRate ToRate(this BookRateEntity entity)
+        public static BookRate ToRate(this BookRateEntity entity, EntityFactory entityFactory)
         {
-            return new BookRate(entity.ReferenceId, entity.User.ToUser(), entity.Rate);
+            return new BookRate(entity.ReferenceId, entity.User.ToUser(entityFactory), entity.Rate);
         }
 
         public static BookEntity ToEntity(this Book book, bool recurcive = true)
@@ -69,14 +69,14 @@ namespace Library.Infrastucture.Data.Internal
             };
         }
 
-        public static Author ToAuthor(this AuthorEntity entity, bool recurcive = true)
+        public static Author ToAuthor(this AuthorEntity entity, EntityFactory entityFactory, bool recurcive = true)
         {
-            var author = new Author(entity.ReferenceId, entity.Name, entity.SurName, new LifePeriod(entity.DateOfBirth, entity.DateOfDeath));
+            var author = entityFactory.CreateAuthor(entity.ReferenceId, entity.Name, entity.SurName, new LifePeriod(entity.DateOfBirth, entity.DateOfDeath));
             if (entity.Books != null && recurcive)
             {
                 foreach (var book in entity.Books)
                 {
-                    author.AddBook(book.Book.ToBook(false));
+                    author.AddBook(book.Book.ToBook(entityFactory, false));
                 }
             }
 

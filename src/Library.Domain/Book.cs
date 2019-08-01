@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Library.Domain.Common;
+using Library.Domain.Events;
 
 namespace Library.Domain
 {
@@ -12,17 +13,20 @@ namespace Library.Domain
         private readonly List<BookRate> _rates;
         private readonly List<Author> _authors;
 
-        public Book(string name, DateTime date, string summary)
-           : this(Guid.NewGuid(), name, date, summary, null)
+        private readonly IEventDispatcher _eventDispatcher;
+
+        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary)
+           : this(eventDispatcher, name, date, summary, null)
         { }
 
-        public Book(string name, DateTime date, string summary, byte[] picture)
-           : this(Guid.NewGuid(), name, date, summary, picture)
+        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary, byte[] picture)
+           : this(eventDispatcher, Guid.NewGuid(), name, date, summary, picture)
         { }
 
-        public Book(Guid id, string name, DateTime date, string summary, byte[] picture)
+        internal Book(IEventDispatcher eventDispatcher, Guid id, string name, DateTime date, string summary, byte[] picture)
             : base(id)
         {
+            _eventDispatcher = eventDispatcher;
             if (id == Guid.Empty)
             {
                 throw new ArgumentException("Id cannot be empty.", nameof(id));
@@ -67,7 +71,6 @@ namespace Library.Domain
         public IReadOnlyList<BookRate> Rates => _rates;
         public IReadOnlyList<Author> Authors => _authors;
         
-        // todo: how update DB????
         public void SetRate(User user, int rate)
         {
             AddOrUpdateRate(new BookRate(user, rate));
@@ -119,7 +122,7 @@ namespace Library.Domain
             {
                 Rate = rate;
 
-                // todo: raise domain event
+                _eventDispatcher.DispatchDeferred(new BookRateChanged(rate, Id));
             }
         }
     }

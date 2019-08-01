@@ -8,12 +8,12 @@ namespace Library.Infrastucture.Data
     {
         private readonly LibraryContext _ctx;
 
-        public UnitOfWork(LibraryContext ctx, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+        public UnitOfWork(LibraryContext ctx, EntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _ctx = ctx;
-            Books = new BooksRepository(ctx);
-            Authors = new AuthorsRepository(ctx);
-            Users = new UsersRepository(ctx, userManager, signInManager, roleManager);
+            Books = new BooksRepository(ctx, entityFactory);
+            Authors = new AuthorsRepository(ctx, entityFactory);
+            Users = new UsersRepository(ctx, entityFactory, userManager, signInManager, roleManager);
         }
         
         public IBooksRepository Books { get; }

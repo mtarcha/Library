@@ -10,13 +10,20 @@ namespace Library.Infrastucture.Data
     public class UsersRepository : IUsersRepository
     {
         private readonly LibraryContext _ctx;
+        private readonly EntityFactory _entityFactory;
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersRepository(LibraryContext ctx, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+        public UsersRepository(
+            LibraryContext ctx, 
+            EntityFactory entityFactory, 
+            UserManager<UserEntity> userManager, 
+            SignInManager<UserEntity> signInManager, 
+            RoleManager<IdentityRole> roleManager)
         {
             _ctx = ctx;
+            _entityFactory = entityFactory;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -62,13 +69,13 @@ namespace Library.Infrastucture.Data
         public User GetById(Guid id)
         {
             var entity = _ctx.Users.FirstOrDefault(x => x.ReferenceId == id);
-            return entity?.ToUser();
+            return entity?.ToUser(_entityFactory);
         }
 
         public User GetByName(string userName)
         {
             var entity = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
-            return entity?.ToUser();
+            return entity?.ToUser(_entityFactory);
         }
 
         public void SignOut()
