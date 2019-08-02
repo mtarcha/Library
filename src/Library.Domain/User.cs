@@ -9,24 +9,30 @@ namespace Library.Domain
         private readonly List<Book> _favoriteBooks;
         private readonly List<User> _favoriteReviewers;
 
-        internal User(string userName)
-            : this(Guid.NewGuid(), userName, null)
+        internal User(string userName, DateTime dateOfBirth)
+            : this(userName, dateOfBirth, null)
         {
         }
 
-        internal User(string userName, Role role)
-            : this(Guid.NewGuid(), userName, role)
+        internal User(string userName, DateTime dateOfBirth, Role role)
+            : this(Guid.NewGuid(), userName, dateOfBirth, role)
         {
         }
 
-        internal User(Guid id, string userName, Role role) : base(id)
+        internal User(Guid id, string userName, DateTime dateOfBirth, Role role) : base(id)
         {
             if (string.IsNullOrEmpty(userName))
             {
                 throw new ArgumentNullException(nameof(userName));
             }
 
+            if (dateOfBirth > DateTime.Now)
+            {
+                throw new ArgumentException(nameof(dateOfBirth));
+            }
+
             UserName = userName;
+            DateOfBirth = dateOfBirth;
             Role = role;
 
             _favoriteBooks = new List<Book>();
@@ -34,6 +40,8 @@ namespace Library.Domain
         }
 
         public string UserName { get; }
+
+        public DateTime DateOfBirth { get; }
 
         public Role Role { get; private set; }
 

@@ -74,7 +74,7 @@ namespace Library.Infrastucture.Data
                 var user = unitOfWork.Users.GetByName(name);
                 if (user == null)
                 {
-                    user = _entityFactory.CreateUser(name, Role.Admin);
+                    user = _entityFactory.CreateUser(name, new DateTime(1993, 5, 5), Role.Admin);
                     user.SetPassword("K.,k. ;bnnz1");
                     unitOfWork.Users.Create(user);
                 }

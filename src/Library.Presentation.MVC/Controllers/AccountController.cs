@@ -33,18 +33,20 @@ namespace Library.Presentation.MVC.Controllers
                     try
                     {
 
-                        var user = _entityFactory.CreateUser(model.UserName, Role.User);
+                        var user = _entityFactory.CreateUser(model.UserName, model.DateOfBirth, Role.User);
                         user.SetPassword(model.Password);
                         uow.Users.Create(user);
                         uow.Users.TrySignIn(model.UserName, model.Password, false);
+
+                        return RedirectToAction("Get", "Books");
                     }
                     catch (Exception e)
                     {
                         ModelState.AddModelError(string.Empty, e.Message);
                     }
                 }
-               
             }
+
             return View(model);
         }
 

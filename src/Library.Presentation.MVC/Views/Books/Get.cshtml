@@ -40,7 +40,7 @@
 <div class="card-deck m-4 jfy-c flex-fill">
     @foreach (var book in Model.BooksOnPage)
     {
-        <div class="card cw-20 mb-3">
+        <div id="@book.Id" class="card cw-20 mb-3">
             @if (book.Picture != null && book.Picture.Length > 0)
             {
                 <img src="data:image;base64,@(Convert.ToBase64String(book.Picture))" class="card-img-top" />
@@ -59,7 +59,7 @@
                 }
             </div>
             <div class="card-footer">
-                <span class="card-text">Rate: @book.Rate</span>
+                <span id="rate" class="card-text">Rate: @book.Rate</span>
 
                 @if (User.Identity.IsAuthenticated)
                 {
@@ -81,6 +81,25 @@
             </div>
         </div>
     }
+  
+    <script src="~/lib/signalr/signalr.js"></script>
+
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/book-rating-events").build();
+        connection.on("bookRateChanged", bookRateChangedEvent => {
+            addEventToList(bookRateChangedEvent);
+        });
+
+        connection.start();
+
+        var addEventToList = bookRateChangedEvent => {
+            var bookId = bookRateChangedEvent.bookId;
+
+            var bookCard = document.getElementById(bookId);
+            var rate = bookCard.querySelectorAll("#rate").item(0);
+            rate.textContent = "Rate:" + bookRateChangedEvent.rate;
+        };
+    </script>
 </div>
 
 @{
@@ -131,5 +150,6 @@ public string TrySetDisabled(PageViewModel page)
 {
     return !page.IsActive ? "disabled" : string.Empty;
 }
+
 }
 

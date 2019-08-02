@@ -6,6 +6,6 @@
 
         void DispatchImmediately<T>(T domainEvent) where T : IDomainEvent;
 
-        void RaiseDeferredEvent();
+        void RaiseDeferredEvents();
     }
 }

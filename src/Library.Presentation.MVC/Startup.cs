@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Library.Domain;
+using Library.Domain.Events;
 using Library.Infrastucture.Data;
+using Library.Infrastucture.EventDispatching.MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +26,9 @@ namespace Library.Presentation.MVC
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+            services.AddMediatR();
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<EntityFactory>();
             services.AddEntityFramework(_configuration.GetConnectionString("LibraryConnectionString"));
             services.AddAutoMapper();
@@ -42,6 +48,11 @@ namespace Library.Presentation.MVC
             app.UseStaticFiles();
             app.UseNodeModules(env);
             app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<BookRateChangedHub>("/book-rating-events");
+            });
 
             app.UseMvc(configuration =>
             {

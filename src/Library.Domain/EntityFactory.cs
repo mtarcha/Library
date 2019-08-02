@@ -37,19 +37,19 @@ namespace Library.Domain
             return new Author(id, name, surName, lifePeriod);
         }
 
-        public User CreateUser(string userName)
+        public User CreateUser(string userName, DateTime dateOfBirth)
         {
-            return new User(userName);
+            return new User(userName, dateOfBirth);
         }
 
-        public User CreateUser(string userName, Role role)
+        public User CreateUser(string userName, DateTime dateOfBirth, Role role)
         {
-            return new User(userName, role);
+            return new User(userName, dateOfBirth, role);
         }
 
-        public User CreateUser(Guid id, string userName, Role role)
+        public User CreateUser(Guid id, string userName, DateTime dateOfBirth, Role role)
         {
-            return new User(id, userName, role);
+            return new User(id, userName, dateOfBirth, role);
         }
     }
 }
