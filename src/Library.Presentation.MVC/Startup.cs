@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 
 namespace Library.Presentation.MVC
 {
+    // todo: move mediatr to domain.common
+    // add business layer for handler implementations & signalR (infratructure?)
     public class Startup
     {
         private readonly IConfiguration _configuration;
