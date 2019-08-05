@@ -154,7 +154,7 @@ namespace Library.Presentation.MVC.Controllers
 
                 var book = uow.Books.GetById(setRateViewModel.BookId);
 
-                book.SetRate(user, setRateViewModel.Rate);
+                book.SetRate(_entityFactory.CreateBookRate(user, setRateViewModel.Rate));
 
                 uow.Books.Update(book);
 

@@ -1,13 +1,14 @@
 ﻿using System;
+using Library.Domain.Common;
 using Library.Domain.Events;
 
 namespace Library.Domain
 {
     public class EntityFactory
     {
-        private readonly IEventDispatcher _dispatcher;
+        private readonly EventDispatcher _dispatcher;
 
-        public EntityFactory(IEventDispatcher dispatcher)
+        public EntityFactory(EventDispatcher dispatcher)
         {
             _dispatcher = dispatcher;
         }
@@ -27,29 +28,39 @@ namespace Library.Domain
             return new Book(_dispatcher, id, name, date, summary, picture);
         }
 
+        public BookRate CreateBookRate(User user, int rate)
+        {
+            return new BookRate(_dispatcher, user, rate);
+        }
+
+        public BookRate CreateBookRate(Guid id, User user, int rate)
+        {
+            return new BookRate(id, _dispatcher, user, rate);
+        }
+
         public Author CreateAuthor(string name, string surName, LifePeriod lifePeriod)
         {
-            return new Author(name, surName, lifePeriod);
+            return new Author(_dispatcher, name, surName, lifePeriod);
         }
 
         public Author CreateAuthor(Guid id, string name, string surName, LifePeriod lifePeriod)
         {
-            return new Author(id, name, surName, lifePeriod);
+            return new Author(id, _dispatcher, name, surName, lifePeriod);
         }
 
         public User CreateUser(string userName, DateTime dateOfBirth)
         {
-            return new User(userName, dateOfBirth);
+            return new User(_dispatcher, userName, dateOfBirth);
         }
 
         public User CreateUser(string userName, DateTime dateOfBirth, Role role)
         {
-            return new User(userName, dateOfBirth, role);
+            return new User(_dispatcher, userName, dateOfBirth, role);
         }
 
         public User CreateUser(Guid id, string userName, DateTime dateOfBirth, Role role)
         {
-            return new User(id, userName, dateOfBirth, role);
+            return new User(id, _dispatcher, userName, dateOfBirth, role);
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Library.Domain.Events;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Library.Infrastucture.EventDispatching.MediatR
 {
-    public class BookRateChangedNotificationDispatcher : INotificationHandler<BookRateChangedNotification>
+    public class BookRateChangedNotificationDispatcher : INotificationHandler<BookRateChanged>
     {
         private readonly IHubContext<BookRateChangedHub> _hubContext;
 
@@ -14,7 +15,7 @@ namespace Library.Infrastucture.EventDispatching.MediatR
             _hubContext = hubContext;
         }
 
-        public Task Handle(BookRateChangedNotification notification, CancellationToken cancellationToken)
+        public Task Handle(BookRateChanged notification, CancellationToken cancellationToken)
         {
             return _hubContext.Clients.All.SendAsync("bookRateChanged", notification, cancellationToken);
         }

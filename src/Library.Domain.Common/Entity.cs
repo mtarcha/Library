@@ -4,7 +4,9 @@ namespace Library.Domain.Common
 {
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
-        protected Entity(TId id)
+        private readonly EventDispatcher _eventDispatcher;
+
+        protected Entity(TId id, EventDispatcher eventDispatcher)
         {
             if (object.Equals(id, default(TId)))
             {
@@ -12,6 +14,7 @@ namespace Library.Domain.Common
             }
 
             Id = id;
+            _eventDispatcher = eventDispatcher;
         }
 
         public TId Id { get; protected set; }
@@ -32,6 +35,16 @@ namespace Library.Domain.Common
         public bool Equals(Entity<TId> other)
         {
             return other != null && Id.Equals(other.Id);
+        }
+
+        protected void RaiseEventEmmediately(IDomainEvent domainEvent)
+        {
+            _eventDispatcher.DispatchImmediately(domainEvent);
+        }
+
+        protected void RaiseEventDeferred(IDomainEvent domainEvent)
+        {
+            _eventDispatcher.DispatchDeferred(domainEvent);
         }
     }
 }

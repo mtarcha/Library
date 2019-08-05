@@ -9,17 +9,18 @@ namespace Library.Domain
         private readonly List<Book> _favoriteBooks;
         private readonly List<User> _favoriteReviewers;
 
-        internal User(string userName, DateTime dateOfBirth)
-            : this(userName, dateOfBirth, null)
+        internal User(EventDispatcher eventDispatcher, string userName, DateTime dateOfBirth)
+            : this(eventDispatcher, userName, dateOfBirth, null)
         {
         }
 
-        internal User(string userName, DateTime dateOfBirth, Role role)
-            : this(Guid.NewGuid(), userName, dateOfBirth, role)
+        internal User(EventDispatcher eventDispatcher, string userName, DateTime dateOfBirth, Role role)
+            : this(Guid.NewGuid(), eventDispatcher, userName, dateOfBirth, role)
         {
         }
 
-        internal User(Guid id, string userName, DateTime dateOfBirth, Role role) : base(id)
+        internal User(Guid id, EventDispatcher eventDispatcher, string userName, DateTime dateOfBirth, Role role) 
+            : base(id, eventDispatcher)
         {
             if (string.IsNullOrEmpty(userName))
             {

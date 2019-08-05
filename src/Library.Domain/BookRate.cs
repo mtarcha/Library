@@ -8,12 +8,13 @@ namespace Library.Domain
         public const int MinValue = 1;
         public const int MaxValue = 5;
 
-        public BookRate(User user, int rate) 
-            : this(Guid.NewGuid(), user, rate)
+        public BookRate(EventDispatcher eventDispatcher, User user, int rate) 
+            : this(Guid.NewGuid(), eventDispatcher, user, rate)
         {
         }
 
-        public BookRate(Guid id, User user, int rate) : base(id)
+        public BookRate(Guid id, EventDispatcher eventDispatcher, User user, int rate) 
+            : base(id, eventDispatcher)
         {
             User = user;
 

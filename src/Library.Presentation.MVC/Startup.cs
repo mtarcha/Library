@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Domain;
+using Library.Domain.Common;
 using Library.Domain.Events;
 using Library.Infrastucture.Data;
 using Library.Infrastucture.EventDispatching.MediatR;
@@ -30,7 +31,7 @@ namespace Library.Presentation.MVC
         {
             services.AddSignalR();
             services.AddMediatR();
-            services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<EventDispatcher>();
             services.AddScoped<EntityFactory>();
             services.AddEntityFramework(_configuration.GetConnectionString("LibraryConnectionString"));
             services.AddAutoMapper();

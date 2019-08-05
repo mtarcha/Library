@@ -1,4 +1,5 @@
 ﻿using Library.Domain;
+using Library.Domain.Common;
 using Library.Domain.Events;
 using Library.Infrastucture.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -8,9 +9,9 @@ namespace Library.Infrastucture.Data
     public class UnitOfWork : IUnitOfWork
     {
         private readonly LibraryContext _ctx;
-        private readonly IEventDispatcher _eventDispatcher;
+        private readonly EventDispatcher _eventDispatcher;
 
-        public UnitOfWork(LibraryContext ctx, IEventDispatcher eventDispatcher, EntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+        public UnitOfWork(LibraryContext ctx, EventDispatcher eventDispatcher, EntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _ctx = ctx;
             _eventDispatcher = eventDispatcher;

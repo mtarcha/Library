@@ -55,7 +55,7 @@ namespace Library.Infrastucture.Data.Internal
 
         public static BookRate ToRate(this BookRateEntity entity, EntityFactory entityFactory)
         {
-            return new BookRate(entity.ReferenceId, entity.User.ToUser(entityFactory), entity.Rate);
+            return entityFactory.CreateBookRate(entity.ReferenceId, entity.User.ToUser(entityFactory), entity.Rate);
         }
 
         public static BookEntity ToEntity(this Book book, bool recurcive = true)

@@ -12,21 +12,18 @@ namespace Library.Domain
 
         private readonly List<BookRate> _rates;
         private readonly List<Author> _authors;
-
-        private readonly IEventDispatcher _eventDispatcher;
-
-        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary)
+        
+        internal Book(EventDispatcher eventDispatcher, string name, DateTime date, string summary)
            : this(eventDispatcher, name, date, summary, null)
         { }
 
-        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary, byte[] picture)
+        internal Book(EventDispatcher eventDispatcher, string name, DateTime date, string summary, byte[] picture)
            : this(eventDispatcher, Guid.NewGuid(), name, date, summary, picture)
         { }
 
-        internal Book(IEventDispatcher eventDispatcher, Guid id, string name, DateTime date, string summary, byte[] picture)
-            : base(id)
+        internal Book(EventDispatcher eventDispatcher, Guid id, string name, DateTime date, string summary, byte[] picture)
+            : base(id, eventDispatcher)
         {
-            _eventDispatcher = eventDispatcher;
             if (id == Guid.Empty)
             {
                 throw new ArgumentException("Id cannot be empty.", nameof(id));
@@ -71,9 +68,9 @@ namespace Library.Domain
         public IReadOnlyList<BookRate> Rates => _rates;
         public IReadOnlyList<Author> Authors => _authors;
         
-        public void SetRate(User user, int rate)
+        public void SetRate(BookRate bookRate)
         {
-            AddOrUpdateRate(new BookRate(user, rate));
+            AddOrUpdateRate(bookRate);
             EvaluateRate();
         }
 
@@ -122,7 +119,7 @@ namespace Library.Domain
             {
                 Rate = rate;
 
-                _eventDispatcher.DispatchDeferred(new BookRateChanged(rate, Id));
+                RaiseEventDeferred(new BookRateChanged(rate, Id));
             }
         }
     }

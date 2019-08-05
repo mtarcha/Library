@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Domain.Common;
+using System;
 
 namespace Library.Domain.Events
 {
@@ -16,10 +17,5 @@ namespace Library.Domain.Events
         public Guid BookId { get; }
 
         public DateTime RaiseTime { get; }
-
-        public T Visit<T>(IDomainEventVisitor<T> visitor)
-        {
-            return visitor.VisitBookRateChangedEvent(this);
-        }
     }
 }
