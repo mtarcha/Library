@@ -8,10 +8,10 @@ namespace Library.Infrastucture.Data
     public class DbInitializer : IStorageSeeder
     {
         private readonly LibraryContext _ctx;
-        private readonly EntityFactory _entityFactory;
+        private readonly IEntityFactory _entityFactory;
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DbInitializer(LibraryContext ctx, EntityFactory entityFactory, IUnitOfWorkFactory unitOfWorkFactory)
+        public DbInitializer(LibraryContext ctx, IEntityFactory entityFactory, IUnitOfWorkFactory unitOfWorkFactory)
         {
             _ctx = ctx;
             _entityFactory = entityFactory;
@@ -43,18 +43,24 @@ namespace Library.Infrastucture.Data
 
                         book.AddAuthor(ivanko);
                         book.AddAuthor(slavko);
+
+                        unitOfWork.Books.Create(book);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
                         var book = _entityFactory.CreateBook("Пригоди Вівчика " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
                         book.AddAuthor(ivanko);
+
+                        unitOfWork.Books.Create(book);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
                         var book = _entityFactory.CreateBook("Пригоди Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i);
                         book.AddAuthor(slavko);
+
+                        unitOfWork.Books.Create(book);
                     }
                 }
             }

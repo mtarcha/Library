@@ -13,15 +13,15 @@ namespace Library.Domain
         private readonly List<BookRate> _rates;
         private readonly List<Author> _authors;
         
-        internal Book(EventDispatcher eventDispatcher, string name, DateTime date, string summary)
+        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary)
            : this(eventDispatcher, name, date, summary, null)
         { }
 
-        internal Book(EventDispatcher eventDispatcher, string name, DateTime date, string summary, byte[] picture)
-           : this(eventDispatcher, Guid.NewGuid(), name, date, summary, picture)
+        internal Book(IEventDispatcher eventDispatcher, string name, DateTime date, string summary, byte[] picture)
+           : this(eventDispatcher, Guid.NewGuid(), name, date, summary, picture, new List<BookRate>())
         { }
 
-        internal Book(EventDispatcher eventDispatcher, Guid id, string name, DateTime date, string summary, byte[] picture)
+        internal Book(IEventDispatcher eventDispatcher, Guid id, string name, DateTime date, string summary, byte[] picture, IEnumerable<BookRate> rates)
             : base(id, eventDispatcher)
         {
             if (id == Guid.Empty)
@@ -74,16 +74,6 @@ namespace Library.Domain
             EvaluateRate();
         }
 
-        public void SetRates(IEnumerable<BookRate> rates)
-        {
-            foreach (var rate in rates)
-            {
-                AddOrUpdateRate(rate);
-            }
-            
-            EvaluateRate();
-        }
-
         public void AddAuthor(Author author)
         {
             if (!_authors.Exists(x => x.Id == author.Id))
@@ -119,7 +109,7 @@ namespace Library.Domain
             {
                 Rate = rate;
 
-                RaiseEventDeferred(new BookRateChanged(rate, Id));
+                RaiseEventDeferred(new BookRateChangedEvent(rate, Id));
             }
         }
     }

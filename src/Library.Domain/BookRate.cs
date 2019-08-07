@@ -8,12 +8,12 @@ namespace Library.Domain
         public const int MinValue = 1;
         public const int MaxValue = 5;
 
-        public BookRate(EventDispatcher eventDispatcher, User user, int rate) 
+        public BookRate(IEventDispatcher eventDispatcher, User user, int rate) 
             : this(Guid.NewGuid(), eventDispatcher, user, rate)
         {
         }
 
-        public BookRate(Guid id, EventDispatcher eventDispatcher, User user, int rate) 
+        public BookRate(Guid id, IEventDispatcher eventDispatcher, User user, int rate) 
             : base(id, eventDispatcher)
         {
             User = user;
@@ -28,7 +28,7 @@ namespace Library.Domain
         {
             if (rate < MinValue || rate > MaxValue)
             {
-                throw new AggregateException($"Rate must be in [{MinValue};{MaxValue}] range.");
+                throw new ArgumentOutOfRangeException($"Rate must be in [{MinValue};{MaxValue}] range.");
             }
 
             Rate = rate;

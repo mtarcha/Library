@@ -11,9 +11,9 @@ namespace Library.Infrastucture.Data
     public sealed class AuthorsRepository : IAuthorsRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly EntityFactory _entityFactory;
+        private readonly IEntityFactory _entityFactory;
 
-        public AuthorsRepository(LibraryContext ctx, EntityFactory entityFactory)
+        public AuthorsRepository(LibraryContext ctx, IEntityFactory entityFactory)
         {
             _ctx = ctx;
             _entityFactory = entityFactory;

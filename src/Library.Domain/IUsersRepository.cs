@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Library.Domain.Common;
 
 namespace Library.Domain
@@ -12,5 +13,7 @@ namespace Library.Domain
         bool TrySignIn(string userName, string password, bool isPersistent);
 
         void CreateRoleIfNotExists(Role role);
+
+        IEnumerable<User> GetFollowers(Guid userId);
     }
 }

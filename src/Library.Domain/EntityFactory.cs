@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Library.Domain.Common;
-using Library.Domain.Events;
 
 namespace Library.Domain
 {
-    public class EntityFactory
+    public class EntityFactory : IEntityFactory
     {
-        private readonly EventDispatcher _dispatcher;
+        private readonly IEventDispatcher _dispatcher;
 
-        public EntityFactory(EventDispatcher dispatcher)
+        public EntityFactory(IEventDispatcher dispatcher)
         {
             _dispatcher = dispatcher;
         }
@@ -23,9 +23,9 @@ namespace Library.Domain
             return new Book(_dispatcher, name, date, summary, picture);
         }
 
-        public Book CreateBook(Guid id, string name, DateTime date, string summary, byte[] picture)
+        public Book CreateBook(Guid id, string name, DateTime date, string summary, byte[] picture, IEnumerable<BookRate> rates)
         {
-            return new Book(_dispatcher, id, name, date, summary, picture);
+            return new Book(_dispatcher, id, name, date, summary, picture, rates);
         }
 
         public BookRate CreateBookRate(User user, int rate)

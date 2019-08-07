@@ -9,9 +9,9 @@ namespace Library.Infrastucture.Data
     public class UnitOfWork : IUnitOfWork
     {
         private readonly LibraryContext _ctx;
-        private readonly EventDispatcher _eventDispatcher;
+        private readonly IEventDispatcher _eventDispatcher;
 
-        public UnitOfWork(LibraryContext ctx, EventDispatcher eventDispatcher, EntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+        public UnitOfWork(LibraryContext ctx, IEventDispatcher eventDispatcher, IEntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _ctx = ctx;
             _eventDispatcher = eventDispatcher;

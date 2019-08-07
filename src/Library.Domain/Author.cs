@@ -8,12 +8,12 @@ namespace Library.Domain
     {
         private readonly List<Book> _books;
 
-        internal Author(EventDispatcher eventDispatcher, string name, string surName, LifePeriod lifePeriod)
+        internal Author(IEventDispatcher eventDispatcher, string name, string surName, LifePeriod lifePeriod)
             : this(Guid.NewGuid(), eventDispatcher, name, surName, lifePeriod)
         {
         }
 
-        internal Author(Guid id, EventDispatcher eventDispatcher, string name, string surName, LifePeriod lifePeriod)
+        internal Author(Guid id, IEventDispatcher eventDispatcher, string name, string surName, LifePeriod lifePeriod)
             : base(id, eventDispatcher)
         {
             Name = name;

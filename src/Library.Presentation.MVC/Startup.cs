@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Library.Business;
+using Library.Business.EventHandling;
 using Library.Domain;
 using Library.Domain.Common;
-using Library.Domain.Events;
 using Library.Infrastucture.Data;
-using Library.Infrastucture.EventDispatching.MediatR;
+using Library.Presentation.MVC.EventHandlers;
+using Library.Presentation.MVC.Utility;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,11 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using BookRateChangedEvent = Library.Domain.Events.BookRateChangedEvent;
 
 namespace Library.Presentation.MVC
 {
-    // todo: move mediatr to domain.common
-    // add business layer for handler implementations & signalR (infratructure?)
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -29,12 +30,28 @@ namespace Library.Presentation.MVC
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfiles(new Profile[]
+                {
+                    new ViewModelsToDTOMapper(),
+                    new DomainToDTOMapper(), 
+                });
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
             services.AddSignalR();
             services.AddMediatR();
-            services.AddScoped<EventDispatcher>();
-            services.AddScoped<EntityFactory>();
-            services.AddEntityFramework(_configuration.GetConnectionString("LibraryConnectionString"));
-            services.AddAutoMapper();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<IEntityFactory, EntityFactory>();
+            services.AddSingleton<IIntegrationEventHandler<Business.EventHandling.BookRateChangedEvent>, BookRateChangedEventHandler>();
+
+            var connectionString = _configuration.GetConnectionString("LibraryConnectionString");
+            services.AddEntityFramework(connectionString);
+            
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -54,7 +71,7 @@ namespace Library.Presentation.MVC
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<BookRateChangedHub>("/book-rating-events");
+                routes.MapHub<BookEventsRHub>("/book-events");
             });
 
             app.UseMvc(configuration =>

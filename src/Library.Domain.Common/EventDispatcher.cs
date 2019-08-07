@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Library.Domain.Common
 {
-    public class EventDispatcher
+    public class EventDispatcher : IEventDispatcher
     {
         private readonly IMediator _mediator;       
         private readonly ConcurrentQueue<IDomainEvent> _deferredEvents;

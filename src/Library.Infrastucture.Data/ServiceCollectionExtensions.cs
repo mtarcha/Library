@@ -1,4 +1,5 @@
 ﻿using Library.Domain;
+using Library.Infrastucture.Core;
 using Library.Infrastucture.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace Library.Infrastucture.Data
 
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             
-            services.AddTransient<DbInitializer>();
+            services.AddTransient<IStorageSeeder, DbInitializer>();
         }
     }
 }

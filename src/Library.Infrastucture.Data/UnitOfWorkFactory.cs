@@ -9,16 +9,16 @@ namespace Library.Infrastucture.Data
     public class UnitOfWorkFactory : IUnitOfWorkFactory
     {
         private readonly LibraryContext _ctx;
-        private readonly EventDispatcher _eventDispatcher;
-        private readonly EntityFactory _entityFactory;
+        private readonly IEventDispatcher _eventDispatcher;
+        private readonly IEntityFactory _entityFactory;
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UnitOfWorkFactory(
             LibraryContext ctx,
-            EventDispatcher eventDispatcher,
-            EntityFactory entityFactory, 
+            IEventDispatcher eventDispatcher,
+            IEntityFactory entityFactory, 
             UserManager<UserEntity> userManager, 
             SignInManager<UserEntity> signInManager, 
             RoleManager<IdentityRole> roleManager)

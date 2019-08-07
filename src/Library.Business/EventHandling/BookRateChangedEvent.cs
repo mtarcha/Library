@@ -1,11 +1,10 @@
-﻿using Library.Domain.Common;
-using System;
+﻿using System;
 
-namespace Library.Domain.Events
+namespace Library.Business.EventHandling
 {
-    public sealed class BookRateChanged : IDomainEvent
+    public sealed class BookRateChangedEvent : IIntegrationEvent
     {
-        public BookRateChanged(double rate, Guid bookId)
+        public BookRateChangedEvent(double rate, Guid bookId)
         {
             Rate = rate;
             BookId = bookId;

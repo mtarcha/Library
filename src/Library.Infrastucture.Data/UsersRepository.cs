@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Library.Domain;
 using Library.Infrastucture.Data.Entities;
@@ -10,14 +11,14 @@ namespace Library.Infrastucture.Data
     public class UsersRepository : IUsersRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly EntityFactory _entityFactory;
+        private readonly IEntityFactory _entityFactory;
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UsersRepository(
-            LibraryContext ctx, 
-            EntityFactory entityFactory, 
+            LibraryContext ctx,
+            IEntityFactory entityFactory, 
             UserManager<UserEntity> userManager, 
             SignInManager<UserEntity> signInManager, 
             RoleManager<IdentityRole> roleManager)
@@ -96,6 +97,12 @@ namespace Library.Infrastucture.Data
             {
                 var identityResult = _roleManager.CreateAsync(new IdentityRole(role.Name)).Result;
             }
+        }
+
+        public IEnumerable<User> GetFollowers(Guid userId)
+        {
+            var entity = _ctx.Users.FirstOrDefault(x => x.ReferenceId == userId);
+            return _ctx.Users.Where(x => x.FavoriteReviewers.Contains(entity)).Select(x => x.ToUser(_entityFactory)).ToList();
         }
     }
 }

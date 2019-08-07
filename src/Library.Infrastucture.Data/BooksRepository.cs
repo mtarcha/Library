@@ -11,9 +11,9 @@ namespace Library.Infrastucture.Data
     public sealed class BooksRepository : IBooksRepository
     {
         private readonly LibraryContext _ctx;
-        private readonly EntityFactory _entityFactory;
+        private readonly IEntityFactory _entityFactory;
 
-        public BooksRepository(LibraryContext ctx, EntityFactory entityFactory)
+        public BooksRepository(LibraryContext ctx, IEntityFactory entityFactory)
         {
             _ctx = ctx;
             _entityFactory = entityFactory;
@@ -48,7 +48,6 @@ namespace Library.Infrastucture.Data
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).Single();
             entity.Name = book.Name;
-            entity.Rate = book.Rate;
             entity.Date = book.Date;
             entity.Summary = book.Summary;
             entity.Picture = book.Picture;
@@ -106,19 +105,23 @@ namespace Library.Infrastucture.Data
             _ctx.SaveChanges();
         }
 
-        public IEnumerable<Book> Get(Predicate<Book> predicate, int skipCount, int takeCount)
+        public IEnumerable<Book> Get(string searchPatter, int skipCount, int takeCount)
         {
-            return _ctx.Books.Where(x => predicate(x.ToBook(_entityFactory, true)))
+            // todo: check if Contains will split sql query
+            var books = _ctx.Books
+                .Where(x => x.Name.Contains(searchPatter, StringComparison.InvariantCultureIgnoreCase))
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
                 .OrderByDescending(x => x.Rate)
                 .Skip(skipCount).Take(takeCount)
-                .Select(x => x.ToBook(_entityFactory, true));
+                .ToList();
+
+            return books.Select(x => x.ToBook(_entityFactory));
         }
 
-        public int GetCount(Predicate<Book> predicate)
+        public int GetCount(string searchPatter)
         {
-            return _ctx.Books.Count(x => predicate(x.ToBook(_entityFactory, true)));
+            return _ctx.Books.Count(x => x.Name.Contains(searchPatter, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

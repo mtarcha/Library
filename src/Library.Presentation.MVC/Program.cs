@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Presentation.MVC
 {
+    // todo: iivc use docker
+    // todo: iivc replace local db with ms sql server in container
     public class Program
     {
         public static void Main(string[] args)
@@ -32,13 +34,6 @@ namespace Library.Presentation.MVC
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(AddConfigurations)
                 .UseStartup<Startup>();
-
-        private static void AddConfigurations(WebHostBuilderContext arg1, IConfigurationBuilder builder)
-        {
-            builder.Sources.Clear();
-            builder.AddJsonFile("config.json");
-        }
     }
 }

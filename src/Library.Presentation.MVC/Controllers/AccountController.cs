@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
+using Library.Business;
+using Library.Business.DTO;
 using Library.Domain;
 using Library.Presentation.MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +11,13 @@ namespace Library.Presentation.MVC.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
-        private readonly EntityFactory _entityFactory;
+        private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public AccountController(IUnitOfWorkFactory unitOfWorkFactory, EntityFactory entityFactory)
+        public AccountController(IAccountService accountService, IMapper mapper)
         {
-            _unitOfWorkFactory = unitOfWorkFactory;
-            _entityFactory = entityFactory;
+            _accountService = accountService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,26 +27,20 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public IActionResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                using (var uow = _unitOfWorkFactory.Create())
+                try
                 {
-                    try
-                    {
+                    var dto = _mapper.Map<RegisterViewModel, Registration>(model);
+                    _accountService.Register(dto);
 
-                        var user = _entityFactory.CreateUser(model.UserName, model.DateOfBirth, Role.User);
-                        user.SetPassword(model.Password);
-                        uow.Users.Create(user);
-                        uow.Users.TrySignIn(model.UserName, model.Password, false);
-
-                        return RedirectToAction("Get", "Books");
-                    }
-                    catch (Exception e)
-                    {
-                        ModelState.AddModelError(string.Empty, e.Message);
-                    }
+                    return RedirectToAction("Get", "Books");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
                 }
             }
 
@@ -58,27 +55,25 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public IActionResult Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                using (var uow = _unitOfWorkFactory.Create())
+                var dto = _mapper.Map<LoginViewModel, Login>(model);
+                if (_accountService.TrySignIn(dto))
                 {
-                    if (uow.Users.TrySignIn(model.UserName, model.Password, model.RememberMe))
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Get", "Books");
-                        }
+                        return Redirect(model.ReturnUrl);
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Failed to log in");
+                        return RedirectToAction("Get", "Books");
                     }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Failed to log in");
                 }
             }
             return View(model);
@@ -86,13 +81,10 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOff()
+        public IActionResult LogOff()
         {
-            using (var uow = _unitOfWorkFactory.Create())
-            {
-                uow.Users.SignOut();
-                return RedirectToAction("Get", "Books");
-            }
+            _accountService.LogOff();
+            return RedirectToAction("Get", "Books");
         }
     }
 }

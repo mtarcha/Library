@@ -19,6 +19,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     <button class="dropdown-item" type="button">Favourite Books</button>
                     <button class="dropdown-item" type="button">Favourite Reviewers</button>
+                    <button class="dropdown-item" type="button">Recommended To Read</button>
                 </div>
 
                 <a class="m-2 btn btn-outline-success my-2 my-sm-0 float-right" asp-controller="Books" asp-action="Create">+</a>
@@ -76,16 +77,16 @@
                 {
                     <br />
                     <br />
-                    <a class="mt-2 btn btn-outline-success btn-block my-sm-0 float-right" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">Edit Book</a>
+                    <a class="mt-2 btn btn-outline-success btn-block my-sm-0 float-right" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">Update Book</a>
                 }
             </div>
         </div>
     }
-  
+
     <script src="~/lib/signalr/signalr.js"></script>
 
     <script>
-        var connection = new signalR.HubConnectionBuilder().withUrl("/book-rating-events").build();
+        var connection = new signalR.HubConnectionBuilder().withUrl("/book-events").build();
         connection.on("bookRateChanged", bookRateChangedEvent => {
             addEventToList(bookRateChangedEvent);
         });
@@ -141,15 +142,13 @@
 
 @functions
 {
-public string TrySetActive(PageViewModel page)
-{
-    return page.IsActive ? "active" : string.Empty;
-}
+    public string TrySetActive(PageViewModel page)
+    {
+        return page.IsActive ? "active" : string.Empty;
+    }
 
-public string TrySetDisabled(PageViewModel page)
-{
-    return !page.IsActive ? "disabled" : string.Empty;
+    public string TrySetDisabled(PageViewModel page)
+    {
+        return !page.IsActive ? "disabled" : string.Empty;
+    }
 }
-
-}
-

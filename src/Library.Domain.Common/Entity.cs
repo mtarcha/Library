@@ -4,9 +4,9 @@ namespace Library.Domain.Common
 {
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
-        private readonly EventDispatcher _eventDispatcher;
+        private readonly IEventDispatcher _eventDispatcher;
 
-        protected Entity(TId id, EventDispatcher eventDispatcher)
+        protected Entity(TId id, IEventDispatcher eventDispatcher)
         {
             if (object.Equals(id, default(TId)))
             {
@@ -37,7 +37,7 @@ namespace Library.Domain.Common
             return other != null && Id.Equals(other.Id);
         }
 
-        protected void RaiseEventEmmediately(IDomainEvent domainEvent)
+        protected void RaiseEventImmediately(IDomainEvent domainEvent)
         {
             _eventDispatcher.DispatchImmediately(domainEvent);
         }

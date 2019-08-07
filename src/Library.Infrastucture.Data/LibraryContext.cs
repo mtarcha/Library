@@ -17,6 +17,9 @@ namespace Library.Infrastucture.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserEntity>().HasMany(x => x.FavoriteReviewers);
+            modelBuilder.Entity<UserEntity>().HasMany(x => x.FavoriteBooks);
+            modelBuilder.Entity<UserEntity>().HasMany(x => x.RecommendedToRead);
 
             modelBuilder.Entity<AuthorEntity>().ToTable("Authors").HasKey(p => p.Id);
             modelBuilder.Entity<AuthorEntity>().Property(x => x.Name).IsRequired().HasMaxLength(1000);
