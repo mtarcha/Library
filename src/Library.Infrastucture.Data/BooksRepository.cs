@@ -21,14 +21,13 @@ namespace Library.Infrastucture.Data
 
         public void Create(Book book)
         {
-            _ctx.Books.Add(book.ToEntity());
-
-            _ctx.SaveChanges();
+            var entity = book.ToEntity();
+            _ctx.Books.Add(entity);
         }
 
         public Book GetById(Guid id)
         {
-            return _ctx.Books.Where(x => x.ReferenceId == id)
+            return _ctx.Books.Where(x => x.Id == id)
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
                 .Single().ToBook(_entityFactory);
@@ -36,15 +35,13 @@ namespace Library.Infrastucture.Data
 
         public void Delete(Guid id)
         {
-            var entity = _ctx.Books.Single(x => x.ReferenceId == id);
+            var entity = _ctx.Books.Single(x => x.Id == id);
             _ctx.Books.Remove(entity);
-
-            _ctx.SaveChanges();
         }
 
         public void Update(Book book)
         {
-            var entity = _ctx.Books.Where(x => x.ReferenceId == book.Id)
+            var entity = _ctx.Books.Where(x => x.Id == book.Id)
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).Single();
             entity.Name = book.Name;
@@ -57,8 +54,8 @@ namespace Library.Infrastucture.Data
                 var savedAuthors = entity.Authors.ToList();
                 var currentAuthors = book.Authors.ToList();
 
-                var updatedAuthors = savedAuthors.Where(x => currentAuthors.Exists(b => b.Id == x.Author.ReferenceId)).ToList();
-                var newAuthors = currentAuthors.Where(x => !savedAuthors.Exists(b => b.Author.ReferenceId == x.Id)).ToList();
+                var updatedAuthors = savedAuthors.Where(x => currentAuthors.Exists(b => b.Id == x.Author.Id)).ToList();
+                var newAuthors = currentAuthors.Where(x => !savedAuthors.Exists(b => b.Author.Id == x.Id)).ToList();
                 var deletedAuthors = savedAuthors.Except(updatedAuthors);
 
                 foreach (var deletedAuthor in deletedAuthors)
@@ -68,7 +65,7 @@ namespace Library.Infrastucture.Data
 
                 foreach (var updatedAuthor in updatedAuthors)
                 {
-                    var update = currentAuthors.Single(x => x.Id == updatedAuthor.Author.ReferenceId);
+                    var update = currentAuthors.Single(x => x.Id == updatedAuthor.Author.Id);
                     updatedAuthor.Author.Name = update.Name;
                     updatedAuthor.Author.SurName = update.SurName;
                     updatedAuthor.Author.DateOfBirth = update.LifePeriod.DateOfBirth;
@@ -81,35 +78,39 @@ namespace Library.Infrastucture.Data
                 }
             }
 
-            if (book.Rates != null)
+            if (book.Rates != null && book.Rates.Any())
             {
+                if (!book.Rate.HasValue)
+                {
+                    throw new ArgumentException("Book has rates but no evaluated rate");
+                }
+
+                entity.Rate = book.Rate.Value;
                 var saved = entity.Rates.ToList();
                 var current = book.Rates.ToList();
 
-                var updatedRates = saved.Where(x => current.Exists(r => r.Id == x.ReferenceId)).ToList();
-                var newRates = current.Where(x => !saved.Exists(b => b.ReferenceId == x.Id)).ToList();
+                var updatedRates = saved.Where(x => current.Exists(r => r.Id == x.Id)).ToList();
+                var newRates = current.Where(x => !saved.Exists(b => b.Id == x.Id)).ToList();
 
                 foreach (var rate in updatedRates)
                 {
-                    var update = current.Single(x => x.Id == rate.ReferenceId);
+                    var update = current.Single(x => x.Id == rate.Id);
                     rate.Rate = update.Rate;
                 }
 
                 foreach (var rate in newRates)
                 {
-                    var user = _ctx.Users.Single(x => x.ReferenceId == rate.User.Id);
-                    entity.Rates.Add(new BookRateEntity {ReferenceId = rate.Id, User = user, Rate = rate.Rate});
+                    var user = _ctx.Users.Single(x => x.Id == rate.User.Id);
+                    entity.Rates.Add(new BookRateEntity { Id = rate.Id, User = user, Rate = rate.Rate });
                 }
             }
-
-            _ctx.SaveChanges();
         }
 
         public IEnumerable<Book> Get(string searchPatter, int skipCount, int takeCount)
         {
             // todo: check if Contains will split sql query
             var books = _ctx.Books
-                .Where(x => x.Name.Contains(searchPatter, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.Name.Contains(searchPatter))
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
                 .OrderByDescending(x => x.Rate)

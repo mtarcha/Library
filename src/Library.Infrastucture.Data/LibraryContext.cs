@@ -1,10 +1,12 @@
-﻿using Library.Infrastucture.Data.Entities;
+﻿using System;
+using Library.Infrastucture.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastucture.Data
 {
-    public sealed class LibraryContext : IdentityDbContext<UserEntity>
+    public sealed class LibraryContext : IdentityDbContext<UserEntity, IdentityRole<Guid>, Guid>
     {
         public LibraryContext(DbContextOptions options) : base(options)
         {
@@ -23,14 +25,12 @@ namespace Library.Infrastucture.Data
 
             modelBuilder.Entity<AuthorEntity>().ToTable("Authors").HasKey(p => p.Id);
             modelBuilder.Entity<AuthorEntity>().Property(x => x.Name).IsRequired().HasMaxLength(1000);
-            modelBuilder.Entity<AuthorEntity>().Property(p => p.ReferenceId).IsRequired();
             modelBuilder.Entity<AuthorEntity>().Property(p => p.DateOfBirth).IsRequired();
             modelBuilder.Entity<AuthorEntity>().Property(p => p.DateOfDeath).IsRequired(false);
 
             modelBuilder.Entity<BookEntity>().ToTable("Books").HasKey(p => p.Id);
             modelBuilder.Entity<BookEntity>().Property(p => p.Name).IsRequired().HasMaxLength(100);
             modelBuilder.Entity<BookEntity>().Property(p => p.Summary).IsRequired().HasMaxLength(1000);
-            modelBuilder.Entity<BookEntity>().Property(p => p.ReferenceId).IsRequired();
             modelBuilder.Entity<BookEntity>().Property(p => p.Date).IsRequired();
             modelBuilder.Entity<BookEntity>().Property(p => p.Rate).IsRequired();
             modelBuilder.Entity<BookEntity>().HasMany(x => x.Rates).WithOne(x => x.Book);

@@ -21,23 +21,24 @@ namespace Library.Infrastucture.Data
 
         public void Create(Author author)
         {
-            _ctx.Authors.Add(author.ToEntity());
+            var entity = author.ToEntity();
+            _ctx.Authors.Add(entity);
         }
 
         public Author GetById(Guid id)
         {
-            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == id).ToAuthor(_entityFactory);
+            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.Id == id).ToAuthor(_entityFactory);
         }
 
         public void Delete(Guid id)
         {
-            var author = _ctx.Authors.Single(x => x.ReferenceId == id);
+            var author = _ctx.Authors.Single(x => x.Id == id);
             _ctx.Remove(author);
         }
 
         public void Update(Author author)
         {
-            var entity = _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.ReferenceId == author.Id);
+            var entity = _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.Id == author.Id);
             entity.Name = author.Name;
             entity.SurName = author.SurName;
             entity.DateOfBirth = author.LifePeriod.DateOfBirth;
@@ -48,8 +49,8 @@ namespace Library.Infrastucture.Data
                 var savedBooks = entity.Books.ToList();
                 var currentBooks = author.Books.ToList();
 
-                var updatedBooks = savedBooks.Where(x => currentBooks.Exists(b => b.Id == x.Book.ReferenceId)).ToList();
-                var newBooks = currentBooks.Where(x => !savedBooks.Exists(b => b.Book.ReferenceId == x.Id)).ToList();
+                var updatedBooks = savedBooks.Where(x => currentBooks.Exists(b => b.Id == x.Book.Id)).ToList();
+                var newBooks = currentBooks.Where(x => !savedBooks.Exists(b => b.Book.Id == x.Id)).ToList();
                 var deletedBooks = savedBooks.Except(updatedBooks);
 
                 foreach (var deletedBook in deletedBooks)
@@ -59,7 +60,7 @@ namespace Library.Infrastucture.Data
 
                 foreach (var updatedBook in updatedBooks)
                 {
-                    var update = currentBooks.Single(x => x.Id == updatedBook.Book.ReferenceId);
+                    var update = currentBooks.Single(x => x.Id == updatedBook.Book.Id);
                     updatedBook.Book.Name = update.Name;
                     updatedBook.Book.Date = update.Date;
                     updatedBook.Book.Picture = update.Picture;

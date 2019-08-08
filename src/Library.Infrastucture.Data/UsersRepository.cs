@@ -14,14 +14,14 @@ namespace Library.Infrastucture.Data
         private readonly IEntityFactory _entityFactory;
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
         public UsersRepository(
             LibraryContext ctx,
             IEntityFactory entityFactory, 
             UserManager<UserEntity> userManager, 
             SignInManager<UserEntity> signInManager, 
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole<Guid>> roleManager)
         {
             _ctx = ctx;
             _entityFactory = entityFactory;
@@ -47,7 +47,7 @@ namespace Library.Infrastucture.Data
 
         public void Update(User user)
         {
-            var entity = _ctx.Users.Single(x => x.ReferenceId == user.Id);
+            var entity = _ctx.Users.Single(x => x.Id == user.Id);
 
             if (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.NewPassword))
             {
@@ -62,14 +62,14 @@ namespace Library.Infrastucture.Data
 
         public void Delete(Guid id)
         {
-            var entity = _ctx.Users.Single(x => x.ReferenceId == id);
+            var entity = _ctx.Users.Single(x => x.Id == id);
 
             _userManager.DeleteAsync(entity).Wait();
         }
 
         public User GetById(Guid id)
         {
-            var entity = _ctx.Users.FirstOrDefault(x => x.ReferenceId == id);
+            var entity = _ctx.Users.FirstOrDefault(x => x.Id == id);
             return entity?.ToUser(_entityFactory);
         }
 
@@ -95,13 +95,13 @@ namespace Library.Infrastucture.Data
             var roleExist = _roleManager.RoleExistsAsync(role.Name).Result;
             if (!roleExist)
             {
-                var identityResult = _roleManager.CreateAsync(new IdentityRole(role.Name)).Result;
+                var identityResult = _roleManager.CreateAsync(new IdentityRole<Guid>(role.Name)).Result;
             }
         }
 
         public IEnumerable<User> GetFollowers(Guid userId)
         {
-            var entity = _ctx.Users.FirstOrDefault(x => x.ReferenceId == userId);
+            var entity = _ctx.Users.FirstOrDefault(x => x.Id == userId);
             return _ctx.Users.Where(x => x.FavoriteReviewers.Contains(entity)).Select(x => x.ToUser(_entityFactory)).ToList();
         }
     }

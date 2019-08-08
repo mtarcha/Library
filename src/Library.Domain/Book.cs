@@ -49,15 +49,16 @@ namespace Library.Domain
             Date = date;
             Summary = summary;
             Picture = picture;
-            Rate = 0;
 
-            _rates = new List<BookRate>();
+            _rates = rates.ToList();
             _authors = new List<Author>();
+
+            EvaluateRate();
         }
         
         public string Name { get; }
 
-        public double Rate { get; private set; }
+        public double? Rate { get; private set; }
 
         public DateTime Date { get; }
 
@@ -98,18 +99,21 @@ namespace Library.Domain
 
         private void EvaluateRate()
         {
-            double rate = 0;
-
             if (_rates.Any())
             {
-                rate = _rates.Average(x => x.Rate);
-            }
+                var rate = _rates.Average(x => x.Rate);
 
-            if (Math.Abs(rate - Rate) > RateChangeTollerance)
-            {
-                Rate = rate;
+                if (!Rate.HasValue || Math.Abs(rate - Rate.Value) > RateChangeTollerance)
+                {
+                    var initialization = !Rate.HasValue;
 
-                RaiseEventDeferred(new BookRateChangedEvent(rate, Id));
+                    Rate = rate;
+
+                    if (!initialization)
+                    {
+                        RaiseEventDeferred(new BookRateChangedEvent(rate, Id));
+                    }
+                }
             }
         }
     }

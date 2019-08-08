@@ -34,9 +34,6 @@ namespace Library.Infrastucture.Data
                     var ivanko = _entityFactory.CreateAuthor("Ivan", "Ivchenko", new LifePeriod(new DateTime(1988, 1, 11)));
                     var slavko = _entityFactory.CreateAuthor("Myroslava", "Tarcha", new LifePeriod(new DateTime(1993, 5, 5)));
 
-                    unitOfWork.Authors.Create(ivanko);
-                    unitOfWork.Authors.Create(slavko);
-
                     for (var i = 1; i < 25; i++)
                     {
                         var book = _entityFactory.CreateBook("Пригоди Вівчика й Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика й Тарчавку " + i);
@@ -44,7 +41,7 @@ namespace Library.Infrastucture.Data
                         book.AddAuthor(ivanko);
                         book.AddAuthor(slavko);
 
-                        unitOfWork.Books.Create(book);
+                        //unitOfWork.Books.Create(book);
                     }
 
                     for (var i = 1; i < 5; i++)
@@ -52,7 +49,7 @@ namespace Library.Infrastucture.Data
                         var book = _entityFactory.CreateBook("Пригоди Вівчика " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
                         book.AddAuthor(ivanko);
 
-                        unitOfWork.Books.Create(book);
+                        //unitOfWork.Books.Create(book);
                     }
 
                     for (var i = 1; i < 5; i++)
@@ -60,8 +57,11 @@ namespace Library.Infrastucture.Data
                         var book = _entityFactory.CreateBook("Пригоди Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i);
                         book.AddAuthor(slavko);
 
-                        unitOfWork.Books.Create(book);
+                        //unitOfWork.Books.Create(book);
                     }
+
+                    unitOfWork.Authors.Create(ivanko);
+                    unitOfWork.Authors.Create(slavko);
                 }
             }
         }

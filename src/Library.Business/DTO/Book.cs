@@ -17,6 +17,6 @@ namespace Library.Business.DTO
 
         public string Summary { get; set; }
 
-        public double Rate { get; set; }
+        public double? Rate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Library.Domain;
+﻿using System;
+using Library.Domain;
 using Library.Infrastucture.Core;
 using Library.Infrastucture.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +17,7 @@ namespace Library.Infrastucture.Data
                 cfg.UseSqlServer(connectionString);
             });
 
-            services.AddIdentity<UserEntity, IdentityRole>()
+            services.AddIdentity<UserEntity, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<LibraryContext>();
 
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();

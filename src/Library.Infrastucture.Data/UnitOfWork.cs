@@ -1,4 +1,5 @@
-﻿using Library.Domain;
+﻿using System;
+using Library.Domain;
 using Library.Domain.Common;
 using Library.Domain.Events;
 using Library.Infrastucture.Data.Entities;
@@ -11,7 +12,13 @@ namespace Library.Infrastucture.Data
         private readonly LibraryContext _ctx;
         private readonly IEventDispatcher _eventDispatcher;
 
-        public UnitOfWork(LibraryContext ctx, IEventDispatcher eventDispatcher, IEntityFactory entityFactory, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+        public UnitOfWork(
+            LibraryContext ctx, 
+            IEventDispatcher eventDispatcher, 
+            IEntityFactory entityFactory, 
+            UserManager<UserEntity> userManager, 
+            SignInManager<UserEntity> signInManager, 
+            RoleManager<IdentityRole<Guid>> roleManager)
         {
             _ctx = ctx;
             _eventDispatcher = eventDispatcher;

@@ -108,7 +108,7 @@ namespace Library.Presentation.MVC.Controllers
 
             _bookService.SetRate(userName, setRateViewModel.BookId, setRateViewModel.Rate);
 
-            return Ok();
+            return RedirectToAction("Get");
         }
     }
 }

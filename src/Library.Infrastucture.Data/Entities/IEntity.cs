@@ -1,7 +1,9 @@
-﻿namespace Library.Infrastucture.Data.Entities
+﻿using System;
+
+namespace Library.Infrastucture.Data.Entities
 {
     public interface IEntity
     {
-        int Id { get; set; }
+        Guid Id { get; set; }
     }
 }
