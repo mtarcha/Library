@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  library.presentation.mvc:
+    image: ${DOCKER_REGISTRY-}librarypresentationmvc
+    build:
+      context: .
+      dockerfile: Library.Presentation.MVC/Dockerfile   
