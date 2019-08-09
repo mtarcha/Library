@@ -34,34 +34,37 @@ namespace Library.Infrastucture.Data
                     var ivanko = _entityFactory.CreateAuthor("Ivan", "Ivchenko", new LifePeriod(new DateTime(1988, 1, 11)));
                     var slavko = _entityFactory.CreateAuthor("Myroslava", "Tarcha", new LifePeriod(new DateTime(1993, 5, 5)));
 
+                    var astrid = _entityFactory.CreateAuthor(
+                        "Astrid", 
+                        "Lindgren",
+                        new LifePeriod(new DateTime(1907, 11, 14), new DateTime(2002, 1, 14)));
+
                     for (var i = 1; i < 25; i++)
                     {
-                        var book = _entityFactory.CreateBook("Пригоди Вівчика й Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика й Тарчавку " + i);
+                        var book = _entityFactory.CreateBook(
+                            "Karlsson-on-the-Roof " + i, 
+                            new DateTime(2016, 09, 08),
+                            "Karlsson-on-the-Roof is a character who figures in a series of children's books by the Swedish author Astrid Lindgren");
 
-                        book.AddAuthor(ivanko);
-                        book.AddAuthor(slavko);
-
-                        //unitOfWork.Books.Create(book);
+                        book.AddAuthor(astrid);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
-                        var book = _entityFactory.CreateBook("Пригоди Вівчика " + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
+                        var book = _entityFactory.CreateBook("Пригоди Вівчика" + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
                         book.AddAuthor(ivanko);
-
-                        //unitOfWork.Books.Create(book);
                     }
 
                     for (var i = 1; i < 5; i++)
                     {
                         var book = _entityFactory.CreateBook("Пригоди Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i);
                         book.AddAuthor(slavko);
-
-                        //unitOfWork.Books.Create(book);
+                        book.AddAuthor(ivanko);
                     }
 
                     unitOfWork.Authors.Create(ivanko);
                     unitOfWork.Authors.Create(slavko);
+                    unitOfWork.Authors.Create(astrid);
                 }
             }
         }
