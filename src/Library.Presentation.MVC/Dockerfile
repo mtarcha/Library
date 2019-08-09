@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+WORKDIR /src
+COPY ["Library.Presentation.MVC/Library.Presentation.MVC.csproj", "Library.Presentation.MVC/"]
+COPY ["Library.Infrastucture.Core/Library.Infrastucture.Core.csproj", "Library.Infrastucture.Core/"]
+COPY ["Library.Business/Library.Business.csproj", "Library.Business/"]
+COPY ["Library.Domain/Library.Domain.csproj", "Library.Domain/"]
+COPY ["Library.Domain.Common/Library.Domain.Common.csproj", "Library.Domain.Common/"]
+COPY ["Library.Infrastucture.Data/Library.Infrastucture.Data.csproj", "Library.Infrastucture.Data/"]
+RUN dotnet restore "Library.Presentation.MVC/Library.Presentation.MVC.csproj"
+COPY . .
+WORKDIR "/src/Library.Presentation.MVC"
+RUN dotnet build "Library.Presentation.MVC.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "Library.Presentation.MVC.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "Library.Presentation.MVC.dll"]

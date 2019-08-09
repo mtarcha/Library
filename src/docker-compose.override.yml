@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  library.presentation.mvc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__LibraryConnectionString=Server=sql;Database=lybrarydb;User Id=sa;Password=123asdQ!
+    ports:
+      - "8888:80"
+
+  sql:
+    image: microsoft/mssql-server-linux:latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=123asdQ!
+    ports:
+      - "5433:1433"
