@@ -1,13 +1,10 @@
-﻿using Library.Infrastucture.Core;
+﻿using Library.Infrastructure.Core;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Presentation.MVC
 {
-    // todo: iivc use docker
-    // todo: iivc replace local db with ms sql server in container
     public class Program
     {
         public static void Main(string[] args)

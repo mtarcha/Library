@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Library.Domain;
-using Library.Infrastucture.Data.Entities;
-using Library.Infrastucture.Data.Internal;
+using Library.Infrastructure.Data.Entities;
+using Library.Infrastructure.Data.Internal;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Infrastucture.Data
+namespace Library.Infrastructure.Data
 {
     public class UsersRepository : IUsersRepository
     {

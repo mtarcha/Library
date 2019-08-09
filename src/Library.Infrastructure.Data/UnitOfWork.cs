@@ -1,11 +1,10 @@
 ﻿using System;
 using Library.Domain;
 using Library.Domain.Common;
-using Library.Domain.Events;
-using Library.Infrastucture.Data.Entities;
+using Library.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Infrastucture.Data
+namespace Library.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {

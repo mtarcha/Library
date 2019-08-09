@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Presentation.MVC", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain", "Library.Domain\Library.Domain.csproj", "{0A758D0E-F6A0-40DB-AAE6-92F7159B899A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastucture.Data", "Library.Infrastucture.Data\Library.Infrastucture.Data.csproj", "{3F50B9CB-CC4B-419F-BA58-430463EEDAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Data", "Library.Infrastructure.Data\Library.Infrastructure.Data.csproj", "{3F50B9CB-CC4B-419F-BA58-430463EEDAD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastucture.Core", "Library.Infrastucture.Core\Library.Infrastucture.Core.csproj", "{7B82FCF3-E9CF-4E6B-B720-DB3C0F67E7F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure", "Library.Infrastructure\Library.Infrastructure.csproj", "{7B82FCF3-E9CF-4E6B-B720-DB3C0F67E7F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain.Common", "Library.Domain.Common\Library.Domain.Common.csproj", "{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}"
 EndProject

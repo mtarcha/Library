@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Library.Domain;
-using Library.Infrastucture.Core;
+using Library.Infrastructure.Core;
 
-namespace Library.Infrastucture.Data
+namespace Library.Infrastructure.Data
 {
     public class DbInitializer : IStorageSeeder
     {
@@ -39,7 +39,7 @@ namespace Library.Infrastucture.Data
                         "Lindgren",
                         new LifePeriod(new DateTime(1907, 11, 14), new DateTime(2002, 1, 14)));
 
-                    for (var i = 1; i < 25; i++)
+                    for (var i = 1; i < 10; i++)
                     {
                         var book = _entityFactory.CreateBook(
                             "Karlsson-on-the-Roof " + i, 
@@ -49,17 +49,11 @@ namespace Library.Infrastucture.Data
                         book.AddAuthor(astrid);
                     }
 
-                    for (var i = 1; i < 5; i++)
+                    for (var i = 1; i < 15; i++)
                     {
-                        var book = _entityFactory.CreateBook("Пригоди Вівчика" + i, new DateTime(2016, 09, 08), "Книга пригод про Вівчика до зустрічі з Тарчавкою " + i);
+                        var book = _entityFactory.CreateBook("Adventures of Vichyk and Tarchavka" + i, new DateTime(2016, 09, 08), "Adventures of Vichyk and Tarchavka " + i);
                         book.AddAuthor(ivanko);
-                    }
-
-                    for (var i = 1; i < 5; i++)
-                    {
-                        var book = _entityFactory.CreateBook("Пригоди Тарчавки " + i, new DateTime(2016, 09, 08), "Книга пригод про Тарчавку до зустрічі з Вівчиком " + i);
                         book.AddAuthor(slavko);
-                        book.AddAuthor(ivanko);
                     }
 
                     unitOfWork.Authors.Create(ivanko);

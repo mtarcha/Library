@@ -1,4 +1,4 @@
-﻿namespace Library.Infrastucture.Core
+﻿namespace Library.Infrastructure.Core
 {
     public interface IStorageSeeder
     {

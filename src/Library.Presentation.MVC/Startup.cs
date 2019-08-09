@@ -3,7 +3,7 @@ using Library.Business;
 using Library.Business.EventHandling;
 using Library.Domain;
 using Library.Domain.Common;
-using Library.Infrastucture.Data;
+using Library.Infrastructure.Data;
 using Library.Presentation.MVC.EventHandlers;
 using Library.Presentation.MVC.Utility;
 using MediatR;
@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using BookRateChangedEvent = Library.Domain.Events.BookRateChangedEvent;
 
 namespace Library.Presentation.MVC
 {
@@ -26,8 +25,6 @@ namespace Library.Presentation.MVC
             _configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             var mappingConfig = new MapperConfiguration(mc =>
@@ -57,7 +54,6 @@ namespace Library.Presentation.MVC
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -66,7 +62,6 @@ namespace Library.Presentation.MVC
             }
 
             app.UseStaticFiles();
-            app.UseNodeModules(env);
             app.UseAuthentication();
 
             app.UseSignalR(routes =>

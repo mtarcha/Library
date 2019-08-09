@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using AutoMapper;
 using Library.Business;
 using Library.Domain;
 using Library.Presentation.MVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Book = Library.Business.DTO.Book;
 

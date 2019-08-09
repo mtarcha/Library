@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.Infrastucture.Data.Entities
+namespace Library.Infrastructure.Data.Entities
 {
     public class BookAuthorEntity
     {

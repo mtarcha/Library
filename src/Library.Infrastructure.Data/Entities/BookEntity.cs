@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.Infrastucture.Data.Entities
+namespace Library.Infrastructure.Data.Entities
 {
     public sealed class BookEntity : IEntity
     {

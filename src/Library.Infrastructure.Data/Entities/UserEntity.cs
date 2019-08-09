@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Infrastucture.Data.Entities
+namespace Library.Infrastructure.Data.Entities
 {
     public sealed class UserEntity : IdentityUser<Guid>, IEntity
     {

@@ -1,10 +1,10 @@
 ﻿using System;
-using Library.Infrastucture.Data.Entities;
+using Library.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.Infrastucture.Data
+namespace Library.Infrastructure.Data
 {
     public sealed class LibraryContext : IdentityDbContext<UserEntity, IdentityRole<Guid>, Guid>
     {

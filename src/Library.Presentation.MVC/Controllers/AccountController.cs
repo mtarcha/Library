@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using AutoMapper;
 using Library.Business;
 using Library.Business.DTO;
-using Library.Domain;
 using Library.Presentation.MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using Library.Domain;
-using Library.Infrastucture.Core;
-using Library.Infrastucture.Data.Entities;
+using Library.Infrastructure.Core;
+using Library.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.Infrastucture.Data
+namespace Library.Infrastructure.Data
 {
     public static class ServiceCollectionExtensions
     {

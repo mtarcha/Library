@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Library.Domain;
-using Library.Infrastucture.Data.Entities;
+using Library.Infrastructure.Data.Entities;
 
-namespace Library.Infrastucture.Data.Internal
+namespace Library.Infrastructure.Data.Internal
 {
     internal static class MappingExtensions
     {
