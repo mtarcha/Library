@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Library.Application.Common;
-using MediatR;
+﻿using MediatR;
 
 namespace Library.Application.Queries.GetAuthors
 {

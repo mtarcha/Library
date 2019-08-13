@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Library.Application.Common;
-using Library.Application.Queries.GetAuthors;
 using Library.Application.Queries.GetBook;
 
 namespace Library.Application.Queries.Sql

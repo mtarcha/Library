@@ -1,6 +1,6 @@
 # Home Library
 
-![Alt text](HomeLibrary.png?raw=true "Home Library")
+![Alt text](docs/HomeLibrary.png?raw=true "Home Library")
 
 Home Lybrary is service that provides ability to find books for reading.
 Home Library features:
@@ -32,6 +32,8 @@ Home Library features:
 * Automapper
 * MediatR
 * SignalR
+* NUnit
+* NSubstitute
 
 ## Principles:
 * SOLID

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Library.Application.Common;
-using Library.Application.Queries.GetBook;
 using Library.Application.Queries.GetBooks;
 
 namespace Library.Application.Queries.Sql
@@ -36,7 +33,7 @@ namespace Library.Application.Queries.Sql
                                 where b.Name like '%{request.SearchPattern}%' or b.Summary like '%{request.SearchPattern}%'
                                 ORDER BY b.Rate DESC 
                                 OFFSET {request.SkipCount} ROWS 
-                                FETCH NEXT {request.TakeCount} ROWS ONLY ) as books) ";
+                                FETCH NEXT {request.TakeCount} ROWS ONLY ) as books)";
 
                 var books = new Dictionary<Guid, Book>();
                 var res = await connection.QueryAsync<Book, Author, Book>(
@@ -55,7 +52,9 @@ namespace Library.Application.Queries.Sql
                     cancellationToken);
                 
                 var allBooksCount = await connection.ExecuteScalarAsync<int>(
-                    "Select Count(*) from dbo.Books",
+                    $@"Select Count(*) 
+                        from dbo.Books 
+                        where Name like '%{request.SearchPattern}%' or Summary like '%{request.SearchPattern}%'",
                     cancellationToken);
 
                 return new SearchBooksResult(books.Values, allBooksCount, books.Count);
