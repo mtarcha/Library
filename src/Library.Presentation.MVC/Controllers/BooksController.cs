@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
-using Library.Business;
+using Library.Application.Commands.CreateBook;
+using Library.Application.Commands.SetBookRate;
+using Library.Application.Commands.UpdateBook;
+using Library.Application.Queries.GetAuthors;
+using Library.Application.Queries.GetBook;
+using Library.Application.Queries.GetBooks;
 using Library.Domain;
 using Library.Presentation.MVC.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Book = Library.Business.DTO.Book;
+
+using Book = Library.Application.Common.Book;
 
 namespace Library.Presentation.MVC.Controllers
 {
@@ -14,40 +23,57 @@ namespace Library.Presentation.MVC.Controllers
     {
         public const int BooksOnPage = 8;
 
-        private readonly IBookService _bookService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        
-        public BooksController(IBookService bookService, IMapper mapper)
+
+        public BooksController(IMediator mediator, IMapper mapper)
         {
-            _bookService = bookService;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
+        public async Task<IActionResult> Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
         {
-            var pattern = search ?? string.Empty;
-            var totalCount = _bookService.GetBooksCount(pattern);
-
-            var totalPages = (int)Math.Ceiling(totalCount / (decimal)BooksOnPage);
-
-            if (page < 1 || (page > totalPages && totalPages > 0))
+            if (page < 1)
             {
-                return NotFound($"Invalid page '{page}'! Should be in range from 1 to {totalPages}");
+                return NotFound($"Invalid page '{page}'! Should be 1 or more.");
             }
 
-            var books = _bookService.GetBooks(pattern, (page - 1) * BooksOnPage, BooksOnPage);
-
-            var vm = new BooksViewModel
+            var pattern = search ?? string.Empty;
+            var query = new GetBooksQuery
             {
-                TotalBooksCount = totalCount,
-                Pagination = new PaginationViewModel(totalPages, totalPages, page),
-                BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books),
-                SearchPattern = pattern
+                SearchPattern = search,
+                SkipCount = (page - 1) * BooksOnPage,
+                TakeCount = BooksOnPage
             };
 
-            return View(vm);
+            var result = await _mediator.Send(query);
+
+            if (result.HasErrors)
+            {
+                foreach (var exception in result.Exceptions.InnerExceptions)
+                {
+                    ModelState.AddModelError(String.Empty, exception.Message);
+                }
+
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var totalPages = (int)Math.Ceiling(result.AllBooksCount / (decimal)BooksOnPage);
+
+                var vm = new BooksViewModel
+                {
+                    TotalBooksCount = result.AllBooksCount,
+                    Pagination = new PaginationViewModel(totalPages, page),
+                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(result.Books),
+                    SearchPattern = pattern
+                };
+
+                return View(vm);
+            }
         }
 
         [HttpGet]
@@ -59,15 +85,39 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpPost]
         [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
-        public IActionResult Create(CreateBookViewModel bookViewModel)
+        public async Task<IActionResult> Create(CreateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var book = _mapper.Map<CreateBookViewModel, Book>(bookViewModel);
+                var command = new CreateBookCommand
+                {
+                    Book = _mapper.Map<CreateBookViewModel, Book>(bookViewModel)
+                };
 
-                _bookService.Create(book);
+                foreach (var author in command.Book.Authors)
+                {
+                    var getAuthors = new GetAuthorsQuery {SubName = author.LastName};
+                    var authors = await _mediator.Send(getAuthors);
+                    var saved = authors.Authors.FirstOrDefault();
 
-                return RedirectToAction("Get");
+                    if (saved != null)
+                    {
+                        author.Id = saved.Id;
+                    }
+                }
+
+                var result = _mediator.Send(command).Result;
+                if (result.HasErrors)
+                {
+                    foreach (var error in result.Exceptions.InnerExceptions)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Message);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Get");
+                }
             }
 
             return View(bookViewModel);
@@ -75,9 +125,13 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpGet]
         [Authorize(Roles = Role.AdminRoleName)]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var book = _bookService.GetById(id);
+            var query = new GetBookQuery { BookId = id };
+
+            var result = await _mediator.Send(query);
+
+            var book = result.Book;
             var editBook = _mapper.Map<Book, EditBookViewModel>(book);
 
             return View(editBook);
@@ -89,10 +143,23 @@ namespace Library.Presentation.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var book = _mapper.Map<EditBookViewModel, Book>(bookViewModel);
-                _bookService.Update(book);
+                var command = new UpdateBookCommand
+                {
+                    UpdatedBook = _mapper.Map<EditBookViewModel, Book>(bookViewModel)
+                };
 
-                return RedirectToAction("Get");
+                var result = _mediator.Send(command).Result;
+                if (result.HasErrors)
+                {
+                    foreach (var error in result.Exceptions.InnerExceptions)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Message);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Get");
+                }
             }
 
             return View(bookViewModel);
@@ -102,9 +169,14 @@ namespace Library.Presentation.MVC.Controllers
         [Authorize]
         public IActionResult SetRate(SetRateViewModel setRateViewModel)
         {
-            var userName = User.Identity.Name;
+            var command = new SetBookRateCommand
+            {
+                UserName = User.Identity.Name,
+                BookId = setRateViewModel.BookId,
+                Rate = setRateViewModel.Rate
+            };
 
-            _bookService.SetRate(userName, setRateViewModel.BookId, setRateViewModel.Rate);
+            var result = _mediator.Send(command).Result;
 
             return RedirectToAction("Get");
         }

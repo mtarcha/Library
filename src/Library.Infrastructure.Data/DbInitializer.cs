@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Library.Domain;
 using Library.Infrastructure.Core;
 
@@ -18,21 +20,28 @@ namespace Library.Infrastructure.Data
             _unitOfWorkFactory = unitOfWorkFactory;
         }
 
-        public void Seed()
+        public async Task SeedAsync(CancellationToken token)
         {
             _ctx.Database.EnsureCreated();
-            SeedLibrary();
-            SeedRoles();
+            await SeedLibraryAsync(token);
+            await SeedRoles(token);
         }
 
-        public void SeedLibrary()
+        public async Task SeedLibraryAsync(CancellationToken token)
         {
             if (!_ctx.Authors.Any() || !_ctx.Books.Any())
             {
                 using (var unitOfWork = _unitOfWorkFactory.Create())
                 {
-                    var ivanko = _entityFactory.CreateAuthor("Ivan", "Ivchenko", new LifePeriod(new DateTime(1988, 1, 11)));
-                    var slavko = _entityFactory.CreateAuthor("Myroslava", "Tarcha", new LifePeriod(new DateTime(1993, 5, 5)));
+                    var ivanko = _entityFactory.CreateAuthor(
+                        "Ivan", 
+                        "Ivchenko", 
+                        new LifePeriod(new DateTime(1988, 1, 11)));
+
+                    var slavko = _entityFactory.CreateAuthor(
+                        "Myroslava", 
+                        "Tarcha", 
+                        new LifePeriod(new DateTime(1993, 5, 5)));
 
                     var astrid = _entityFactory.CreateAuthor(
                         "Astrid", 
@@ -49,37 +58,61 @@ namespace Library.Infrastructure.Data
                         book.AddAuthor(astrid);
                     }
 
-                    for (var i = 1; i < 15; i++)
+                    for (var i = 1; i < 10; i++)
                     {
-                        var book = _entityFactory.CreateBook("Adventures of Vichyk and Tarchavka" + i, new DateTime(2016, 09, 08), "Adventures of Vichyk and Tarchavka " + i);
+                        var book = _entityFactory.CreateBook(
+                            "Adventures of Vivchyk and Tarchavka" + i, 
+                            new DateTime(2016, 09, 08), 
+                            "Adventures of Vivchyk and Tarchavka " + i);
+
                         book.AddAuthor(ivanko);
                         book.AddAuthor(slavko);
                     }
 
-                    unitOfWork.Authors.Create(ivanko);
-                    unitOfWork.Authors.Create(slavko);
-                    unitOfWork.Authors.Create(astrid);
+                    for (var i = 1; i < 10; i++)
+                    {
+                        var book = _entityFactory.CreateBook(
+                            "Adventures of Vivchyk" + i,
+                            new DateTime(2016, 09, 08),
+                            "Adventures of Vivchyk before he has met Tarchavka " + i);
+
+                        book.AddAuthor(ivanko);
+                    }
+
+                    for (var i = 1; i < 10; i++)
+                    {
+                        var book = _entityFactory.CreateBook(
+                            "Adventures of Tarchavka" + i,
+                            new DateTime(2016, 09, 08),
+                            "Adventures of Tarchavka before she has met Vivchyk " + i);
+
+                        book.AddAuthor(slavko);
+                    }
+
+                    await unitOfWork.Authors.CreateAsync(ivanko, token);
+                    await unitOfWork.Authors.CreateAsync(slavko, token);
+                    await unitOfWork.Authors.CreateAsync(astrid, token);
                 }
             }
         }
 
-        public void SeedRoles()
+        public async Task SeedRoles(CancellationToken token)
         {
             using (var unitOfWork = _unitOfWorkFactory.Create())
             {
                 var roles = new [] { Role.User, Role.Admin };
                 foreach (var role in roles)
                 {
-                    unitOfWork.Users.CreateRoleIfNotExists(role);
+                    await unitOfWork.Users.CreateRoleIfNotExistsAsync(role, token);
                 }
 
                 var name = "AdminMyroslava";
-                var user = unitOfWork.Users.GetByName(name);
+                var user = await unitOfWork.Users.GetByNameAsync(name, token);
                 if (user == null)
                 {
                     user = _entityFactory.CreateUser(name, new DateTime(1993, 5, 5), Role.Admin);
                     user.SetPassword("K.,k. ;bnnz1");
-                    unitOfWork.Users.Create(user);
+                    await unitOfWork.Users.CreateAsync(user, token);
                 }
             }
         }

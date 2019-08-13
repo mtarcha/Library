@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using AutoMapper;
-using Library.Business.DTO;
+using Library.Application.Commands.LoginUser;
+using Library.Application.Commands.RegisterUser;
+using Library.Application.Common;
 using Library.Presentation.MVC.ViewModels;
 using Microsoft.AspNetCore.Http;
 
@@ -53,7 +55,7 @@ namespace Library.Presentation.MVC.Utility
               .ForMember(b => b.DateOfDeath, o => o.MapFrom(b => b.DateOfDeath))
               .ReverseMap();
 
-            CreateMap<Registration, RegisterViewModel>()
+            CreateMap<RegisterUserCommand, RegisterViewModel>()
                 .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
                 .ForMember(r => r.DateOfBirth, o => o.MapFrom(r => r.DateOfBirth))
                 .ForMember(r => r.Password, o => o.MapFrom(r => r.Password))
@@ -61,7 +63,7 @@ namespace Library.Presentation.MVC.Utility
                 .ForMember(r => r.PasswordConfirm, o => o.Ignore())
                 .ReverseMap();
 
-            CreateMap<Login, LoginViewModel>()
+            CreateMap<LoginUserCommand, LoginViewModel>()
                 .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
                 .ForMember(r => r.RememberMe, o => o.MapFrom(r => r.RememberMe))
                 .ForMember(r => r.Password, o => o.MapFrom(r => r.Password))

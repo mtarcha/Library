@@ -6,8 +6,5 @@ namespace Library.Domain
 {
     public interface IBooksRepository : IRepository<Book, Guid>
     {
-        int GetCount(string searchPatter);
-
-        IEnumerable<Book> Get(string searchPatter, int skipCount, int takeCount);
     }
 }

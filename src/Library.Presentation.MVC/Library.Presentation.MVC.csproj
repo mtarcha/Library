@@ -17,7 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Library.Business\Library.Business.csproj" />
+    <ProjectReference Include="..\Library.Application.Commands\Library.Application.Commands.csproj" />
+    <ProjectReference Include="..\Library.Application.Common\Library.Application.Common.csproj" />
+    <ProjectReference Include="..\Library.Application.EventHandling\Library.Application.EventHandling.csproj" />
+    <ProjectReference Include="..\Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj" />
+    <ProjectReference Include="..\Library.Application.Queries\Library.Application.Queries.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Library.Infrastructure\Library.Infrastructure.csproj" />
   </ItemGroup>

@@ -24,6 +24,7 @@ Home Library features:
 # What was used
 ## Tech Stack:
 * ASP.NTET Core
+* Dapper
 * EF
 * MS SQL Server
 * Docker
@@ -36,6 +37,7 @@ Home Library features:
 * SOLID
 * DDD
 * MVC
+* CQRS
 * Dependency Injection
 * Repository pattern
 * Factory pattern
@@ -44,3 +46,4 @@ Home Library features:
 # License
 
 Home Lybrary is open source software, licensed under the terms of MIT license. 
+See [LICENSE](LICENSE) for details.

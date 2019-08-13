@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Library.Business;
-using Library.Business.EventHandling;
+using Library.Application.EventHandling;
+using Library.Application.Queries.Sql;
 using Library.Domain;
 using Library.Domain.Common;
 using Library.Infrastructure.Data;
@@ -32,7 +32,7 @@ namespace Library.Presentation.MVC
                 mc.AddProfiles(new Profile[]
                 {
                     new ViewModelsToDTOMapper(),
-                    new DomainToDTOMapper(), 
+                    new DomainEventsMapping(), 
                 });
             });
 
@@ -40,15 +40,13 @@ namespace Library.Presentation.MVC
             services.AddSingleton(mapper);
             services.AddSignalR();
             services.AddMediatR();
-            services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IAccountService, AccountService>();
+           
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IEntityFactory, EntityFactory>();
-            services.AddSingleton<IIntegrationEventHandler<Business.EventHandling.BookRateChangedEvent>, BookRateChangedEventHandler>();
-
+            services.AddSingleton<IIntegrationEventHandler<BookRateChangedEvent>, BookRateChangedEventHandler>();
             var connectionString = _configuration.GetConnectionString("LibraryConnectionString");
             services.AddEntityFramework(connectionString);
-            
+            services.AddSingleton<IConnectionFactory>(new ConnectionFactory(connectionString));
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);

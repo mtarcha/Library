@@ -1,4 +1,6 @@
-﻿using Library.Infrastructure.Core;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Library.Infrastructure.Core;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,12 +13,12 @@ namespace Library.Presentation.MVC
         {
             var host = CreateWebHostBuilder(args).Build();
 
-            RunSeed(host);
+            RunSeed(host).Wait();
 
             host.Run();
         }
 
-        private static void RunSeed(IWebHost host)
+        private static async Task RunSeed(IWebHost host)
         {
             var scoupeFactory = host.Services.GetService<IServiceScopeFactory>();
             using (var scoupe = scoupeFactory.CreateScope())
@@ -24,7 +26,7 @@ namespace Library.Presentation.MVC
                 var seeders = scoupe.ServiceProvider.GetServices<IStorageSeeder>();
                 foreach (var storageSeeder in seeders)
                 {
-                    storageSeeder.Seed();
+                    await storageSeeder.SeedAsync(CancellationToken.None);
                 }
             }
         }

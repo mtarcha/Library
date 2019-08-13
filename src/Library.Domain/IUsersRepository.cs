@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Library.Domain.Common;
 
 namespace Library.Domain
 {
     public interface IUsersRepository : IRepository<User, Guid>
     {
-        User GetByName(string userName);
+        Task<User> GetByNameAsync(string userName, CancellationToken token);
 
-        void SignOut();
+        Task LogoutAsync(CancellationToken token);
 
-        bool TrySignIn(string userName, string password, bool isPersistent);
+        Task LoginAsync(string userName, string password, bool isPersistent, CancellationToken token);
 
-        void CreateRoleIfNotExists(Role role);
+        Task CreateRoleIfNotExistsAsync(Role role, CancellationToken token);
 
-        IEnumerable<User> GetFollowers(Guid userId);
+        Task<IEnumerable<User>> GetFollowersAsync(Guid userId, CancellationToken token);
     }
 }

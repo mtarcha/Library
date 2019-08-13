@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Library.Domain;
 using Library.Infrastructure.Data.Entities;
 using Library.Infrastructure.Data.Internal;
@@ -19,31 +21,29 @@ namespace Library.Infrastructure.Data
             _entityFactory = entityFactory;
         }
 
-        public void Create(Book book)
+        public async Task CreateAsync(Book book, CancellationToken token)
         {
             var entity = book.ToEntity();
-            _ctx.Books.Add(entity);
+            await _ctx.Books.AddAsync(entity, token);
         }
 
-        public Book GetById(Guid id)
+        public async Task<Book> GetByIdAsync(Guid id, CancellationToken token)
         {
-            return _ctx.Books.Where(x => x.Id == id)
+            var entity = await _ctx.Books
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
                 .Include(x => x.Rates).ThenInclude(x => x.User)
-                .Single().ToBook(_entityFactory);
+                .SingleAsync(x => x.Id == id, token);
+
+            return entity.ToBook(_entityFactory);
         }
 
-        public void Delete(Guid id)
+        public async Task UpdateAsync(Book book, CancellationToken token)
         {
-            var entity = _ctx.Books.Single(x => x.Id == id);
-            _ctx.Books.Remove(entity);
-        }
-
-        public void Update(Book book)
-        {
-            var entity = _ctx.Books.Where(x => x.Id == book.Id)
+            var entity = await _ctx.Books
                 .Include(x => x.Authors).ThenInclude(x => x.Author)
-                .Include(x => x.Rates).Single();
+                .Include(x => x.Rates)
+                .SingleAsync(x => x.Id == book.Id, token);
+
             entity.Name = book.Name;
             entity.Date = book.Date;
             entity.Summary = book.Summary;
@@ -106,23 +106,10 @@ namespace Library.Infrastructure.Data
             }
         }
 
-        public IEnumerable<Book> Get(string searchPatter, int skipCount, int takeCount)
+        public async Task DeleteAsync(Guid id, CancellationToken token)
         {
-            // todo: check if Contains will split sql query
-            var books = _ctx.Books
-                .Where(x => x.Name.Contains(searchPatter))
-                .Include(x => x.Authors).ThenInclude(x => x.Author)
-                .Include(x => x.Rates).ThenInclude(x => x.User)
-                .OrderByDescending(x => x.Rate)
-                .Skip(skipCount).Take(takeCount)
-                .ToList();
-
-            return books.Select(x => x.ToBook(_entityFactory));
-        }
-
-        public int GetCount(string searchPatter)
-        {
-            return _ctx.Books.Count(x => x.Name.Contains(searchPatter, StringComparison.InvariantCultureIgnoreCase));
+            var entity = await _ctx.Books.SingleAsync(x => x.Id == id, token);
+            _ctx.Books.Remove(entity);
         }
     }
 }
