@@ -1,6 +1,7 @@
 ﻿using System;
 using Library.Domain;
 using Library.Domain.Common;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 

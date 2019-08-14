@@ -1,7 +1,10 @@
-﻿namespace Library.Infrastructure.Core
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Library.Infrastructure
 {
     public interface IStorageSeeder
     {
-        void Seed();
+        Task SeedAsync(CancellationToken token);
     }
 }

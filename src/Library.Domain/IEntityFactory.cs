@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Library.Domain.Entities;
 
 namespace Library.Domain
 {
@@ -8,6 +9,8 @@ namespace Library.Domain
         Book CreateBook(string name, DateTime date, string summary);
 
         Book CreateBook(string name, DateTime date, string summary, byte[] picture);
+
+        Book CreateBook(Guid id, string name, DateTime date, string summary, byte[] picture);
 
         Book CreateBook(Guid id, string name, DateTime date, string summary, byte[] picture, IEnumerable<BookRate> rates);
 
@@ -23,6 +26,13 @@ namespace Library.Domain
 
         User CreateUser(string userName, DateTime dateOfBirth, Role role);
 
-        User CreateUser(Guid id, string userName, DateTime dateOfBirth, Role role);
+        User CreateUser(
+            Guid id, 
+            string userName, 
+            DateTime dateOfBirth, 
+            Role role, 
+            IEnumerable<Book> favoriteBooks,
+            IEnumerable<Book> recommendedBooks,
+            IEnumerable<User> favoriteReviewers);
     }
 }

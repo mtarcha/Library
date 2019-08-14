@@ -1,14 +1,17 @@
-﻿namespace Library.Domain.Common
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Library.Domain.Common
 {
     public interface IRepository<TEntity, in TId>
         where TEntity : Entity<TId>, IAggregateRoot
     {
-        void Create(TEntity entity);
+        Task CreateAsync(TEntity entity, CancellationToken token);
 
-        TEntity GetById(TId id);
+        Task<TEntity> GetByIdAsync(TId id, CancellationToken token);
 
-        void Update(TEntity entity);
+        Task UpdateAsync(TEntity entity, CancellationToken token);
 
-        void Delete(TId id);
+        Task DeleteAsync(TId id, CancellationToken token);
     }
 }

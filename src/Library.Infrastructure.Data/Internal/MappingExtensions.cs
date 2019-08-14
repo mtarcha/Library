@@ -1,15 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Library.Domain;
+using Library.Domain.Entities;
 using Library.Infrastructure.Data.Entities;
 
 namespace Library.Infrastructure.Data.Internal
 {
     internal static class MappingExtensions
     {
-        public static User ToUser(this UserEntity entity, IEntityFactory entityFactory)
+        public static User ToUser(this UserEntity entity, IEntityFactory entityFactory, bool recursive = true)
         {
-            return entityFactory.CreateUser(entity.Id, entity.UserName, entity.DateOfBirth, null);
+            var favoriteBooks = entity.FavoriteBooks?.Select(x => x.ToBook(entityFactory));
+            var recommendedBooks = entity.RecommendedToRead?.Select(x => x.ToBook(entityFactory));
+            var favoriteReviewers = recursive && entity.FavoriteReviewers != null
+                ? entity.FavoriteReviewers?.Select(x => x.ToUser(entityFactory, false)) 
+                : new List<User>();
+
+            return entityFactory.CreateUser(entity.Id, entity.UserName, entity.DateOfBirth, null, favoriteBooks, recommendedBooks, favoriteReviewers);
         }
 
         public static UserEntity ToEntity(this User user)
@@ -22,11 +29,11 @@ namespace Library.Infrastructure.Data.Internal
             };
         }
 
-        public static Book ToBook(this BookEntity entity, IEntityFactory entityFactory, bool recurcive = true)
+        public static Book ToBook(this BookEntity entity, IEntityFactory entityFactory, bool recursive = true)
         {
             var rates = entity.Rates != null ? entity.Rates.Select(x => x.ToRate(entityFactory)) : new List<BookRate>();
             var book = entityFactory.CreateBook(entity.Id, entity.Name, entity.Date, entity.Summary, entity.Picture, rates);
-            if (recurcive && entity.Authors != null)
+            if (recursive && entity.Authors != null)
             {
                 foreach (var author in entity.Authors)
                 {
@@ -53,7 +60,7 @@ namespace Library.Infrastructure.Data.Internal
             return entityFactory.CreateBookRate(entity.Id, entity.User.ToUser(entityFactory), entity.Rate);
         }
 
-        public static BookEntity ToEntity(this Book book, bool recurcive = true)
+        public static BookEntity ToEntity(this Book book, bool recursive = true)
         {
             return new BookEntity
             {
@@ -62,7 +69,7 @@ namespace Library.Infrastructure.Data.Internal
                 Date = book.Date,
                 Summary = book.Summary,
                 Picture = book.Picture,
-                Authors = recurcive ? book.Authors?.Select(x => new BookAuthorEntity { Author = x.ToEntity(false) }).ToList() : null
+                Authors = recursive ? book.Authors?.Select(x => new BookAuthorEntity { Author = x.ToEntity(false) }).ToList() : null
             };
         }
 
@@ -80,7 +87,7 @@ namespace Library.Infrastructure.Data.Internal
             return author;
         }
 
-        public static AuthorEntity ToEntity(this Author author, bool recurcive = true)
+        public static AuthorEntity ToEntity(this Author author, bool recursive = true)
         {
             var entity = new AuthorEntity
             {
@@ -91,7 +98,7 @@ namespace Library.Infrastructure.Data.Internal
                 DateOfDeath = author.LifePeriod.DateOfDeath
             };
 
-            entity.Books = recurcive
+            entity.Books = recursive
                 ? author.Books?.Select(x => new BookAuthorEntity {Book = x.ToEntity(false), Author = entity}).ToList()
                 : null;
 

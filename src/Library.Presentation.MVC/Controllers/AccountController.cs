@@ -1,20 +1,21 @@
-﻿using System;
-using AutoMapper;
-using Library.Business;
-using Library.Business.DTO;
+﻿using AutoMapper;
+using Library.Application.Commands.LoginUser;
+using Library.Application.Commands.LogoutUser;
+using Library.Application.Commands.RegisterUser;
 using Library.Presentation.MVC.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Presentation.MVC.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IAccountService _accountService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService, IMapper mapper)
+        public AccountController(IMediator mediator, IMapper mapper)
         {
-            _accountService = accountService;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
@@ -29,16 +30,28 @@ namespace Library.Presentation.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var command = _mapper.Map<RegisterViewModel, RegisterUserCommand>(model);
+                var result = _mediator.Send(command).Result;
+
+                if (result.HasErrors)
                 {
-                    var dto = _mapper.Map<RegisterViewModel, Registration>(model);
-                    _accountService.Register(dto);
+                    foreach (var error in result.Exceptions.InnerExceptions)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Message);
+                    }
+                }
+                else
+                {
+                    var login = new LoginUserCommand
+                    {
+                        UserName = model.UserName,
+                        Password = model.Password,
+                        RememberMe = false
+                    };
+
+                    var res = _mediator.Send(login).Result;
 
                     return RedirectToAction("Get", "Books");
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError(string.Empty, e.Message);
                 }
             }
 
@@ -57,8 +70,17 @@ namespace Library.Presentation.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var dto = _mapper.Map<LoginViewModel, Login>(model);
-                if (_accountService.TrySignIn(dto))
+                var command = _mapper.Map<LoginViewModel, LoginUserCommand>(model);
+                var result = _mediator.Send(command).Result;
+
+                if (result.HasErrors)
+                {
+                    foreach (var error in result.Exceptions.InnerExceptions)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Message);
+                    }
+                }
+                else
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
@@ -69,11 +91,8 @@ namespace Library.Presentation.MVC.Controllers
                         return RedirectToAction("Get", "Books");
                     }
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Failed to log in");
-                }
             }
+
             return View(model);
         }
 
@@ -81,7 +100,7 @@ namespace Library.Presentation.MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogOff()
         {
-            _accountService.LogOff();
+            var result = _mediator.Send(new LogoutCommand()).Result;
             return RedirectToAction("Get", "Books");
         }
     }

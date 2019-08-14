@@ -1,6 +1,6 @@
 # Home Library
 
-![Alt text](HomeLibrary.png?raw=true "Home Library")
+![Alt text](docs/HomeLibrary.png?raw=true "Home Library")
 
 Home Lybrary is service that provides ability to find books for reading.
 Home Library features:
@@ -24,6 +24,7 @@ Home Library features:
 # What was used
 ## Tech Stack:
 * ASP.NTET Core
+* Dapper
 * EF
 * MS SQL Server
 * Docker
@@ -31,11 +32,14 @@ Home Library features:
 * Automapper
 * MediatR
 * SignalR
+* NUnit
+* NSubstitute
 
 ## Principles:
 * SOLID
 * DDD
 * MVC
+* CQRS
 * Dependency Injection
 * Repository pattern
 * Factory pattern
@@ -44,3 +48,4 @@ Home Library features:
 # License
 
 Home Lybrary is open source software, licensed under the terms of MIT license. 
+See [LICENSE](LICENSE) for details.

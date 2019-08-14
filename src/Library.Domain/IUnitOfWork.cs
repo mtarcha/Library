@@ -1,4 +1,5 @@
 ﻿using System;
+using Library.Domain.Repositories;
 
 namespace Library.Domain
 {

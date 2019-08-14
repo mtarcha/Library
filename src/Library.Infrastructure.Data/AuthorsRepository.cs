@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Library.Domain;
+using Library.Domain.Entities;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Data.Entities;
 using Library.Infrastructure.Data.Internal;
 using Microsoft.EntityFrameworkCore;
@@ -19,31 +22,32 @@ namespace Library.Infrastructure.Data
             _entityFactory = entityFactory;
         }
 
-        public void Create(Author author)
+        public async Task CreateAsync(Author author, CancellationToken token)
         {
             var entity = author.ToEntity();
-            _ctx.Authors.Add(entity);
+            await _ctx.Authors.AddAsync(entity, token);
         }
 
-        public Author GetById(Guid id)
+        public async Task<Author> GetByIdAsync(Guid id, CancellationToken token)
         {
-            return _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.Id == id).ToAuthor(_entityFactory);
+            var entity = await _ctx.Authors
+                .Include(x => x.Books).ThenInclude(x => x.Book)
+                .SingleAsync(x => x.Id == id, token);
+
+            return entity.ToAuthor(_entityFactory);
         }
 
-        public void Delete(Guid id)
+        public async Task UpdateAsync(Author author, CancellationToken token)
         {
-            var author = _ctx.Authors.Single(x => x.Id == id);
-            _ctx.Remove(author);
-        }
+            var entity = await _ctx.Authors
+                .Include(x => x.Books).ThenInclude(x => x.Book)
+                .SingleAsync(x => x.Id == author.Id, token);
 
-        public void Update(Author author)
-        {
-            var entity = _ctx.Authors.Include(x => x.Books).ThenInclude(x => x.Book).Single(x => x.Id == author.Id);
             entity.Name = author.Name;
             entity.SurName = author.SurName;
             entity.DateOfBirth = author.LifePeriod.DateOfBirth;
             entity.DateOfDeath = author.LifePeriod.DateOfDeath;
-            
+
             if (author.Books != null)
             {
                 var savedBooks = entity.Books.ToList();
@@ -68,14 +72,24 @@ namespace Library.Infrastructure.Data
 
                 foreach (var newBook in newBooks)
                 {
-                    entity.Books.Add(new BookAuthorEntity { Book = newBook.ToEntity()});
+                    entity.Books.Add(new BookAuthorEntity { Book = newBook.ToEntity() });
                 }
             }
         }
 
-        public IEnumerable<Author> GetByName(string firstName, string lastName)
+        public async Task DeleteAsync(Guid id, CancellationToken token)
         {
-            return _ctx.Authors.Where(x => x.Name == firstName && x.SurName == lastName).Select(x => x.ToAuthor(_entityFactory, false)).ToList();
+            var author = await _ctx.Authors.SingleAsync(x => x.Id == id, token);
+            _ctx.Remove(author);
+        }
+
+        public async Task<Author> FindAsync(string name, string surName, DateTime dateOfBirth, DateTime? dateOfDeath, CancellationToken token)
+        {
+            var author = await _ctx.Authors.FirstOrDefaultAsync(
+                x => x.Name == name && x.SurName == surName && x.DateOfBirth == dateOfBirth && x.DateOfDeath == dateOfDeath
+                , token);
+
+            return author?.ToAuthor(_entityFactory);
         }
     }
 }
