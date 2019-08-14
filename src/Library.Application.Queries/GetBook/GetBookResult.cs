@@ -1,5 +1,6 @@
 ﻿using System;
 using Library.Application.Common;
+using Library.Application.Queries.Common;
 
 namespace Library.Application.Queries.GetBook
 {

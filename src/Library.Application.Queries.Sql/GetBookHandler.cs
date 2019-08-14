@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using Library.Application.Common;
+using Library.Application.Queries.Common;
 using Library.Application.Queries.GetBook;
 
 namespace Library.Application.Queries.Sql
@@ -26,22 +27,29 @@ namespace Library.Application.Queries.Sql
                                from dbo.BookAuthorEntity as ba 
 		                            inner join dbo.Books as b on ba.BookId = b.Id 
 		                            inner join dbo.Authors as a on ba.AuthorId = a.Id
-                                where b.Id = '{request.BookId}'";
+                                where b.Id = @BookId";
 
-                var authors = new List<Author>();
-                var res = await connection.QueryAsync<Book, Author, Book>(
-                    query,
-                    (book, author) =>
-                    {
-                        authors.Add(author);
-                        return book;
-                    },
-                    cancellationToken);
+                try
+                {
+                    var authors = new List<Author>();
+                    var res = await connection.QueryAsync<Book, Author, Book>(
+                        query,
+                        (book, author) =>
+                        {
+                            authors.Add(author);
+                            return book;
+                        },
+                        new { BookId = request.BookId}
+                    );
 
-                var foundBook = res.First();
-                foundBook.Authors = authors;
-
-                return new GetBookResult(foundBook);
+                    var foundBook = res.First();
+                    foundBook.Authors = authors;
+                    return new GetBookResult(foundBook);
+                }
+                catch (Exception e)
+                {
+                    return new GetBookResult(e);
+                }
             }
         }
     }

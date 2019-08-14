@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Library.Application.EventHandling
+namespace Library.Application.EventHandling.Handlers
 {
     public interface IIntegrationEventHandler<in T> where T: IIntegrationEvent
     {

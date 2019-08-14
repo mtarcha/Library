@@ -1,7 +1,7 @@
 ﻿using System;
 using Library.Domain.Common;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class LifePeriod : ValueObject
     {
@@ -12,7 +12,7 @@ namespace Library.Domain
 
         public LifePeriod(DateTime dateOfBirth, DateTime? dateOfDeath)
         {
-            if (dateOfBirth > DateTime.Today)
+            if (dateOfBirth.Date > DateTime.Today.Date)
             {
                 throw new ArgumentException("Let the child enjoy the childhood.");
             }
@@ -34,6 +34,5 @@ namespace Library.Domain
         {
             return !DateOfDeath.HasValue;
         }
-
     }
 }

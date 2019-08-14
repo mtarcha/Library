@@ -3,9 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Library.Domain.Common;
+using BookRateChangedEvent = Library.Application.EventHandling.Events.BookRateChangedEvent;
 using DomainEvents = Library.Domain.Events;
+using RecommendedBookAddedEvent = Library.Application.EventHandling.Events.RecommendedBookAddedEvent;
 
-namespace Library.Application.EventHandling
+namespace Library.Application.EventHandling.Handlers
 {
     public class IntegrationEventsDispatcher 
         : IDomainEventHandler<DomainEvents.BookRateChangedEvent>

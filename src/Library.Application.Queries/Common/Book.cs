@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.Application.Common
+namespace Library.Application.Queries.Common
 {
     public class Book
     {

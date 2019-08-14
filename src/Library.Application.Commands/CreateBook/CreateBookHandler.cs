@@ -23,8 +23,7 @@ namespace Library.Application.Commands.CreateBook
             {
                 try
                 {
-                    var bookModel = _entityFactory
-                        .CreateBook(request.Book.Name, request.Book.Date, request.Book.Summary, request.Book.Picture);
+                    var bookModel = _entityFactory.CreateBook(request.Name, request.Date, request.Summary, request.Picture);
 
                     await uow.Books.CreateAsync(bookModel, cancellationToken);
 

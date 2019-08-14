@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Application.EventHandling.Events;
 
 namespace Library.Application.EventHandling
 {

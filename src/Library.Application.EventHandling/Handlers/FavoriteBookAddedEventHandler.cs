@@ -5,7 +5,7 @@ using Library.Domain.Common;
 using Library.Domain.Events;
 using MediatR;
 
-namespace Library.Application.EventHandling
+namespace Library.Application.EventHandling.Handlers
 {
     public sealed class FavoriteBookAddedEventHandler : IDomainEventHandler<FavoriteBookAddedEvent>
     {

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Library.Domain.Common;
 using Library.Domain.Events;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class User : Entity<Guid>, IAggregateRoot
     {
@@ -17,11 +18,19 @@ namespace Library.Domain
         }
 
         internal User(IEventDispatcher eventDispatcher, string userName, DateTime dateOfBirth, Role role)
-            : this(Guid.NewGuid(), eventDispatcher, userName, dateOfBirth, role)
+            : this(Guid.NewGuid(), eventDispatcher, userName, dateOfBirth, role, new List<Book>(), new List<Book>(), new List<User>())
         {
         }
 
-        internal User(Guid id, IEventDispatcher eventDispatcher, string userName, DateTime dateOfBirth, Role role) 
+        internal User(
+            Guid id, 
+            IEventDispatcher eventDispatcher, 
+            string userName, 
+            DateTime dateOfBirth, 
+            Role role,
+            IEnumerable<Book> favoriteBooks,
+            IEnumerable<Book> recommendedBooks,
+            IEnumerable<User> favoriteReviewers) 
             : base(id, eventDispatcher)
         {
             if (string.IsNullOrEmpty(userName))
@@ -29,7 +38,7 @@ namespace Library.Domain
                 throw new ArgumentNullException(nameof(userName));
             }
 
-            if (dateOfBirth > DateTime.Now)
+            if (dateOfBirth.Date > DateTime.Now.Date)
             {
                 throw new ArgumentException(nameof(dateOfBirth));
             }
@@ -38,8 +47,9 @@ namespace Library.Domain
             DateOfBirth = dateOfBirth;
             Role = role;
 
-            _favoriteBooks = new List<Book>();
-            _favoriteReviewers = new List<User>();
+            _favoriteBooks = favoriteBooks.ToList();
+            _recommendedToRead = recommendedBooks.ToList();
+            _favoriteReviewers = favoriteReviewers.ToList();
         }
 
         public string UserName { get; }

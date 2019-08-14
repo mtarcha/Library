@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
-using Library.Infrastructure.Core;
+using Library.Domain.Entities;
 
 namespace Library.Infrastructure.Data
 {

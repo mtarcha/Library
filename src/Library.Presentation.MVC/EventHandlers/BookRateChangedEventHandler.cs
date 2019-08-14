@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Library.Application.EventHandling;
+using Library.Application.EventHandling.Events;
+using Library.Application.EventHandling.Handlers;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Library.Presentation.MVC.EventHandlers

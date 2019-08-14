@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.Application.EventHandling
+namespace Library.Application.EventHandling.Handlers
 {
     public interface IIntegrationEvent
     {

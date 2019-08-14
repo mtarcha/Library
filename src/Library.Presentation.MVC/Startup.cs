@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.EventHandling;
+using Library.Application.EventHandling.Events;
+using Library.Application.EventHandling.Handlers;
 using Library.Application.Queries.Sql;
 using Library.Domain;
 using Library.Domain.Common;
@@ -31,7 +33,7 @@ namespace Library.Presentation.MVC
             {
                 mc.AddProfiles(new Profile[]
                 {
-                    new ViewModelsToDTOMapper(),
+                    new ViewModelsMapper(),
                     new DomainEventsMapping(), 
                 });
             });

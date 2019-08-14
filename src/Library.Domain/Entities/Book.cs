@@ -4,11 +4,11 @@ using System.Linq;
 using Library.Domain.Common;
 using Library.Domain.Events;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class Book : Entity<Guid>, IAggregateRoot
     {
-        private const double RateChangeTollerance = 0.01;
+        private const double RateChangeTolerance = 0.01;
 
         private readonly List<BookRate> _rates;
         private readonly List<Author> _authors;
@@ -39,7 +39,7 @@ namespace Library.Domain
                 throw new ArgumentException("Summary cannot be empty.", nameof(summary));
             }
 
-            if (date > DateTime.Now)
+            if (date.Date > DateTime.Now.Date)
             {
                 throw new ArgumentException("Only existing books are valid. Date must be today or less", nameof(date));
             }
@@ -103,7 +103,7 @@ namespace Library.Domain
             {
                 var rate = _rates.Average(x => x.Rate);
 
-                if (!Rate.HasValue || Math.Abs(rate - Rate.Value) > RateChangeTollerance)
+                if (!Rate.HasValue || Math.Abs(rate - Rate.Value) > RateChangeTolerance)
                 {
                     var initialization = !Rate.HasValue;
 

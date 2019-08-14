@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Library.Domain.Common;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class Author : Entity<Guid>, IAggregateRoot
     {

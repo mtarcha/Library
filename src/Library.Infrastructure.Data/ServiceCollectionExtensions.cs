@@ -1,6 +1,5 @@
 ﻿using System;
 using Library.Domain;
-using Library.Infrastructure.Core;
 using Library.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

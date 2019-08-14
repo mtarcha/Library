@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
+using Library.Domain.Entities;
 using MediatR;
 
 namespace Library.Application.Commands.RegisterUser

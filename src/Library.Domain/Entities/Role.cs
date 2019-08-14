@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Common;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class Role : Enumeration<Role>
     {
@@ -8,7 +8,7 @@ namespace Library.Domain
         public const string AdminRoleName = "Administrator";
 
         public static Role User = new Role(1, UserRoleName);
-        public static Role Admin = new Role(1, AdminRoleName);
+        public static Role Admin = new Role(2, AdminRoleName);
 
         private Role(int id, string name) : base(id, name)
         {

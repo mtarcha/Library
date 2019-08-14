@@ -1,6 +1,7 @@
 ﻿using System;
+using Library.Application.EventHandling.Handlers;
 
-namespace Library.Application.EventHandling
+namespace Library.Application.EventHandling.Events
 {
     public sealed class BookRateChangedEvent : IIntegrationEvent
     {

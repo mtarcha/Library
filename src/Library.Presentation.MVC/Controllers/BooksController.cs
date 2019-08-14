@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Library.Application.Commands.CreateBook;
 using Library.Application.Commands.SetBookRate;
 using Library.Application.Commands.UpdateBook;
-using Library.Application.Queries.GetAuthors;
 using Library.Application.Queries.GetBook;
 using Library.Application.Queries.GetBooks;
-using Library.Domain;
+using Library.Domain.Entities;
 using Library.Presentation.MVC.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Book = Library.Application.Common.Book;
+using Book = Library.Application.Queries.Common.Book;
 
 namespace Library.Presentation.MVC.Controllers
 {
@@ -89,23 +87,8 @@ namespace Library.Presentation.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var command = new CreateBookCommand
-                {
-                    Book = _mapper.Map<CreateBookViewModel, Book>(bookViewModel)
-                };
-
-                foreach (var author in command.Book.Authors)
-                {
-                    var getAuthors = new GetAuthorsQuery {SubName = author.LastName};
-                    var authors = await _mediator.Send(getAuthors);
-                    var saved = authors.Authors.FirstOrDefault();
-
-                    if (saved != null)
-                    {
-                        author.Id = saved.Id;
-                    }
-                }
-
+                var command = _mapper.Map<CreateBookViewModel, CreateBookCommand>(bookViewModel);
+                
                 var result = _mediator.Send(command).Result;
                 if (result.HasErrors)
                 {
@@ -132,21 +115,18 @@ namespace Library.Presentation.MVC.Controllers
             var result = await _mediator.Send(query);
 
             var book = result.Book;
-            var editBook = _mapper.Map<Book, EditBookViewModel>(book);
+            var editBook = _mapper.Map<Book, UpdateBookViewModel>(book);
 
             return View(editBook);
         }
 
         [HttpPost]
         [Authorize(Roles = Role.AdminRoleName)]
-        public IActionResult Edit(EditBookViewModel bookViewModel)
+        public IActionResult Edit(UpdateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var command = new UpdateBookCommand
-                {
-                    UpdatedBook = _mapper.Map<EditBookViewModel, Book>(bookViewModel)
-                };
+                var command = _mapper.Map<UpdateBookViewModel, UpdateBookCommand>(bookViewModel);
 
                 var result = _mediator.Send(command).Result;
                 if (result.HasErrors)

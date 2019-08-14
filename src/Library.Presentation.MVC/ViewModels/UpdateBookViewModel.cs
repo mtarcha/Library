@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Library.Presentation.MVC.ViewModels
 {
-    public class EditBookViewModel
+    public class UpdateBookViewModel
     {
-        public EditBookViewModel()
+        public UpdateBookViewModel()
         {
             Authors = new List<AuthorViewModel>();
         } 
@@ -31,7 +31,6 @@ namespace Library.Presentation.MVC.ViewModels
         [MaxLength(1000)]
         public string Summary { get; set; }
 
-        [Required]
         public List<AuthorViewModel> Authors { get; set; }
     }
 }

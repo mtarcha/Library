@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
@@ -22,8 +21,5 @@ namespace Library.Presentation.MVC.ViewModels
         [Required]
         [MaxLength(1000)]
         public string Summary { get; set; }
-
-        [Required]
-        public List<AuthorViewModel> Authors { get; set; }
     }
 }

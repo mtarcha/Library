@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.Application.Common
+namespace Library.Application.Queries.Common
 {
     public class Author
     {

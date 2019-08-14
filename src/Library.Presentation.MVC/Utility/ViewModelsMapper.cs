@@ -1,16 +1,18 @@
 ﻿using System.IO;
 using AutoMapper;
+using Library.Application.Commands.CreateBook;
 using Library.Application.Commands.LoginUser;
 using Library.Application.Commands.RegisterUser;
-using Library.Application.Common;
+using Library.Application.Commands.UpdateBook;
+using Library.Application.Queries.Common;
 using Library.Presentation.MVC.ViewModels;
 using Microsoft.AspNetCore.Http;
 
 namespace Library.Presentation.MVC.Utility
 {
-    public class ViewModelsToDTOMapper : Profile
+    public class ViewModelsMapper : Profile
     {
-        public ViewModelsToDTOMapper()
+        public ViewModelsMapper()
         {
             CreateMap<Book, BookViewModel>()
                 .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
@@ -21,7 +23,7 @@ namespace Library.Presentation.MVC.Utility
                 .ForMember(b => b.Rate, o => o.MapFrom(b => b.Rate))
                 .ReverseMap();
 
-            CreateMap<Book, EditBookViewModel>()
+            CreateMap<Book, UpdateBookViewModel>()
                .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
                .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
@@ -30,7 +32,7 @@ namespace Library.Presentation.MVC.Utility
                .ForMember(b => b.Avatar, o => o.Ignore())
                .ForMember(b => b.Authors, o => o.MapFrom(b => b.Authors));
             
-            CreateMap<EditBookViewModel, Book>()
+            CreateMap<UpdateBookViewModel, UpdateBookCommand>()
                 .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
                 .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
@@ -40,12 +42,11 @@ namespace Library.Presentation.MVC.Utility
                     return b.Avatar?.Length > 0 ? ReadImageData(b.Avatar) : b.Picture;
                 }));
             
-            CreateMap<CreateBookViewModel, Book>()
+            CreateMap<CreateBookViewModel, CreateBookCommand>()
                 .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
                 .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
                 .ForMember(b => b.Picture, o => o.MapFrom((b, c, d) => ReadImageData(b.Avatar)));
-
 
             CreateMap<Author, AuthorViewModel>()
               .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
@@ -54,6 +55,14 @@ namespace Library.Presentation.MVC.Utility
               .ForMember(b => b.DateOfBirth, o => o.MapFrom(b => b.DateOfBirth))
               .ForMember(b => b.DateOfDeath, o => o.MapFrom(b => b.DateOfDeath))
               .ReverseMap();
+
+            CreateMap<UpdateAuthor, AuthorViewModel>()
+                .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
+                .ForMember(b => b.FirstName, o => o.MapFrom(b => b.FirstName))
+                .ForMember(b => b.LastName, o => o.MapFrom(b => b.LastName))
+                .ForMember(b => b.DateOfBirth, o => o.MapFrom(b => b.DateOfBirth))
+                .ForMember(b => b.DateOfDeath, o => o.MapFrom(b => b.DateOfDeath))
+                .ReverseMap();
 
             CreateMap<RegisterUserCommand, RegisterViewModel>()
                 .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))

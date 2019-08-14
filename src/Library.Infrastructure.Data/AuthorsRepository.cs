@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
+using Library.Domain.Entities;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Data.Entities;
 using Library.Infrastructure.Data.Internal;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +81,15 @@ namespace Library.Infrastructure.Data
         {
             var author = await _ctx.Authors.SingleAsync(x => x.Id == id, token);
             _ctx.Remove(author);
+        }
+
+        public async Task<Author> FindAsync(string name, string surName, DateTime dateOfBirth, DateTime? dateOfDeath, CancellationToken token)
+        {
+            var author = await _ctx.Authors.FirstOrDefaultAsync(
+                x => x.Name == name && x.SurName == surName && x.DateOfBirth == dateOfBirth && x.DateOfDeath == dateOfDeath
+                , token);
+
+            return author?.ToAuthor(_entityFactory);
         }
     }
 }

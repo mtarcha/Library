@@ -1,7 +1,7 @@
 ﻿using System;
 using Library.Domain.Common;
 
-namespace Library.Domain
+namespace Library.Domain.Entities
 {
     public class BookRate : Entity<Guid>
     {

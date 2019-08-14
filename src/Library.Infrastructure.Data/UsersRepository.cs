@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
+using Library.Domain.Entities;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Data.Entities;
 using Library.Infrastructure.Data.Internal;
 using Microsoft.AspNetCore.Identity;

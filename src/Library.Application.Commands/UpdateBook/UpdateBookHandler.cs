@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Application.Common;
 using Library.Domain;
+using Library.Domain.Entities;
 using MediatR;
 
 namespace Library.Application.Commands.UpdateBook
@@ -25,23 +25,43 @@ namespace Library.Application.Commands.UpdateBook
             {
                 try
                 {
-                    var bookModel = _entityFactory.CreateBook(
-                        request.UpdatedBook.Id,
-                        request.UpdatedBook.Name,
-                        request.UpdatedBook.Date,
-                        request.UpdatedBook.Summary,
-                        request.UpdatedBook.Picture,
-                        new List<BookRate>());
+                    var bookModel = _entityFactory.CreateBook(request.Id, request.Name, request.Date, request.Summary, request.Picture);
 
-                    foreach (var author in request.UpdatedBook.Authors)
+                    foreach (var author in request.Authors)
                     {
-                        var authorModel = _entityFactory.CreateAuthor(
-                            author.Id,
-                            author.FirstName,
-                            author.LastName,
-                            new LifePeriod(author.DateOfBirth, author.DateOfDeath));
+                        if (author.Id.HasValue && author.Id != Guid.Empty)
+                        {
+                            var authorModel = _entityFactory.CreateAuthor(
+                                author.Id.Value,
+                                author.FirstName,
+                                author.LastName,
+                                new LifePeriod(author.DateOfBirth, author.DateOfDeath));
 
-                        bookModel.AddAuthor(authorModel);
+                            bookModel.AddAuthor(authorModel);
+                        }
+                        else
+                        {
+                            var saved =  await uow.Authors.FindAsync(
+                                author.FirstName, 
+                                author.LastName, 
+                                author.DateOfBirth, 
+                                author.DateOfDeath, 
+                                cancellationToken);
+
+                            if (saved == null)
+                            {
+                                var authorModel = _entityFactory.CreateAuthor(
+                                    author.FirstName,
+                                    author.LastName,
+                                    new LifePeriod(author.DateOfBirth, author.DateOfDeath));
+
+                                bookModel.AddAuthor(authorModel);
+                            }
+                            else
+                            {
+                                bookModel.AddAuthor(saved);
+                            }
+                        }
                     }
 
                     await uow.Books.UpdateAsync(bookModel, cancellationToken);

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
+using Library.Domain.Entities;
+using Library.Domain.Repositories;
 using Library.Infrastructure.Data.Entities;
 using Library.Infrastructure.Data.Internal;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +75,8 @@ namespace Library.Infrastructure.Data
 
                 foreach (var newAuthor in newAuthors)
                 {
-                    entity.Authors.Add(new BookAuthorEntity { Author = newAuthor.ToEntity() });
+                    var newBookAuthor = new BookAuthorEntity {Author = newAuthor.ToEntity(false), Book = entity};
+                    entity.Authors.Add(newBookAuthor);
                 }
             }
 

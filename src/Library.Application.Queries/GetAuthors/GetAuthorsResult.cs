@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Library.Application.Common;
+using Library.Application.Queries.Common;
 
 namespace Library.Application.Queries.GetAuthors
 {
