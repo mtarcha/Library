@@ -1,29 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using Library.Application.Common;
+﻿using System.Collections.Generic;
 using Library.Application.Queries.Common;
 
 namespace Library.Application.Queries.GetBooks
 {
-    public class SearchBooksResult : RequestResult
+    public class SearchBooksResult
     {
-        public SearchBooksResult(IEnumerable<Book> books, int allBooksCount, int foundBooksCount)
-        : base(null)
+        public SearchBooksResult(IEnumerable<Book> books, int totalBooksCount, int foundBooksCount)
         {
             Books = books;
-            AllBooksCount = allBooksCount;
+            TotalBooksCount = totalBooksCount;
             FoundBooksCount = foundBooksCount;
         }
 
-        public SearchBooksResult(Exception exception) : base(exception)
-        {
-        }
-
-        public SearchBooksResult(AggregateException exceptions) : base(exceptions)
-        {
-        }
-
-        public int AllBooksCount { get; set; }
+        public int TotalBooksCount { get; set; }
 
         public int FoundBooksCount { get; set; }
 

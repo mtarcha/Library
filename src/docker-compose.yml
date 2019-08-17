@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  library.presentation.mvc:
-    image: ${DOCKER_REGISTRY-}librarypresentationmvc
+  library.api:
+    image: ${DOCKER_REGISTRY-}libraryapi
     build:
       context: .
-      dockerfile: Library.Presentation.MVC/Dockerfile   
+      dockerfile: Library.Api/Dockerfile  

@@ -1,9 +1,10 @@
 ﻿using System;
+using Library.Application.Commands.Common;
 using MediatR;
 
 namespace Library.Application.Commands.CreateBook
 {
-    public class CreateBookCommand : IRequest<CreateBookResult>
+    public class CreateBookCommand : IRequest<Book>
     {
         public string Name { get; set; }
 

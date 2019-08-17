@@ -22,10 +22,12 @@ namespace Library.Infrastructure.Data
             _entityFactory = entityFactory;
         }
 
-        public async Task CreateAsync(Author author, CancellationToken token)
+        public async Task<Author> CreateAsync(Author author, CancellationToken token)
         {
             var entity = author.ToEntity();
             await _ctx.Authors.AddAsync(entity, token);
+
+            return entity.ToAuthor(_entityFactory);
         }
 
         public async Task<Author> GetByIdAsync(Guid id, CancellationToken token)
@@ -37,7 +39,7 @@ namespace Library.Infrastructure.Data
             return entity.ToAuthor(_entityFactory);
         }
 
-        public async Task UpdateAsync(Author author, CancellationToken token)
+        public async Task<Author> UpdateAsync(Author author, CancellationToken token)
         {
             var entity = await _ctx.Authors
                 .Include(x => x.Books).ThenInclude(x => x.Book)
@@ -75,6 +77,8 @@ namespace Library.Infrastructure.Data
                     entity.Books.Add(new BookAuthorEntity { Book = newBook.ToEntity() });
                 }
             }
+
+            return entity.ToAuthor(_entityFactory);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken token)

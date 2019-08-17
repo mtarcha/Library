@@ -1,10 +1,9 @@
 ﻿using System;
-using Library.Application.Common;
 using MediatR;
 
 namespace Library.Application.Commands.SetBookRate
 {
-    public class SetBookRateCommand : IRequest<RequestResult>
+    public class SetBookRateCommand : IRequest<SetBookRateResult>
     {
         public string UserName { get; set; }
 

@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Library.Application.Commands\Library.Application.Commands.csproj" />
-    <ProjectReference Include="..\Library.Application.Common\Library.Application.Common.csproj" />
     <ProjectReference Include="..\Library.Application.EventHandling\Library.Application.EventHandling.csproj" />
     <ProjectReference Include="..\Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj" />
     <ProjectReference Include="..\Library.Application.Queries\Library.Application.Queries.csproj" />

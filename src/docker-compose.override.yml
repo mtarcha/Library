@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  library.presentation.mvc:
+  library.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__LibraryConnectionString=Server=sql;Database=lybrarydb;User Id=sa;Password=123asdQ!

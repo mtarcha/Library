@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Library.Application.Common;
+using Library.Application.Commands.Common;
 using MediatR;
 
 namespace Library.Application.Commands.UpdateBook
 {
-    public class UpdateBookCommand : IRequest<RequestResult>
+    public class UpdateBookCommand : IRequest<Book>
     {
         public UpdateBookCommand()
         {

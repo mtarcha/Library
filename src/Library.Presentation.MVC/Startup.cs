@@ -18,6 +18,12 @@ using Newtonsoft.Json;
 
 namespace Library.Presentation.MVC
 {
+    // todo: add API
+    // todo: add general exceptions handling
+    // todo: add MVC client
+    // todo: add RabbitMQ to send notification
+    // todo: authentication
+    // todo: extend docker-compose settings 
     public class Startup
     {
         private readonly IConfiguration _configuration;

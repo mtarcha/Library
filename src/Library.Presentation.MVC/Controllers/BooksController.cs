@@ -60,11 +60,11 @@ namespace Library.Presentation.MVC.Controllers
             }
             else
             {
-                var totalPages = (int)Math.Ceiling(result.AllBooksCount / (decimal)BooksOnPage);
+                var totalPages = (int)Math.Ceiling(result.TotalBooksCount / (decimal)BooksOnPage);
 
                 var vm = new BooksViewModel
                 {
-                    TotalBooksCount = result.AllBooksCount,
+                    TotalBooksCount = result.TotalBooksCount,
                     Pagination = new PaginationViewModel(totalPages, page),
                     BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(result.Books),
                     SearchPattern = pattern

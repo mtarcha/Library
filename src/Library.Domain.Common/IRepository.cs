@@ -6,11 +6,11 @@ namespace Library.Domain.Common
     public interface IRepository<TEntity, in TId>
         where TEntity : Entity<TId>, IAggregateRoot
     {
-        Task CreateAsync(TEntity entity, CancellationToken token);
+        Task<TEntity> CreateAsync(TEntity entity, CancellationToken token);
 
         Task<TEntity> GetByIdAsync(TId id, CancellationToken token);
 
-        Task UpdateAsync(TEntity entity, CancellationToken token);
+        Task<TEntity> UpdateAsync(TEntity entity, CancellationToken token);
 
         Task DeleteAsync(TId id, CancellationToken token);
     }

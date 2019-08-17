@@ -1,13 +1,13 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Library.Domain;
 using Library.Domain.Entities;
 using MediatR;
+using User = Library.Application.Commands.Common.User;
 
 namespace Library.Application.Commands.RegisterUser
 {
-    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, RegisterUserResult>
+    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, User>
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IEntityFactory _entityFactory;
@@ -18,23 +18,15 @@ namespace Library.Application.Commands.RegisterUser
             _entityFactory = entityFactory;
         }
 
-        public async Task<RegisterUserResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<User> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
-                User user = null;
-                try
-                {
-                    user = _entityFactory.CreateUser(request.UserName, request.DateOfBirth, Role.User);
-                    user.SetPassword(request.Password);
-                    await uow.Users.CreateAsync(user, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    return new RegisterUserResult(e);
-                }
+                var user = _entityFactory.CreateUser(request.UserName, request.DateOfBirth, Role.User);
+                user.SetPassword(request.Password);
+                await uow.Users.CreateAsync(user, cancellationToken);
 
-                return new RegisterUserResult(user.Id);
+                return new User { Id = user.Id, UserName = user.UserName };
             }
         }
     }

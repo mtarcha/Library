@@ -1,9 +1,9 @@
-﻿using Library.Application.Common;
+﻿using Library.Application.Commands.Common;
 using MediatR;
 
 namespace Library.Application.Commands.LoginUser
 {
-    public class LoginUserCommand : IRequest<RequestResult>
+    public class LoginUserCommand : IRequest<User>
     {
         public string UserName { get; set; }
 

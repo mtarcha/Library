@@ -26,6 +26,9 @@ namespace Library.Infrastructure.Data.Internal
                 Id = user.Id,
                 UserName = user.UserName,
                 DateOfBirth = user.DateOfBirth,
+                FavoriteBooks = user.FavoriteBooks.Select(x => x.ToEntity()).ToList(),
+                RecommendedToRead = user.RecommendedToRead.Select(x => x.ToEntity()).ToList(),
+                FavoriteReviewers = user.FavoriteReviewers.Select(x => x.ToEntity()).ToList()
             };
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,10 +17,11 @@ namespace Library.Application.Queries.Sql
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<GetBookResult> Handle(GetBookQuery request, CancellationToken cancellationToken)
+        public async Task<Book> Handle(GetBookQuery request, CancellationToken cancellationToken)
         {
             using (var connection = _connectionFactory.Create())
             {
+
                 var query = $@"Select b.Id, b.Name, b.Picture, b.Date, b.Summary, b.Rate, 
                                     a.Id, a.Name as FirstName, a.SurName as LastName, a.DateOfBirth, a.DateOfDeath
                                from dbo.BookAuthorEntity as ba 
@@ -29,27 +29,21 @@ namespace Library.Application.Queries.Sql
 		                            inner join dbo.Authors as a on ba.AuthorId = a.Id
                                 where b.Id = @BookId";
 
-                try
-                {
-                    var authors = new List<Author>();
-                    var res = await connection.QueryAsync<Book, Author, Book>(
-                        query,
-                        (book, author) =>
-                        {
-                            authors.Add(author);
-                            return book;
-                        },
-                        new { BookId = request.BookId}
-                    );
+                var authors = new List<Author>();
+                var res = await connection.QueryAsync<Book, Author, Book>(
+                    query,
+                    (book, author) =>
+                    {
+                        authors.Add(author);
+                        return book;
+                    },
+                    new { BookId = request.BookId }
+                );
 
-                    var foundBook = res.First();
-                    foundBook.Authors = authors;
-                    return new GetBookResult(foundBook);
-                }
-                catch (Exception e)
-                {
-                    return new GetBookResult(e);
-                }
+                var foundBook = res.First();
+                foundBook.Authors = authors;
+
+                return foundBook;
             }
         }
     }
