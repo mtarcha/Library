@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.Common.UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Api", "Library.Api\Library.Api.csproj", "{020F93BA-9849-4F37-8995-6D1548D5A2A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lubrary.IdentityServer", "Lubrary.IdentityServer\Lubrary.IdentityServer.csproj", "{C16B945F-EC7D-4494-8728-7F647DB399ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C16B945F-EC7D-4494-8728-7F647DB399ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C16B945F-EC7D-4494-8728-7F647DB399ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C16B945F-EC7D-4494-8728-7F647DB399ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C16B945F-EC7D-4494-8728-7F647DB399ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
