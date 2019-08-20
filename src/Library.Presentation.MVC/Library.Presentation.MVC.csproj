@@ -9,20 +9,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Library.Application.Commands\Library.Application.Commands.csproj" />
-    <ProjectReference Include="..\Library.Application.EventHandling\Library.Application.EventHandling.csproj" />
-    <ProjectReference Include="..\Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj" />
-    <ProjectReference Include="..\Library.Application.Queries\Library.Application.Queries.csproj" />
-    <ProjectReference Include="..\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj" />
-    <ProjectReference Include="..\Library.Infrastructure\Library.Infrastructure.csproj" />
+    <PackageReference Include="RestEase" Version="1.4.10" />
   </ItemGroup>
 
   <ItemGroup>

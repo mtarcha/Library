@@ -6,7 +6,7 @@ namespace Library.Application.Commands.SetBookRate
     {
         public SetBookRateCommandValidator()
         {
-            RuleFor(x => x.UserName).NotEmpty();
+            RuleFor(x => x.UserId).NotEmpty();
             RuleFor(x => x.BookId).NotEmpty();
             RuleFor(x => x.Rate).Must(x => x >= 1 && x <= 5);
         }

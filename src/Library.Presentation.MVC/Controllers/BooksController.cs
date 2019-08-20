@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
-using Library.Application.Commands.CreateBook;
-using Library.Application.Commands.SetBookRate;
-using Library.Application.Commands.UpdateBook;
-using Library.Application.Queries.GetBook;
-using Library.Application.Queries.GetBooks;
-using Library.Domain.Entities;
+using Library.Presentation.MVC.Clients;
+using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.ViewModels;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Book = Library.Application.Queries.Common.Book;
+using Book = Library.Presentation.MVC.Models.Book;
 
 namespace Library.Presentation.MVC.Controllers
 {
@@ -21,12 +18,12 @@ namespace Library.Presentation.MVC.Controllers
     {
         public const int BooksOnPage = 8;
 
-        private readonly IMediator _mediator;
+        private readonly IBooksClient _booksClient;
         private readonly IMapper _mapper;
 
-        public BooksController(IMediator mediator, IMapper mapper)
+        public BooksController(IBooksClient booksClient, IMapper mapper)
         {
-            _mediator = mediator;
+            _booksClient = booksClient;
             _mapper = mapper;
         }
 
@@ -39,63 +36,51 @@ namespace Library.Presentation.MVC.Controllers
                 return NotFound($"Invalid page '{page}'! Should be 1 or more.");
             }
 
-            var pattern = search ?? string.Empty;
-            var query = new GetBooksQuery
+            var searchPattern = search ?? string.Empty;
+            var result = await _booksClient.Get( searchPattern, (page - 1) * BooksOnPage, BooksOnPage);
+
+            if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
             {
-                SearchPattern = search,
-                SkipCount = (page - 1) * BooksOnPage,
-                TakeCount = BooksOnPage
-            };
-
-            var result = await _mediator.Send(query);
-
-            if (result.HasErrors)
-            {
-                foreach (var exception in result.Exceptions.InnerExceptions)
-                {
-                    ModelState.AddModelError(String.Empty, exception.Message);
-                }
-
-                return BadRequest(ModelState);
+                ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
             }
             else
             {
-                var totalPages = (int)Math.Ceiling(result.TotalBooksCount / (decimal)BooksOnPage);
+                var books = result.GetContent().ToList();
+                var totalPages = (int)Math.Ceiling(books.Count / (decimal)BooksOnPage);
 
                 var vm = new BooksViewModel
                 {
-                    TotalBooksCount = result.TotalBooksCount,
+                    TotalBooksCount = books.Count,
                     Pagination = new PaginationViewModel(totalPages, page),
-                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(result.Books),
-                    SearchPattern = pattern
+                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books),
+                    SearchPattern = searchPattern
                 };
 
                 return View(vm);
             }
+
+            return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
+        [Authorize(Roles = Constants.UserRoleName + "," + Constants.AdminRoleName)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
+        [Authorize(Roles = Constants.UserRoleName + "," + Constants.AdminRoleName)]
         public async Task<IActionResult> Create(CreateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var command = _mapper.Map<CreateBookViewModel, CreateBookCommand>(bookViewModel);
-                
-                var result = _mediator.Send(command).Result;
-                if (result.HasErrors)
+                var model = _mapper.Map<CreateBookViewModel, CreateBookModel>(bookViewModel);
+                var result = await _booksClient.Create(model);
+
+                if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
-                    foreach (var error in result.Exceptions.InnerExceptions)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Message);
-                    }
+                    ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
                 }
                 else
                 {
@@ -107,34 +92,29 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Role.AdminRoleName)]
+        [Authorize(Roles = Constants.AdminRoleName)]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var query = new GetBookQuery { BookId = id };
+            var result = await _booksClient.GetBook(id);
 
-            var result = await _mediator.Send(query);
-
-            var book = result.Book;
+            var book = result.GetContent();
             var editBook = _mapper.Map<Book, UpdateBookViewModel>(book);
 
             return View(editBook);
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.AdminRoleName)]
-        public IActionResult Edit(UpdateBookViewModel bookViewModel)
+        [Authorize(Roles = Constants.AdminRoleName)]
+        public async Task<IActionResult> Edit(UpdateBookViewModel bookViewModel)
         {
             if (ModelState.IsValid)
             {
-                var command = _mapper.Map<UpdateBookViewModel, UpdateBookCommand>(bookViewModel);
+                var model = _mapper.Map<UpdateBookViewModel, UpdateBookModel>(bookViewModel);
+                var result = await _booksClient.UpdateBook(model);
 
-                var result = _mediator.Send(command).Result;
-                if (result.HasErrors)
+                if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
-                    foreach (var error in result.Exceptions.InnerExceptions)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Message);
-                    }
+                    ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
                 }
                 else
                 {
@@ -147,16 +127,10 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult SetRate(SetRateViewModel setRateViewModel)
+        public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
-            var command = new SetBookRateCommand
-            {
-                UserName = User.Identity.Name,
-                BookId = setRateViewModel.BookId,
-                Rate = setRateViewModel.Rate
-            };
-
-            var result = _mediator.Send(command).Result;
+            var model = _mapper.Map<SetRateViewModel, SetRateModel>(setRateViewModel);
+            var result = await _booksClient.SetRate(model);
 
             return RedirectToAction("Get");
         }

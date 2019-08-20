@@ -1,21 +1,21 @@
-﻿using AutoMapper;
-using Library.Application.Commands.LoginUser;
-using Library.Application.Commands.LogoutUser;
-using Library.Application.Commands.RegisterUser;
+﻿using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
+using Library.Presentation.MVC.Clients;
+using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.ViewModels;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Presentation.MVC.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly IUsersClient _usersClient;
         private readonly IMapper _mapper;
 
-        public AccountController(IMediator mediator, IMapper mapper)
+        public AccountController(IUsersClient usersClient, IMapper mapper)
         {
-            _mediator = mediator;
+            _usersClient = usersClient;
             _mapper = mapper;
         }
 
@@ -26,36 +26,31 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var command = _mapper.Map<RegisterViewModel, RegisterUserCommand>(model);
-                var result = _mediator.Send(command).Result;
+                var model = _mapper.Map<RegisterViewModel, RegisterUserModel>(viewModel);
+                var result = await _usersClient.Register(model);
 
-                if (result.HasErrors)
+                if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
-                    foreach (var error in result.Exceptions.InnerExceptions)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Message);
-                    }
+                    ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
                 }
                 else
                 {
-                    var login = new LoginUserCommand
+                    await _usersClient.Login(new LoginUserModel
                     {
                         UserName = model.UserName,
                         Password = model.Password,
                         RememberMe = false
-                    };
-
-                    var res = _mediator.Send(login).Result;
+                    });
 
                     return RedirectToAction("Get", "Books");
                 }
             }
 
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -66,25 +61,22 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var command = _mapper.Map<LoginViewModel, LoginUserCommand>(model);
-                var result = _mediator.Send(command).Result;
+                var model = _mapper.Map<LoginViewModel, LoginUserModel>(viewModel);
+                var result = await _usersClient.Login(model);
 
-                if (result.HasErrors)
+                if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
-                    foreach (var error in result.Exceptions.InnerExceptions)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Message);
-                    }
+                    ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!string.IsNullOrEmpty(viewModel.ReturnUrl) && Url.IsLocalUrl(viewModel.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        return Redirect(viewModel.ReturnUrl);
                     }
                     else
                     {
@@ -93,14 +85,14 @@ namespace Library.Presentation.MVC.Controllers
                 }
             }
 
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LogOff()
+        public async Task<IActionResult> LogOff()
         {
-            var result = _mediator.Send(new LogoutCommand()).Result;
+            await _usersClient.LogOff();
             return RedirectToAction("Get", "Books");
         }
     }

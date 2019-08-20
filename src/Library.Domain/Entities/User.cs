@@ -6,6 +6,7 @@ using Library.Domain.Events;
 
 namespace Library.Domain.Entities
 {
+    // todo: separate aggregation roots, communication only through domain events
     public class User : Entity<Guid>, IAggregateRoot
     {
         private readonly List<Book> _favoriteBooks;
@@ -57,6 +58,8 @@ namespace Library.Domain.Entities
         public DateTime DateOfBirth { get; }
 
         public Role Role { get; private set; }
+
+        public string Token { get; set; }
 
         public string Password { get; private set; }
 

@@ -21,7 +21,7 @@ namespace Library.Application.Commands.LoginUser
             {
                 var user = await uow.Users.LoginAsync(request.UserName, request.Password, request.RememberMe, cancellationToken);
 
-                return new User {Id = user.Id, UserName = user.UserName};
+                return new User { Id = user.Id, UserName = user.UserName, Role = user.Role.Name, Token = user.Token };
             }
         }
     }

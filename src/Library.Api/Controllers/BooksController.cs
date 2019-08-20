@@ -7,7 +7,9 @@ using Library.Application.Commands.SetBookRate;
 using Library.Application.Commands.UpdateBook;
 using Library.Application.Queries.GetBook;
 using Library.Application.Queries.GetBooks;
+using Library.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
@@ -29,6 +31,7 @@ namespace Library.Api.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get([FromQuery(Name = "pattern")] string search = "", [FromQuery(Name = "page")] int page = 1)
         {
             if (!ModelState.IsValid)
@@ -52,8 +55,8 @@ namespace Library.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("create")]
-        //[Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
+        [HttpPost]
+        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public async Task<IActionResult> Create(CreateBookViewModel bookViewModel)
         {
             if (!ModelState.IsValid)
@@ -61,46 +64,42 @@ namespace Library.Api.Controllers
 
             var command = _mapper.Map<CreateBookViewModel, CreateBookCommand>(bookViewModel);
             var result = await _mediator.Send(command);
+
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = Role.AdminRoleName)]
         public async Task<IActionResult> GetBook(Guid id)
         {
             var query = new GetBookQuery { BookId = id };
-
             var result = await _mediator.Send(query);
-            // todo result should be book
+
             return Ok(result);
         }
 
-        [HttpPost("update")]
-        //[Authorize(Roles = Role.AdminRoleName)]
+        [Authorize(Roles = Role.AdminRoleName)]
+        [HttpPut]
         public async Task<IActionResult> UpdateBook(UpdateBookViewModel bookViewModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var command = _mapper.Map<UpdateBookViewModel, UpdateBookCommand>(bookViewModel);
-
             var result = await _mediator.Send(command);
-            //todo: return book
-            return Ok();
+          
+            return Ok(result);
         }
 
-        [HttpPost("setrate")]
-        //[Authorize]
+        [HttpPut("set_rate")]
+        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //var user = _mapper.Send(GetUserCommand);
-
             var command = new SetBookRateCommand
             {
-                UserName = "AdminMyroslava", // todo: fix
+                UserId = setRateViewModel.UserId,
                 BookId = setRateViewModel.BookId,
                 Rate = setRateViewModel.Rate
             };

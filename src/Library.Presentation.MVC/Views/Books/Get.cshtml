@@ -1,4 +1,4 @@
-﻿@using Library.Domain.Entities
+﻿@using Library.Presentation.MVC.Clients
 @using Library.Presentation.MVC.ViewModels
 @model Library.Presentation.MVC.ViewModels.BooksViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -66,14 +66,21 @@
                 {
                     <form class="float-right" asp-action="SetRate" method="post">
                         <input type="hidden" value="@book.Id" name="BookId" />
-                        <input class="border border-success rounded" name="Rate" type="number" min="@BookRate.MinValue" max="@BookRate.MaxValue" step="1">
+
+                        <input 
+                            class="border border-success rounded" 
+                            name="Rate" 
+                            type="number" 
+                            min="@Constants.BookRateMinValue" 
+                            max="@Constants.BookRateMaxValue" step="1">
+
                         <span class="fa fa-star"></span>
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Set</button>
                     </form>
                 }
 
 
-                @if (User.IsInRole(Role.AdminRoleName))
+                @if (User.IsInRole(Constants.AdminRoleName))
                 {
                     <br />
                     <br />

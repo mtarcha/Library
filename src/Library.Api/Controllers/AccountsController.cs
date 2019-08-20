@@ -5,6 +5,7 @@ using Library.Application.Commands.LoginUser;
 using Library.Application.Commands.LogoutUser;
 using Library.Application.Commands.RegisterUser;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
@@ -22,6 +23,7 @@ namespace Library.Api.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -34,8 +36,8 @@ namespace Library.Api.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)

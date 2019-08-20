@@ -1,14 +1,6 @@
 ﻿using AutoMapper;
-using Library.Application.EventHandling;
-using Library.Application.EventHandling.Events;
-using Library.Application.EventHandling.Handlers;
-using Library.Application.Queries.Sql;
-using Library.Domain;
-using Library.Domain.Common;
-using Library.Infrastructure.Data;
 using Library.Presentation.MVC.EventHandlers;
 using Library.Presentation.MVC.Utility;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +10,6 @@ using Newtonsoft.Json;
 
 namespace Library.Presentation.MVC
 {
-    // todo: add API
-    // todo: add general exceptions handling
     // todo: add MVC client
     // todo: add RabbitMQ to send notification
     // todo: authentication
@@ -40,21 +30,13 @@ namespace Library.Presentation.MVC
                 mc.AddProfiles(new Profile[]
                 {
                     new ViewModelsMapper(),
-                    new DomainEventsMapping(), 
+                    //new DomainEventsMapping(), 
                 });
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddSignalR();
-            services.AddMediatR();
-           
-            services.AddScoped<IEventDispatcher, EventDispatcher>();
-            services.AddScoped<IEntityFactory, EntityFactory>();
-            services.AddSingleton<IIntegrationEventHandler<BookRateChangedEvent>, BookRateChangedEventHandler>();
-            var connectionString = _configuration.GetConnectionString("LibraryConnectionString");
-            services.AddEntityFramework(connectionString);
-            services.AddSingleton<IConnectionFactory>(new ConnectionFactory(connectionString));
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);

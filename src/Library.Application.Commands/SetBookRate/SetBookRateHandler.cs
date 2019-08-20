@@ -20,7 +20,7 @@ namespace Library.Application.Commands.SetBookRate
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
-                var user = await uow.Users.GetByNameAsync(request.UserName, cancellationToken);
+                var user = await uow.Users.GetByIdAsync(request.UserId, cancellationToken);
 
                 var book = await uow.Books.GetByIdAsync(request.BookId, cancellationToken);
 
