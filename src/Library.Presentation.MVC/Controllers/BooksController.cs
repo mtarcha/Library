@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,20 +41,33 @@ namespace Library.Presentation.MVC.Controllers
             var searchPattern = search ?? string.Empty;
             var result = await _booksClient.Get( searchPattern, (page - 1) * BooksOnPage, BooksOnPage);
 
+            //var books = result;
+            //var totalPages = (int)Math.Ceiling(books.TotalBooksCount / (decimal)BooksOnPage);
+
+            //var vm = new BooksViewModel
+            //{
+            //    TotalBooksCount = books.TotalBooksCount,
+            //    Pagination = new PaginationViewModel(totalPages, page),
+            //    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books.Books),
+            //    SearchPattern = searchPattern
+            //};
+
+            //return View(vm);
+
             if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
             {
                 ModelState.AddModelError(string.Empty, result.ResponseMessage.Content.ToString());
             }
             else
             {
-                var books = result.GetContent().ToList();
-                var totalPages = (int)Math.Ceiling(books.Count / (decimal)BooksOnPage);
+                var books = result.GetContent();
+                var totalPages = (int)Math.Ceiling(books.TotalBooksCount / (decimal)BooksOnPage);
 
                 var vm = new BooksViewModel
                 {
-                    TotalBooksCount = books.Count,
+                    TotalBooksCount = books.TotalBooksCount,
                     Pagination = new PaginationViewModel(totalPages, page),
-                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books),
+                    BooksOnPage = _mapper.Map<IEnumerable<Book>, IEnumerable<BookViewModel>>(books.Books),
                     SearchPattern = searchPattern
                 };
 
@@ -76,7 +91,8 @@ namespace Library.Presentation.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<CreateBookViewModel, CreateBookModel>(bookViewModel);
-                var result = await _booksClient.Create(model);
+
+                var result = await _booksClient.Create(GetAuthorization(), model);
 
                 if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
@@ -95,7 +111,7 @@ namespace Library.Presentation.MVC.Controllers
         [Authorize(Roles = Constants.AdminRoleName)]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var result = await _booksClient.GetBook(id);
+            var result = await _booksClient.GetBook(GetAuthorization(), id);
 
             var book = result.GetContent();
             var editBook = _mapper.Map<Book, UpdateBookViewModel>(book);
@@ -110,7 +126,7 @@ namespace Library.Presentation.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<UpdateBookViewModel, UpdateBookModel>(bookViewModel);
-                var result = await _booksClient.UpdateBook(model);
+                var result = await _booksClient.UpdateBook(GetAuthorization(), model);
 
                 if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
@@ -130,9 +146,20 @@ namespace Library.Presentation.MVC.Controllers
         public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
             var model = _mapper.Map<SetRateViewModel, SetRateModel>(setRateViewModel);
-            var result = await _booksClient.SetRate(model);
+            var result = await _booksClient.SetRate(GetAuthorization(), model);
 
             return RedirectToAction("Get");
+        }
+
+        private string GetAuthorization()
+        {
+            var accessToken = HttpContext.GetTokenAsync("access_token").Result;
+
+            var a = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var a1 = a.ToString();
+
+            return a1;
         }
     }
 }

@@ -52,27 +52,39 @@ namespace Library.Api
             var connectionString = Configuration.GetConnectionString("LibraryConnectionString");
             services.AddEntityFramework(connectionString);
             services.AddSingleton<IConnectionFactory>(new ConnectionFactory(connectionString));
-            services.AddMvc()
+            services.AddMvcCore()
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonFormatters();
 
-            services
-                .AddSwaggerGen(c =>
+            services.AddAuthorization();
+
+            var identityUrl = Configuration["IdentityServerUrl"];
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
                 {
-                    c.DescribeAllEnumsAsStrings();
-
-                    c.SwaggerDoc("v1", new Info
-                    {
-                        Version = "v1",
-                        Title = "Home Library Api",
-                        Contact = new Contact
-                        {
-                            Name = "Home Library",
-                            Email = "mtarcha@outlook.com",
-                            Url = "https://github.com/mtarcha/Library"
-                        }
-                    });
+                    options.Authority = identityUrl;
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = "HomeLibraryApi";
                 });
+
+            //services
+            //    .AddSwaggerGen(c =>
+            //    {
+            //        c.DescribeAllEnumsAsStrings();
+
+            //        c.SwaggerDoc("v1", new Info
+            //        {
+            //            Version = "v1",
+            //            Title = "Home Library Api",
+            //            Contact = new Contact
+            //            {
+            //                Name = "Home Library",
+            //                Email = "mtarcha@outlook.com",
+            //                Url = "https://github.com/mtarcha/Library"
+            //            }
+            //        });
+            //    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,14 +99,15 @@ namespace Library.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseAuthentication();
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Home Library V1");
-            });
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Home Library V1");
+            //});
         }
     }
 }

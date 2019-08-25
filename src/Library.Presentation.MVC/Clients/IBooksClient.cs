@@ -8,22 +8,19 @@ namespace Library.Presentation.MVC.Clients
 {
     public interface IBooksClient
     {
+        [Get("books")]
+        Task<Response<SearchBooksResult>> Get(string pattern, int skipCount, int takeCount);
+        
+        [Post("books")]
+        Task<Response<Book>> Create([Header("Authorization")] string authorization, [Body] CreateBookModel bookViewModel);
+        
+        [Get("books/{id}")]
+        Task<Response<Book>> GetBook([Header("Authorization")] string authorization, [Path("id")] Guid id);
 
-        [Get("api/books")]
-        Task<Response<IEnumerable<Book>>> Get(string search, int skipCount, int takeCount);
+        [Put("books")]
+        Task<Response<Book>> UpdateBook([Header("Authorization")] string authorization, [Body] UpdateBookModel bookViewModel);
 
-
-        [Post("api/books")]
-        Task<Response<Book>> Create([Body] CreateBookModel bookViewModel);
-
-
-        [Get("{id}")]
-        Task<Response<Book>> GetBook(Guid id);
-
-        [Put]
-        Task<Response<Book>> UpdateBook([Body] UpdateBookModel bookViewModel);
-
-        [Put("set_rate")]
-        Task<Response<Book>> SetRate([Body] SetRateModel setRateViewModel);
+        [Put("books/set_rate")]
+        Task<Response<Book>> SetRate([Header("Authorization")] string authorization, [Body] SetRateModel setRateViewModel);
     }
 }
