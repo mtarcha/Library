@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8A6233D0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.Common.UnitTests", "..\tests\Library.Domain.Common.UnitTests\Library.Domain.Common.UnitTests.csproj", "{984D49ED-7697-4D2F-9C30-48D3C815A76C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Api", "Library.Api\Library.Api.csproj", "{020F93BA-9849-4F37-8995-6D1548D5A2A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Api", "Library.Api\Library.Api.csproj", "{020F93BA-9849-4F37-8995-6D1548D5A2A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

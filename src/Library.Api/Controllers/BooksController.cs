@@ -32,22 +32,19 @@ namespace Library.Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Get([FromQuery(Name = "pattern")] string search = "", [FromQuery(Name = "page")] int page = 1)
+        public async Task<IActionResult> Get(
+            [FromQuery(Name = "pattern")] string search, 
+            [FromQuery(Name = "skipCount")] int skipCount, 
+            [FromQuery(Name = "takeCount")] int takeCount)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            //if (!ModelState.IsValid)
+            //    return BadRequest(ModelState);
 
-            if (page < 1)
-            {
-                return BadRequest($"Invalid page '{page}'! Should be 1 or more.");
-            }
-
-            var pattern = search ?? string.Empty;
             var query = new GetBooksQuery
             {
-                SearchPattern = search,
-                SkipCount = (page - 1) * BooksOnPage,
-                TakeCount = BooksOnPage
+                SearchPattern = search ?? "",
+                SkipCount = skipCount,
+                TakeCount = takeCount
             };
 
             var result = await _mediator.Send(query);

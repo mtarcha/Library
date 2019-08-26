@@ -59,20 +59,6 @@ namespace Library.Presentation.MVC.Utility
                 .ForMember(b => b.DateOfBirth, o => o.MapFrom(b => b.DateOfBirth))
                 .ForMember(b => b.DateOfDeath, o => o.MapFrom(b => b.DateOfDeath))
                 .ReverseMap();
-
-            CreateMap<RegisterUserModel, RegisterViewModel>()
-                .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
-                .ForMember(r => r.DateOfBirth, o => o.MapFrom(r => r.DateOfBirth))
-                .ForMember(r => r.Password, o => o.MapFrom(r => r.Password))
-                .ForMember(r => r.PhoneNumber, o => o.MapFrom(r => r.PhoneNumber))
-                .ForMember(r => r.PasswordConfirm, o => o.Ignore())
-                .ReverseMap();
-
-            CreateMap<LoginUserModel, LoginViewModel>()
-                .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
-                .ForMember(r => r.RememberMe, o => o.MapFrom(r => r.RememberMe))
-                .ForMember(r => r.Password, o => o.MapFrom(r => r.Password))
-                .ReverseMap();
         }
 
         private byte[] ReadImageData(IFormFile formFile)

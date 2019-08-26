@@ -1,12 +1,16 @@
-﻿using AutoMapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
+using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
 using Library.Presentation.MVC.Utility;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using RestEase;
 
 namespace Library.Presentation.MVC
 {
@@ -35,6 +39,8 @@ namespace Library.Presentation.MVC
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
+            var apiUrl = _configuration["ApiUrl"];
+            services.AddTransient(x => RestClient.For<IBooksClient>(apiUrl));
             services.AddSingleton(mapper);
             services.AddSignalR();
             services.AddMvc()
@@ -49,8 +55,8 @@ namespace Library.Presentation.MVC
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseStaticFiles();
 
             app.UseSignalR(routes =>
             {
