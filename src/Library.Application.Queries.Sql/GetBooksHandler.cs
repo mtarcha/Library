@@ -24,16 +24,15 @@ namespace Library.Application.Queries.Sql
                 var query = @"Select b.Id, b.Name, b.Picture, b.Date, b.Summary, b.Rate, 
                                     a.Id, a.Name as FirstName, a.SurName as LastName, a.DateOfBirth, a.DateOfDeath
                             from dbo.BookAuthorEntity as ba 
-                                inner join dbo.Books as b on ba.BookId = b.Id 
-	                            inner join dbo.Authors as a on ba.AuthorId = a.Id
+                                full join dbo.Books as b on ba.BookId = b.Id 
+	                            full join dbo.Authors as a on ba.AuthorId = a.Id
                             where b.Id in (Select Id from 
-                                (Select distinct b.Id, b.Rate
-                                from dbo.BookAuthorEntity as ba 
-                                    inner join dbo.Books as b on ba.BookId = b.Id 	
-                                where b.Name like @SearchPattern or b.Summary like @SearchPattern
-                                ORDER BY b.Rate DESC 
-                                OFFSET @SkipCount ROWS 
-                                FETCH NEXT @TakeCount ROWS ONLY ) as books)";
+                                                    (Select distinct Id, Rate
+                                                    from dbo.Books
+                                                    where Name like @SearchPattern or Summary like @SearchPattern
+                                                    ORDER BY Rate DESC 
+                                                    OFFSET @SkipCount ROWS 
+                                                    FETCH NEXT @TakeCount ROWS ONLY ) as books)";
 
                 var books = new Dictionary<Guid, Book>();
                 var res = await connection.QueryAsync<Book, Author, Book>(
@@ -46,7 +45,11 @@ namespace Library.Application.Queries.Sql
                             books.Add(book.Id, theBook);
                         }
 
-                        theBook.Authors.Add(author);
+                        if (author != null)
+                        {
+                            theBook.Authors.Add(author);
+                        }
+                        
                         return theBook;
                     },
                     new { SearchPattern = $"%{request.SearchPattern}%", SkipCount = request.SkipCount, TakeCount = request.TakeCount });

@@ -9,7 +9,6 @@ namespace Library.Application.Commands.UpdateBook
         {
             RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.Picture).Must(x => x.Length > 0);
             RuleFor(x => x.Date).Must(x => x.Date < DateTime.Today.Date.AddDays(1));
             RuleForEach(x => x.Authors).Must(x => x.DateOfBirth.Date < DateTime.Today.Date
                                                   && x.FirstName != null

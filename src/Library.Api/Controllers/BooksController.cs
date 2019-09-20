@@ -31,14 +31,13 @@ namespace Library.Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> Get(
             [FromQuery(Name = "pattern")] string search, 
             [FromQuery(Name = "skipCount")] int skipCount, 
             [FromQuery(Name = "takeCount")] int takeCount)
         {
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var query = new GetBooksQuery
             {
@@ -53,7 +52,6 @@ namespace Library.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public async Task<IActionResult> Create(CreateBookViewModel bookViewModel)
         {
             if (!ModelState.IsValid)
@@ -74,7 +72,6 @@ namespace Library.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = Role.AdminRoleName)]
         [HttpPut]
         public async Task<IActionResult> UpdateBook(UpdateBookViewModel bookViewModel)
         {
@@ -83,12 +80,11 @@ namespace Library.Api.Controllers
 
             var command = _mapper.Map<UpdateBookViewModel, UpdateBookCommand>(bookViewModel);
             var result = await _mediator.Send(command);
-          
+
             return Ok(result);
         }
 
         [HttpPut("set_rate")]
-        [Authorize(Roles = Role.UserRoleName + "," + Role.AdminRoleName)]
         public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
             if (!ModelState.IsValid)

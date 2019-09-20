@@ -16,7 +16,14 @@ namespace Library.Api.Utility
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
                 .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
                 .ForMember(b => b.Picture, o => o.MapFrom(b => b.Picture));
-                
+
+            CreateMap<AuthorViewModel, UpdateAuthor>()
+                .ForMember(b => b.Id, o => o.MapFrom(b => b.Id))
+                .ForMember(b => b.FirstName, o => o.MapFrom(b => b.FirstName))
+                .ForMember(b => b.LastName, o => o.MapFrom(b => b.LastName))
+                .ForMember(b => b.DateOfBirth, o => o.MapFrom(b => b.DateOfBirth))
+                .ForMember(b => b.DateOfDeath, o => o.MapFrom(b => b.DateOfDeath));
+
             CreateMap<CreateBookViewModel, CreateBookCommand>()
                 .ForMember(b => b.Date, o => o.MapFrom(b => b.Date))
                 .ForMember(b => b.Name, o => o.MapFrom(b => b.Name))
