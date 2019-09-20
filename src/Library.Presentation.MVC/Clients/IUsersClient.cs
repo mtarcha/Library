@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Library.Presentation.MVC.Models;
 using RestEase;
 
@@ -6,14 +7,10 @@ namespace Library.Presentation.MVC.Clients
 {
     public interface IUsersClient
     {
-        [Post("api/register")]
-        Task<Response<User>> Register([Body] RegisterUserModel model);
+        [Get("users/{id}")]
+        Task<User> GetUser([Path("id")] Guid id);
 
-        [Post("api/login")]
-        Task<Response<User>> Login([Body] LoginUserModel model);
-
-        [Post("api/logoff")]
-
-        Task LogOff();
+        [Post("users/add")]
+        Task AddUser([Body] AddUserModel model);
     }
 }

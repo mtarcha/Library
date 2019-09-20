@@ -59,21 +59,15 @@ namespace Library.Domain
             return new User(_dispatcher, userName, dateOfBirth);
         }
 
-        public User CreateUser(string userName, DateTime dateOfBirth, Role role)
-        {
-            return new User(_dispatcher, userName, dateOfBirth, role);
-        }
-
         public User CreateUser(
             Guid id, 
             string userName, 
             DateTime dateOfBirth, 
-            Role role, 
             IEnumerable<Book> favoriteBooks,
             IEnumerable<Book> recommendedBooks,
             IEnumerable<User> favoriteReviewers)
         {
-            return new User(id, _dispatcher, userName, dateOfBirth, role, favoriteBooks, recommendedBooks, favoriteReviewers);
+            return new User(id, _dispatcher, userName, dateOfBirth, favoriteBooks, recommendedBooks, favoriteReviewers);
         }
     }
 }

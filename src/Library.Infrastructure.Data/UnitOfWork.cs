@@ -1,9 +1,6 @@
-﻿using System;
-using Library.Domain;
+﻿using Library.Domain;
 using Library.Domain.Common;
 using Library.Domain.Repositories;
-using Library.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace Library.Infrastructure.Data
 {
@@ -15,16 +12,13 @@ namespace Library.Infrastructure.Data
         public UnitOfWork(
             LibraryContext ctx, 
             IEventDispatcher eventDispatcher, 
-            IEntityFactory entityFactory, 
-            UserManager<UserEntity> userManager, 
-            SignInManager<UserEntity> signInManager, 
-            RoleManager<IdentityRole<Guid>> roleManager)
+            IEntityFactory entityFactory)
         {
             _ctx = ctx;
             _eventDispatcher = eventDispatcher;
             Books = new BooksRepository(ctx, entityFactory);
             Authors = new AuthorsRepository(ctx, entityFactory);
-            Users = new UsersRepository(ctx, entityFactory, userManager, signInManager, roleManager);
+            Users = new UsersRepository(ctx, entityFactory);
         }
         
         public IBooksRepository Books { get; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Library.Api.ViewModels
 {
-    public class RegisterViewModel
+    public class AddUserViewModel
     {
         [Required]
         public string UserName { get; set; }
@@ -13,8 +13,5 @@ namespace Library.Api.ViewModels
 
         [Required]
         public DateTime DateOfBirth { get; set; }
-
-        [Required]
-        public string Password { get; set; }
     }
 }

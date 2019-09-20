@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Library.Api.ViewModels;
 using Library.Application.Commands.CreateBook;
-using Library.Application.Commands.LoginUser;
 using Library.Application.Commands.RegisterUser;
 using Library.Application.Commands.UpdateBook;
 
@@ -24,16 +23,10 @@ namespace Library.Api.Utility
                 .ForMember(b => b.Summary, o => o.MapFrom(b => b.Summary))
                 .ForMember(b => b.Picture, o => o.MapFrom(b => b.Picture));
 
-            CreateMap<RegisterViewModel, RegisterUserCommand>()
+            CreateMap<AddUserViewModel, AddUserCommand>()
                 .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
                 .ForMember(r => r.DateOfBirth, o => o.MapFrom(r => r.DateOfBirth))
-                .ForMember(r => r.Password, o => o.MapFrom(r => r.Password))
                 .ForMember(r => r.PhoneNumber, o => o.MapFrom(r => r.PhoneNumber));
-
-            CreateMap<LoginViewModel, LoginUserCommand>()
-                .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
-                .ForMember(r => r.RememberMe, o => o.MapFrom(r => r.RememberMe))
-                .ForMember(r => r.Password, o => o.MapFrom(r => r.Password));
         }
     }
 }

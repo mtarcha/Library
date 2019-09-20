@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.Models;
+using Library.Presentation.MVC.Utility;
 using Library.Presentation.MVC.ViewModels;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -79,7 +77,7 @@ namespace Library.Presentation.MVC.Controllers
             {
                 var model = _mapper.Map<CreateBookViewModel, CreateBookModel>(bookViewModel);
 
-                var result = await _booksClient.Create(GetAuthorization(), model);
+                var result = await _booksClient.Create(model);
 
                 if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
@@ -98,7 +96,7 @@ namespace Library.Presentation.MVC.Controllers
         [Authorize(Roles = Constants.AdminRoleName)]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var result = await _booksClient.GetBook(GetAuthorization(), id);
+            var result = await _booksClient.GetBook(id);
 
             var book = result.GetContent();
             var editBook = _mapper.Map<Book, UpdateBookViewModel>(book);
@@ -113,7 +111,7 @@ namespace Library.Presentation.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<UpdateBookViewModel, UpdateBookModel>(bookViewModel);
-                var result = await _booksClient.UpdateBook(GetAuthorization(), model);
+                var result = await _booksClient.UpdateBook(model);
 
                 if (result.ResponseMessage.StatusCode != HttpStatusCode.OK)
                 {
@@ -133,20 +131,9 @@ namespace Library.Presentation.MVC.Controllers
         public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
             var model = _mapper.Map<SetRateViewModel, SetRateModel>(setRateViewModel);
-            var result = await _booksClient.SetRate(GetAuthorization(), model);
+            await _booksClient.SetRate(model);
 
             return RedirectToAction("Get");
-        }
-
-        private string GetAuthorization()
-        {
-            var accessToken = HttpContext.GetTokenAsync("access_token").Result;
-
-            var a = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var a1 = a.ToString();
-
-            return a1;
         }
     }
 }

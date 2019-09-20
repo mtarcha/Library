@@ -16,9 +16,6 @@ namespace Library.Infrastructure.Data
                 cfg.UseSqlServer(connectionString);
             });
 
-            services.AddIdentity<UserEntity, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<LibraryContext>();
-
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             
             services.AddTransient<IStorageSeeder, DbInitializer>();

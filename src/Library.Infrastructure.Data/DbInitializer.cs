@@ -24,7 +24,6 @@ namespace Library.Infrastructure.Data
         {
             _ctx.Database.EnsureCreated();
             await SeedLibraryAsync(token);
-            await SeedRoles(token);
         }
 
         public async Task SeedLibraryAsync(CancellationToken token)
@@ -92,27 +91,6 @@ namespace Library.Infrastructure.Data
                     await unitOfWork.Authors.CreateAsync(ivanko, token);
                     await unitOfWork.Authors.CreateAsync(slavko, token);
                     await unitOfWork.Authors.CreateAsync(astrid, token);
-                }
-            }
-        }
-
-        public async Task SeedRoles(CancellationToken token)
-        {
-            using (var unitOfWork = _unitOfWorkFactory.Create())
-            {
-                var roles = new [] { Role.User, Role.Admin };
-                foreach (var role in roles)
-                {
-                    await unitOfWork.Users.CreateRoleIfNotExistsAsync(role, token);
-                }
-
-                var name = "AdminMyroslava";
-                var user = await unitOfWork.Users.GetByNameAsync(name, token);
-                if (user == null)
-                {
-                    user = _entityFactory.CreateUser(name, new DateTime(1993, 5, 5), Role.Admin);
-                    user.SetPassword("K.,k. ;bnnz1");
-                    await unitOfWork.Users.CreateAsync(user, token);
                 }
             }
         }

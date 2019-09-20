@@ -12,9 +12,3 @@ services:
     build:
       context: .
       dockerfile: Library.Presentation.MVC/Dockerfile   
-
-  ids:
-    image: ${DOCKER_REGISTRY-}libraryidentityserver
-    build:
-      context: .
-      dockerfile: Library.IdentityServer/Dockerfile  

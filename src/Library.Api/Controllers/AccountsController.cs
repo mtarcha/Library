@@ -1,17 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using Library.Api.ViewModels;
-using Library.Application.Commands.LoginUser;
-using Library.Application.Commands.LogoutUser;
+using Library.Application.Commands.Common;
 using Library.Application.Commands.RegisterUser;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
 {
     [ApiController]
-    [Route("api/accounts")]
+    [Route("api/users")]
     public class AccountsController : Controller
     {
         private readonly IMediator _mediator;
@@ -23,38 +22,22 @@ namespace Library.Api.Controllers
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        [HttpPost("add")]
+        public async Task<IActionResult> Add(AddUserViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var command = _mapper.Map<RegisterViewModel, RegisterUserCommand>(model);
+            var command = _mapper.Map<AddUserViewModel, AddUserCommand>(model);
             var result = await _mediator.Send(command);
 
             return Ok(result);
         }
 
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [HttpGet("{id}")]
+        Task<User> GetUser(Guid id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var command = _mapper.Map<LoginViewModel, LoginUserCommand>(model);
-            var result = await _mediator.Send(command);
-
-            return Ok(result);
-        }
-
-        [HttpPost("logoff")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOff()
-        {
-            var result = await _mediator.Send(new LogoutCommand());
-            return Ok(result);
+            throw new NotImplementedException();
         }
     }
 }

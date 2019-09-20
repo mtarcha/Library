@@ -23,16 +23,7 @@ namespace Library.Domain
         Author CreateAuthor(Guid id, string name, string surName, LifePeriod lifePeriod);
 
         User CreateUser(string userName, DateTime dateOfBirth);
-
-        User CreateUser(string userName, DateTime dateOfBirth, Role role);
-
-        User CreateUser(
-            Guid id, 
-            string userName, 
-            DateTime dateOfBirth, 
-            Role role, 
-            IEnumerable<Book> favoriteBooks,
-            IEnumerable<Book> recommendedBooks,
-            IEnumerable<User> favoriteReviewers);
+        
+        User CreateUser(Guid id, string userName, DateTime dateOfBirth, IEnumerable<Book> favoriteBooks, IEnumerable<Book> recommendedBooks, IEnumerable<User> favoriteReviewers);
     }
 }

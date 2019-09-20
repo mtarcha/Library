@@ -1,45 +1,25 @@
 version: '3.4'
 
-services:
- 
+services: 
   library.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__LibraryConnectionString=Server=sql;Database=lybrarydb;User Id=sa;Password=123asdQ!
-      - IdentityServerUrl=http://ids:5001/
+      - ConnectionStrings__LibraryConnectionString=Server=sql;Database=librarydb;User Id=sa;Password=123asdQ!     
     ports:
       - "8888:80"
-    depends_on:
-      - ids
+    depends_on:   
       - sql
-    networks:
-      - mconetwork
        
   library.presentation.mvc:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ApiUrl=http://library.api/api/
-      - IdentityServerUrl=http://host.docker.internal:5001/
+      - ApiUrl=http://library.api/api/    
+      - ConnectionStrings__AccountsDBConnectionString=Server=sql;Database=accountsdb;User Id=sa;Password=123asdQ!
     ports:
       - "7777:80"
-    depends_on:
-      - ids
+    depends_on:    
       - sql
-      - library.api
-    networks:
-      - mconetwork
-
-  ids:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sql;Database=identitydb;User Id=sa;Password=123asdQ!
-      - ClientUrl=http://library.presentation.mvc/
-    ports:
-      - "5001:5001"
-    depends_on:
-      - sql
-    networks:
-      - mconetwork
+      - library.api  
 
   sql:
     image: microsoft/mssql-server-linux:latest
@@ -47,10 +27,4 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=123asdQ!
     ports:
-      - "5433:1433"
-    networks:
-     - mconetwork
-
-networks:
-  mconetwork:
-    driver: bridge
+      - "5433:1433"  

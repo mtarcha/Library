@@ -1,4 +1,4 @@
-﻿namespace Library.Presentation.MVC.Clients
+﻿namespace Library.Presentation.MVC.Utility
 {
     public class Constants
     {

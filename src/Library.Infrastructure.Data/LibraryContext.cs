@@ -1,12 +1,9 @@
-﻿using System;
-using Library.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Library.Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Data
 {
-    public sealed class LibraryContext : IdentityDbContext<UserEntity, IdentityRole<Guid>, Guid>
+    public sealed class LibraryContext : DbContext
     {
         public LibraryContext(DbContextOptions options) : base(options)
         {
@@ -16,9 +13,14 @@ namespace Library.Infrastructure.Data
 
         public DbSet<AuthorEntity> Authors { get; set; }
 
+        public DbSet<UserEntity> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserEntity>().ToTable("Users").HasKey(p => p.Id);
+            modelBuilder.Entity<UserEntity>().Property(p => p.UserName).IsRequired();
+            modelBuilder.Entity<UserEntity>().Property(p => p.DateOfBirth).IsRequired();
             modelBuilder.Entity<UserEntity>().HasMany(x => x.FavoriteReviewers);
             modelBuilder.Entity<UserEntity>().HasMany(x => x.FavoriteBooks);
             modelBuilder.Entity<UserEntity>().HasMany(x => x.RecommendedToRead);

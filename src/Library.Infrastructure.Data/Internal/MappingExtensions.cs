@@ -16,7 +16,7 @@ namespace Library.Infrastructure.Data.Internal
                 ? entity.FavoriteReviewers?.Select(x => x.ToUser(entityFactory, false)) 
                 : new List<User>();
 
-            return entityFactory.CreateUser(entity.Id, entity.UserName, entity.DateOfBirth, null, favoriteBooks, recommendedBooks, favoriteReviewers);
+            return entityFactory.CreateUser(entity.Id, entity.UserName, entity.DateOfBirth, favoriteBooks, recommendedBooks, favoriteReviewers);
         }
 
         public static UserEntity ToEntity(this User user)

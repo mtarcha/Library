@@ -1,12 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using AutoMapper;
+﻿using AutoMapper;
+using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
 using Library.Presentation.MVC.Utility;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -29,6 +30,17 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
+            services.AddDbContext<AccountContext>(cfg =>
+                            {
+                                cfg.UseSqlServer(connectionString);
+                            });
+
+            services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+
+            services.AddTransient<AccountContext>();
+            services.AddTransient<AccountsSeeder>();
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfiles(new Profile[]
@@ -41,6 +53,7 @@ namespace Library.Presentation.MVC
             IMapper mapper = mappingConfig.CreateMapper();
             var apiUrl = _configuration["ApiUrl"];
             services.AddTransient(x => RestClient.For<IBooksClient>(apiUrl));
+            services.AddTransient(x => RestClient.For<IUsersClient>(apiUrl));
             services.AddSingleton(mapper);
             services.AddSignalR();
             services.AddMvc()

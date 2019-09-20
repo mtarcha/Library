@@ -14,12 +14,7 @@ namespace Library.Domain.Entities
         private readonly List<User> _favoriteReviewers;
 
         internal User(IEventDispatcher eventDispatcher, string userName, DateTime dateOfBirth)
-            : this(eventDispatcher, userName, dateOfBirth, null)
-        {
-        }
-
-        internal User(IEventDispatcher eventDispatcher, string userName, DateTime dateOfBirth, Role role)
-            : this(Guid.NewGuid(), eventDispatcher, userName, dateOfBirth, role, new List<Book>(), new List<Book>(), new List<User>())
+            : this(Guid.NewGuid(), eventDispatcher, userName, dateOfBirth, new List<Book>(), new List<Book>(), new List<User>())
         {
         }
 
@@ -28,7 +23,6 @@ namespace Library.Domain.Entities
             IEventDispatcher eventDispatcher, 
             string userName, 
             DateTime dateOfBirth, 
-            Role role,
             IEnumerable<Book> favoriteBooks,
             IEnumerable<Book> recommendedBooks,
             IEnumerable<User> favoriteReviewers) 
@@ -46,8 +40,7 @@ namespace Library.Domain.Entities
 
             UserName = userName;
             DateOfBirth = dateOfBirth;
-            Role = role;
-
+           
             _favoriteBooks = favoriteBooks.ToList();
             _recommendedToRead = recommendedBooks.ToList();
             _favoriteReviewers = favoriteReviewers.ToList();
@@ -57,50 +50,11 @@ namespace Library.Domain.Entities
 
         public DateTime DateOfBirth { get; }
 
-        public Role Role { get; private set; }
-
-        public string Token { get; set; }
-
-        public string Password { get; private set; }
-
-        public string NewPassword { get; private set; }
-
         public IReadOnlyList<Book> FavoriteBooks => _favoriteBooks;
 
         public IReadOnlyList<User> FavoriteReviewers => _favoriteReviewers;
 
         public IReadOnlyList<Book> RecommendedToRead => _recommendedToRead;
-
-        public void SetRole(Role role)
-        {
-            Role = role;
-        }
-
-        public void SetPassword(string password)
-        {
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new ArgumentNullException(nameof(password));
-            }
-
-            Password = password;
-        }
-
-        public void ChangePassword(string currentPassword, string newPassword)
-        {
-            if (string.IsNullOrEmpty(currentPassword))
-            {
-                throw new ArgumentNullException(nameof(currentPassword));
-            }
-
-            if (string.IsNullOrEmpty(newPassword))
-            {
-                throw new ArgumentNullException(nameof(newPassword));
-            }
-
-            Password = currentPassword;
-            NewPassword = newPassword;
-        }
 
         public void AddFavoriteBook(Book book)
         {
