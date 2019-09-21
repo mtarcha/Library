@@ -29,7 +29,7 @@ namespace Library.Presentation.MVC.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Get([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
+        public async Task<IActionResult> Search([FromQuery(Name = "pattern")]string search = "", [FromQuery(Name = "page")]int page = 1)
         {
             if (page < 1)
             {
@@ -85,7 +85,7 @@ namespace Library.Presentation.MVC.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Get");
+                    return RedirectToAction("Search");
                 }
             }
 
@@ -119,7 +119,7 @@ namespace Library.Presentation.MVC.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Get");
+                    return RedirectToAction("Search");
                 }
             }
 
@@ -127,13 +127,13 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = Constants.UserRoleName)]
         public async Task<IActionResult> SetRate(SetRateViewModel setRateViewModel)
         {
             var model = _mapper.Map<SetRateViewModel, SetRateModel>(setRateViewModel);
             await _booksClient.SetRate(model);
 
-            return RedirectToAction("Get");
+            return RedirectToAction("Search");
         }
     }
 }

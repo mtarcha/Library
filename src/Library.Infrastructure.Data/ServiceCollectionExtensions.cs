@@ -1,7 +1,4 @@
-﻿using System;
-using Library.Domain;
-using Library.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Library.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

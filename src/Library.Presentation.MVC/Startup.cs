@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
@@ -46,15 +47,22 @@ namespace Library.Presentation.MVC
                 mc.AddProfiles(new Profile[]
                 {
                     new ViewModelsMapper(),
-                    //new DomainEventsMapping(), 
                 });
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
-            var apiUrl = _configuration["ApiUrl"];
-            services.AddTransient(x => RestClient.For<IBooksClient>(apiUrl));
-            services.AddTransient(x => RestClient.For<IUsersClient>(apiUrl));
             services.AddSingleton(mapper);
+
+            var apiUrl = _configuration["ApiUrl"];
+            services
+                .AddHttpClient("airport", c => { c.BaseAddress = new Uri(apiUrl); })
+                .AddTypedClient(c => RestClient.For<IBooksClient>(c));
+
+            services
+                .AddHttpClient("countries", c => { c.BaseAddress = new Uri(apiUrl); })
+                .AddTypedClient(c => RestClient.For<IUsersClient>(c));
+
+            
             services.AddSignalR();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest)
@@ -78,7 +86,7 @@ namespace Library.Presentation.MVC
 
             app.UseMvc(configuration =>
             {
-                configuration.MapRoute("Default", "{controller=Books}/{action=Get}/{id?}");
+                configuration.MapRoute("Default", "{controller=Books}/{action=Search}/{id?}");
             });
         }
     }

@@ -41,7 +41,7 @@ namespace Library.Presentation.MVC.Controllers
                     await _usersClient.AddUser(user);
 
                     await _signInManager.SignInAsync(account, false);
-                    return RedirectToAction("Get", "Books");
+                    return RedirectToAction("Search", "Books");
                 }
                 else
                 {
@@ -75,7 +75,7 @@ namespace Library.Presentation.MVC.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Get", "Books");
+                        return RedirectToAction("Search", "Books");
                     }
                 }
                 else
@@ -91,7 +91,7 @@ namespace Library.Presentation.MVC.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Get", "Books");
+            return RedirectToAction("Search", "Books");
         }
     }
 }

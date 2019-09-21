@@ -7,9 +7,7 @@ using Library.Application.Commands.SetBookRate;
 using Library.Application.Commands.UpdateBook;
 using Library.Application.Queries.GetBook;
 using Library.Application.Queries.GetBooks;
-using Library.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers
@@ -17,10 +15,7 @@ namespace Library.Api.Controllers
     [ApiController]
     [Route("api/books")]
     public class BooksController : Controller
-
     {
-        public const int BooksOnPage = 8;
-
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
