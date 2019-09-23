@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace Library.Application.Commands.RegisterUser
+namespace Library.Application.Commands.AddUser
 {
     public class AddUserCommandValidator : AbstractValidator<AddUserCommand>
     {

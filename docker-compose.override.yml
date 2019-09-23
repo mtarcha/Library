@@ -5,10 +5,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__LibraryConnectionString=Server=sql;Database=librarydb;User Id=sa;Password=123asdQ!     
+      - RedisHost=redis.cache
+      - RedisPort=6379
     ports:
       - "8888:80"
     depends_on:   
       - sql
+      - redis.cache
+      - cache.web
        
   library.presentation.mvc:
     environment:
@@ -28,3 +32,16 @@ services:
       - SA_PASSWORD=123asdQ!
     ports:
       - "5433:1433"  
+
+  redis.cache:
+    image: redis
+    ports:
+      - "9999:6379"
+
+  cache.web:    
+    image: rediscommander/redis-commander
+    restart: always
+    environment:
+      - REDIS_HOST=redis.cache
+    ports:
+      - "8081:8081"    

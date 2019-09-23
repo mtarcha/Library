@@ -17,6 +17,7 @@ namespace Library.Api.Utility
 
         public Task Handle(BookRateChangedEvent integrationEvent, CancellationToken token)
         {
+            // todo: send event via RabbitMQ
             return Task.Run(() => _logger.LogInformation("Event"), token);
         }
     }

@@ -4,7 +4,7 @@ using Library.Domain;
 using MediatR;
 using User = Library.Application.Commands.Common.User;
 
-namespace Library.Application.Commands.RegisterUser
+namespace Library.Application.Commands.AddUser
 {
     public class AddUserHandler : IRequestHandler<AddUserCommand, User>
     {

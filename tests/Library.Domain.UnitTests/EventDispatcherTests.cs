@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Library.Domain.Common;
 using MediatR;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Library.Domain.Common.UnitTests
+namespace Library.Domain.UnitTests
 {
     [TestFixture]
     public class EventDispatcherTests

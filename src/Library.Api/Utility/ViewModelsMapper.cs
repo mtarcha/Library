@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Library.Api.ViewModels;
+using Library.Application.Commands.AddUser;
 using Library.Application.Commands.CreateBook;
-using Library.Application.Commands.RegisterUser;
 using Library.Application.Commands.UpdateBook;
 
 namespace Library.Api.Utility

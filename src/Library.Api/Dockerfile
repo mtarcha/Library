@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["Library.Api/Library.Api.csproj", "Library.Api/"]
-RUN dotnet restore "Library.Api/Library.Api.csproj"
+COPY ["src/Library.Api/Library.Api.csproj", "src/Library.Api/"]
+RUN dotnet restore "src/Library.Api/Library.Api.csproj"
 COPY . .
-WORKDIR "/src/Library.Api"
+WORKDIR "/src/src/Library.Api"
 RUN dotnet build "Library.Api.csproj" -c Release -o /app
 
 FROM build AS publish

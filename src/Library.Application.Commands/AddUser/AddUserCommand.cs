@@ -2,7 +2,7 @@
 using Library.Application.Commands.Common;
 using MediatR;
 
-namespace Library.Application.Commands.RegisterUser
+namespace Library.Application.Commands.AddUser
 {
     public class AddUserCommand : IRequest<User>
     {

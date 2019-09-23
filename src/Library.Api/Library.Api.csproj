@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="EasyCaching.Redis" Version="0.6.1" />
     <PackageReference Include="FluentValidation" Version="8.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />
@@ -26,6 +27,8 @@
     <ProjectReference Include="..\Library.Application.Queries\Library.Application.Queries.csproj" />
     <ProjectReference Include="..\Library.Domain.Common\Library.Domain.Common.csproj" />
     <ProjectReference Include="..\Library.Domain\Library.Domain.csproj" />
+    <ProjectReference Include="..\Library.Infrastructure.Cache.Redis\Library.Infrastructure.Cache.Redis.csproj" />
+    <ProjectReference Include="..\Library.Infrastructure.Cache\Library.Infrastructure.Cache.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Library.Infrastructure\Library.Infrastructure.csproj" />
   </ItemGroup>

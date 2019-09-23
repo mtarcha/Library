@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Library.Api.ViewModels;
+using Library.Application.Commands.AddUser;
 using Library.Application.Commands.Common;
-using Library.Application.Commands.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

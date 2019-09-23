@@ -1,33 +1,37 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29123.88
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Presentation.MVC", "Library.Presentation.MVC\Library.Presentation.MVC.csproj", "{77D4DB5B-8018-4B1B-ACE1-7A1792AB0944}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Presentation.MVC", "src\Library.Presentation.MVC\Library.Presentation.MVC.csproj", "{77D4DB5B-8018-4B1B-ACE1-7A1792AB0944}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain", "Library.Domain\Library.Domain.csproj", "{0A758D0E-F6A0-40DB-AAE6-92F7159B899A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain", "src\Library.Domain\Library.Domain.csproj", "{0A758D0E-F6A0-40DB-AAE6-92F7159B899A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Data", "Library.Infrastructure.Data\Library.Infrastructure.Data.csproj", "{3F50B9CB-CC4B-419F-BA58-430463EEDAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Data", "src\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj", "{3F50B9CB-CC4B-419F-BA58-430463EEDAD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure", "Library.Infrastructure\Library.Infrastructure.csproj", "{7B82FCF3-E9CF-4E6B-B720-DB3C0F67E7F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure", "src\Library.Infrastructure\Library.Infrastructure.csproj", "{7B82FCF3-E9CF-4E6B-B720-DB3C0F67E7F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain.Common", "Library.Domain.Common\Library.Domain.Common.csproj", "{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain.Common", "src\Library.Domain.Common\Library.Domain.Common.csproj", "{E0B8C6E6-5E97-42B6-ABFA-51821F4EA481}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{EA4CA5F6-3293-4A21-970E-CB3187FFC0EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Commands", "Library.Application.Commands\Library.Application.Commands.csproj", "{FB87AAD0-F542-40D0-A986-979F15AFE3D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Commands", "src\Library.Application.Commands\Library.Application.Commands.csproj", "{FB87AAD0-F542-40D0-A986-979F15AFE3D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Queries", "Library.Application.Queries\Library.Application.Queries.csproj", "{34687E0C-46D6-4FD8-A636-26C2CBE8D632}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Queries", "src\Library.Application.Queries\Library.Application.Queries.csproj", "{34687E0C-46D6-4FD8-A636-26C2CBE8D632}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.EventHandling", "Library.Application.EventHandling\Library.Application.EventHandling.csproj", "{ABBDC02F-007B-4DFF-8FB7-FD13B7000B85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.EventHandling", "src\Library.Application.EventHandling\Library.Application.EventHandling.csproj", "{ABBDC02F-007B-4DFF-8FB7-FD13B7000B85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Queries.Sql", "Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj", "{C193C726-7683-4CB5-9EBF-5F8F573F4EE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application.Queries.Sql", "src\Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj", "{C193C726-7683-4CB5-9EBF-5F8F573F4EE6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8A6233D0-B86D-42AA-B721-07E3029A8162}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.Common.UnitTests", "..\tests\Library.Domain.Common.UnitTests\Library.Domain.Common.UnitTests.csproj", "{984D49ED-7697-4D2F-9C30-48D3C815A76C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Api", "src\Library.Api\Library.Api.csproj", "{020F93BA-9849-4F37-8995-6D1548D5A2A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Api", "Library.Api\Library.Api.csproj", "{020F93BA-9849-4F37-8995-6D1548D5A2A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Cache", "src\Library.Infrastructure.Cache\Library.Infrastructure.Cache.csproj", "{2A801273-8F61-4BBF-9684-FCB21E5F8BC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Cache.Redis", "src\Library.Infrastructure.Cache.Redis\Library.Infrastructure.Cache.Redis.csproj", "{91217F0B-EB3C-40A8-B538-B2A5915C31D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.UnitTests", "tests\Library.Domain.UnitTests\Library.Domain.UnitTests.csproj", "{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,20 +79,28 @@ Global
 		{C193C726-7683-4CB5-9EBF-5F8F573F4EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C193C726-7683-4CB5-9EBF-5F8F573F4EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C193C726-7683-4CB5-9EBF-5F8F573F4EE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{984D49ED-7697-4D2F-9C30-48D3C815A76C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{984D49ED-7697-4D2F-9C30-48D3C815A76C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{984D49ED-7697-4D2F-9C30-48D3C815A76C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{984D49ED-7697-4D2F-9C30-48D3C815A76C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{020F93BA-9849-4F37-8995-6D1548D5A2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A801273-8F61-4BBF-9684-FCB21E5F8BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A801273-8F61-4BBF-9684-FCB21E5F8BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A801273-8F61-4BBF-9684-FCB21E5F8BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A801273-8F61-4BBF-9684-FCB21E5F8BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91217F0B-EB3C-40A8-B538-B2A5915C31D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91217F0B-EB3C-40A8-B538-B2A5915C31D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91217F0B-EB3C-40A8-B538-B2A5915C31D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91217F0B-EB3C-40A8-B538-B2A5915C31D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{984D49ED-7697-4D2F-9C30-48D3C815A76C} = {8A6233D0-B86D-42AA-B721-07E3029A8162}
+		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E} = {8A6233D0-B86D-42AA-B721-07E3029A8162}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D1CCD8F-593C-496C-8150-DC25B8CC6759}

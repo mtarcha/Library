@@ -5,10 +5,10 @@ services:
     image: ${DOCKER_REGISTRY-}libraryapi
     build:
       context: .
-      dockerfile: Library.Api/Dockerfile  
+      dockerfile: src/Library.Api/Dockerfile  
 
   library.presentation.mvc:
     image: ${DOCKER_REGISTRY-}librarypresentationmvc
     build:
       context: .
-      dockerfile: Library.Presentation.MVC/Dockerfile   
+      dockerfile: src/Library.Presentation.MVC/Dockerfile   

@@ -1,6 +1,10 @@
 ﻿using System;
 using AutoMapper;
+using EasyCaching.Core;
+using EasyCaching.Core.Configurations;
+using EasyCaching.Redis;
 using FluentValidation.AspNetCore;
+using Library.Api.Middlewares;
 using Library.Api.Utility;
 using Library.Application.EventHandling;
 using Library.Application.EventHandling.Events;
@@ -9,6 +13,8 @@ using Library.Application.Queries.Sql;
 using Library.Domain;
 using Library.Domain.Common;
 using Library.Infrastructure;
+using Library.Infrastructure.Cache;
+using Library.Infrastructure.Cache.Redis;
 using Library.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using ExceptionHandlerMiddleware = Library.Api.Middlewares.ExceptionHandlerMiddleware;
 
 namespace Library.Api
 {
@@ -56,6 +63,18 @@ namespace Library.Api
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddSingleton<IDistributedCache, DistributedCache>();
+
+            var redisHost = Configuration["RedisHost"];
+            var redisPort = int.Parse(Configuration["RedisPort"]);
+            services.AddEasyCaching(options =>
+            {
+                options.UseRedis(config =>
+                {
+                    config.DBConfig.Endpoints.Add(new ServerEndPoint(redisHost, redisPort));
+                }, "library.api");
+            });
+
             services
                 .AddSwaggerGen(c =>
                 {
@@ -89,6 +108,7 @@ namespace Library.Api
             }
             
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseMiddleware<CachingMiddleware>();
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

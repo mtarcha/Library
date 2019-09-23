@@ -5,7 +5,7 @@ using Library.Domain.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Library.Infrastructure
+namespace Library.Api.Middlewares
 {
     public class ExceptionHandlerMiddleware
     {
