@@ -20,6 +20,21 @@ Home Library features:
 * docker 
 * docker-compose
 * .NET Core SDK 2.2.107
+* PowerShell
+
+## Before runing scripts
+* Run cmd 
+* Navigate to the app root folder
+* ...
+
+## Run 
+Next command will build application, create docker images and run docker-compose.
+```
+     .\build.ps1 -Target Run
+```
+* MVC is accesable on http://localhost:7777/
+* API is accesable with swagger on http://localhost:8888/swagger/index.html
+* Redis GUI is accesable on http://localhost:8081/
 
 # What was used
 ## Tech Stack:
@@ -27,6 +42,9 @@ Home Library features:
 * Dapper
 * EF
 * MS SQL Server
+* Redis
+* Redis-commander
+* Cake
 * Docker
 * Docker Compose
 * Automapper
@@ -37,6 +55,7 @@ Home Library features:
 
 ## Principles:
 * SOLID
+* REST
 * DDD
 * MVC
 * CQRS
