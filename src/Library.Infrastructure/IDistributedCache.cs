@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Library.Infrastructure.Cache
+namespace Library.Infrastructure
 {
     public interface IDistributedCache
     {

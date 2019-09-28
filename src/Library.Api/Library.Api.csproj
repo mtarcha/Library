@@ -28,7 +28,6 @@
     <ProjectReference Include="..\Library.Domain.Common\Library.Domain.Common.csproj" />
     <ProjectReference Include="..\Library.Domain\Library.Domain.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Cache.Redis\Library.Infrastructure.Cache.Redis.csproj" />
-    <ProjectReference Include="..\Library.Infrastructure.Cache\Library.Infrastructure.Cache.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Library.Infrastructure\Library.Infrastructure.csproj" />
   </ItemGroup>
