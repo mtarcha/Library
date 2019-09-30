@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Cach
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.UnitTests", "tests\Library.Domain.UnitTests\Library.Domain.UnitTests.csproj", "{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.Messaging.RabbitMq", "Library.Infrastructure.Messaging.RabbitMq\Library.Infrastructure.Messaging.RabbitMq.csproj", "{75783587-498D-42E3-B999-FE6DB0E9F1F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04F4A151-1DC6-4E7F-97FE-58EDCDF1A92E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75783587-498D-42E3-B999-FE6DB0E9F1F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75783587-498D-42E3-B999-FE6DB0E9F1F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75783587-498D-42E3-B999-FE6DB0E9F1F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75783587-498D-42E3-B999-FE6DB0E9F1F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

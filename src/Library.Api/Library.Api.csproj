@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Library.Infrastructure.Messaging.RabbitMq\Library.Infrastructure.Messaging.RabbitMq.csproj" />
     <ProjectReference Include="..\Library.Application.Commands\Library.Application.Commands.csproj" />
     <ProjectReference Include="..\Library.Application.EventHandling\Library.Application.EventHandling.csproj" />
     <ProjectReference Include="..\Library.Application.Queries.Sql\Library.Application.Queries.Sql.csproj" />

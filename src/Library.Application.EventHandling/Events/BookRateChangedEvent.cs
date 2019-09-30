@@ -17,5 +17,10 @@ namespace Library.Application.EventHandling.Events
         public Guid BookId { get; }
 
         public DateTime RaiseTime { get; }
+
+        public override string ToString()
+        {
+            return $"New book {BookId} rate: {Rate}";
+        }
     }
 }

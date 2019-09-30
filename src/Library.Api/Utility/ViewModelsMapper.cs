@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Api.MessageHandlers;
 using Library.Api.ViewModels;
 using Library.Application.Commands.AddUser;
 using Library.Application.Commands.CreateBook;
@@ -31,6 +32,11 @@ namespace Library.Api.Utility
                 .ForMember(b => b.Picture, o => o.MapFrom(b => b.Picture));
 
             CreateMap<AddUserViewModel, AddUserCommand>()
+                .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
+                .ForMember(r => r.DateOfBirth, o => o.MapFrom(r => r.DateOfBirth))
+                .ForMember(r => r.PhoneNumber, o => o.MapFrom(r => r.PhoneNumber));
+
+            CreateMap<NewUserRegistered, AddUserCommand>()
                 .ForMember(r => r.UserName, o => o.MapFrom(r => r.UserName))
                 .ForMember(r => r.DateOfBirth, o => o.MapFrom(r => r.DateOfBirth))
                 .ForMember(r => r.PhoneNumber, o => o.MapFrom(r => r.PhoneNumber));

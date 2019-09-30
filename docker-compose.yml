@@ -12,3 +12,6 @@ services:
     build:
       context: .
       dockerfile: src/Library.Presentation.MVC/Dockerfile   
+
+  rabbit: 
+    image: rabbitmq:3-management

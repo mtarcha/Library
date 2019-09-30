@@ -16,6 +16,7 @@ using Library.Infrastructure;
 using Library.Infrastructure.Cache;
 using Library.Infrastructure.Cache.Redis;
 using Library.Infrastructure.Data;
+using Library.Infrastructure.Messaging.RabbitMq;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +65,9 @@ namespace Library.Api
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IDistributedCache, DistributedCache>();
+
+            var rabbitMqConnectionString = Configuration["RabbitMqConnectionString"];
+            services.AddRabbitMq(rabbitMqConnectionString);
 
             var redisHost = Configuration["RedisHost"];
             var redisPort = int.Parse(Configuration["RedisPort"]);

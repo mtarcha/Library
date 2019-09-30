@@ -7,6 +7,7 @@ services:
       - ConnectionStrings__LibraryConnectionString=Server=sql;Database=librarydb;User Id=sa;Password=123asdQ!     
       - RedisHost=redis.cache
       - RedisPort=6379
+      - RabbitMqConnectionString=host=rabbit
     ports:
       - "8888:80"
     depends_on:   
@@ -19,11 +20,16 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ApiUrl=http://library.api/api/    
       - ConnectionStrings__AccountsDBConnectionString=Server=sql;Database=accountsdb;User Id=sa;Password=123asdQ!
+      - RabbitMqConnectionString=host=rabbit
     ports:
       - "7777:80"
     depends_on:    
       - sql
       - library.api  
+
+  rabbit: 
+    ports:
+      - "15672:15672"
 
   sql:
     image: microsoft/mssql-server-linux:latest
