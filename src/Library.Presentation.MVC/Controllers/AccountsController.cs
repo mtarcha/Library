@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Library.Infrastructure;
+using Library.Messaging.Contracts;
 using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.Models;
@@ -10,13 +13,13 @@ namespace Library.Presentation.MVC.Controllers
 {
     public class AccountsController : Controller
     {
-        private readonly IUsersClient _usersClient;
+        private readonly IMessageService _messageService;
         private readonly UserManager<UserAccount> _userManager;
         private readonly SignInManager<UserAccount> _signInManager;
 
-        public AccountsController(IUsersClient usersClient, UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager)
+        public AccountsController(IMessageService messageService, UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager)
         {
-            _usersClient = usersClient;
+            _messageService = messageService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -37,8 +40,8 @@ namespace Library.Presentation.MVC.Controllers
                 var result = await _userManager.CreateAsync(account, model.Password);
                 if (result.Succeeded)
                 {
-                    var user = new AddUserModel { UserName = model.UserName, DateOfBirth = model.DateOfBirth, PhoneNumber = model.PhoneNumber};
-                    await _usersClient.AddUser(user);
+                    var user = new NewUserRegistered { UserName = model.UserName, DateOfBirth = model.DateOfBirth, PhoneNumber = model.PhoneNumber};
+                    await _messageService.SendAsync(user, CancellationToken.None);
 
                     await _signInManager.SignInAsync(account, false);
                     return RedirectToAction("Search", "Books");

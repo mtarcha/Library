@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Library.Application.EventHandling.Events;
 using Library.Application.EventHandling.Handlers;
 using Library.Infrastructure;
+using Library.Messaging.Contracts;
 using Microsoft.Extensions.Logging;
 
-namespace Library.Api.Utility
+namespace Library.Api.Handlers.EventHandlers
 {
     public class BookRateChangedEventHandler : IIntegrationEventHandler<BookRateChangedEvent>
     {
@@ -22,7 +23,14 @@ namespace Library.Api.Utility
         {
             _logger.LogInformation($"Book rate changed event: {integrationEvent}");
 
-            await _messageService.SendAsync(integrationEvent, token);
+            var message = new BookRateChanged
+            {
+                BookId = integrationEvent.BookId,
+                Rate = integrationEvent.Rate,
+                RaiseTime = integrationEvent.RaiseTime
+            };
+
+            await _messageService.SendAsync(message, token);
         }
     }
 }

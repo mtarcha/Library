@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using Library.Infrastructure.Messaging.RabbitMq;
 using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
@@ -16,10 +17,6 @@ using RestEase;
 
 namespace Library.Presentation.MVC
 {
-    // todo: add MVC client
-    // todo: add RabbitMQ to send notification
-    // todo: authentication
-    // todo: extend docker-compose settings 
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -42,6 +39,9 @@ namespace Library.Presentation.MVC
             services.AddTransient<AccountContext>();
             services.AddTransient<AccountsSeeder>();
 
+            var rabbitMqConnectionString = _configuration["RabbitMqConnectionString"];
+            services.AddRabbitMq(rabbitMqConnectionString);
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfiles(new Profile[]
@@ -55,13 +55,8 @@ namespace Library.Presentation.MVC
 
             var apiUrl = _configuration["ApiUrl"];
             services
-                .AddHttpClient("airport", c => { c.BaseAddress = new Uri(apiUrl); })
+                .AddHttpClient("books", c => { c.BaseAddress = new Uri(apiUrl); })
                 .AddTypedClient(c => RestClient.For<IBooksClient>(c));
-
-            services
-                .AddHttpClient("countries", c => { c.BaseAddress = new Uri(apiUrl); })
-                .AddTypedClient(c => RestClient.For<IUsersClient>(c));
-
             
             services.AddSignalR();
             services.AddMvc()

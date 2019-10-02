@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Library.Presentation.MVC.Models
+namespace Library.Messaging.Contracts
 {
-    public class AddUserModel
+    public class NewUserRegistered
     {
         public string UserName { get; set; }
 

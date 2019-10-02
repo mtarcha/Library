@@ -31,6 +31,7 @@
     <ProjectReference Include="..\Library.Infrastructure.Cache.Redis\Library.Infrastructure.Cache.Redis.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Data\Library.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Library.Infrastructure\Library.Infrastructure.csproj" />
+    <ProjectReference Include="..\Library.Messaging.Contracts\Library.Messaging.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

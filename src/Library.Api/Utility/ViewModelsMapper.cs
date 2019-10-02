@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using Library.Api.MessageHandlers;
+using Library.Api.Handlers.MessageHandlers;
 using Library.Api.ViewModels;
 using Library.Application.Commands.AddUser;
 using Library.Application.Commands.CreateBook;
 using Library.Application.Commands.UpdateBook;
+using Library.Messaging.Contracts;
 
 namespace Library.Api.Utility
 {

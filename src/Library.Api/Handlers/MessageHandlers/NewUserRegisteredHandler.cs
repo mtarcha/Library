@@ -2,19 +2,11 @@
 using AutoMapper;
 using Library.Application.Commands.AddUser;
 using Library.Infrastructure;
+using Library.Messaging.Contracts;
 using MediatR;
 
-namespace Library.Api.MessageHandlers
+namespace Library.Api.Handlers.MessageHandlers
 {
-    public class NewUserRegistered
-    {
-        public string UserName { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public DateTime DateOfBirth { get; set; }
-    }
-
     public class NewUserRegisteredHandler : IMessageHandler<NewUserRegistered>
     {
         private readonly IMediator _mediator;

@@ -4,6 +4,7 @@ using EasyCaching.Core;
 using EasyCaching.Core.Configurations;
 using EasyCaching.Redis;
 using FluentValidation.AspNetCore;
+using Library.Api.Handlers.EventHandlers;
 using Library.Api.Middlewares;
 using Library.Api.Utility;
 using Library.Application.EventHandling;

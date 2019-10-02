@@ -30,27 +30,30 @@ namespace Library.Infrastructure.Messaging.RabbitMq
             var messageHandlers = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(x => x.GetInterfaces().Any(y => y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IMessageHandler<>)));
 
-            using (var scope = _services.CreateScope())
+            foreach (var messageHandlerType in messageHandlers)
             {
-                foreach (var messageHandlerType in messageHandlers)
-                {
-                    var messageHandler = scope.ServiceProvider.GetRequiredService(messageHandlerType);
-                    var argumentType = messageHandlerType
-                        .GetInterfaces().First(y => y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IMessageHandler<>))
-                        .GetGenericArguments().First();
-                    
-                    var subscription = _messageBus.Subscribe(
-                        argumentType, 
-                        "SuitShop", 
-                        o => { messageHandlerType.GetMethod("Handle").Invoke(messageHandler, new[] { o }); });
+                var argumentType = messageHandlerType
+                    .GetInterfaces().First(y => y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IMessageHandler<>))
+                    .GetGenericArguments().First();
 
-                    _subscriptions.Add(subscription);
-                }
+                var subscription = _messageBus.Subscribe(
+                    argumentType,
+                    "Library",
+                    message =>
+                    {
+                        using (var scope = _services.CreateScope())
+                        {
+                            var messageHandler = scope.ServiceProvider.GetRequiredService(messageHandlerType);
+                            messageHandlerType.GetMethod("Handle").Invoke(messageHandler, new[] { message });
+                        }
+                    });
+
+                _subscriptions.Add(subscription);
             }
 
             return Task.CompletedTask;
         }
-        
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             foreach (var subscription in _subscriptions)
