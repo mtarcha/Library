@@ -35,10 +35,12 @@ Next command will build application, create docker images and run docker-compose
 * MVC is accesable on http://localhost:7777/
 * API is accesable with swagger on http://localhost:8888/swagger/index.html
 * Redis GUI is accesable on http://localhost:8081/
+* RabbitMQ GUI is accesable on http://localhost:15672 (username and password: guest)
 
 # What was used
 ## Tech Stack:
 * ASP.NTET Core
+* RabbitMQ
 * Dapper
 * EF
 * MS SQL Server
