@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using AutoMapper;
 using Library.Infrastructure.Messaging.RabbitMq;
 using Library.Presentation.MVC.Accounts;
@@ -28,13 +29,20 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
-            services.AddDbContext<AccountContext>(cfg =>
-                            {
-                                cfg.UseSqlServer(connectionString);
-                            });
+            //var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
+            //services.AddDbContext<AccountContext>(cfg =>
+            //                {
+            //                    cfg.UseSqlServer(connectionString);
+            //                });
 
-            services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+            //services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+
+            services.AddAuthentication()
+                .AddJwtBearer("Bearer", config =>
+                {
+                    config.Authority = "https://localhost:44338/";
+                    config.Audience = "MyApi1";
+                });
 
             services.AddTransient<AccountContext>();
             services.AddTransient<AccountsSeeder>();
@@ -54,9 +62,12 @@ namespace Library.Presentation.MVC
             services.AddSingleton(mapper);
 
             var apiUrl = _configuration["ApiUrl"];
-            services
-                .AddHttpClient("books", c => { c.BaseAddress = new Uri(apiUrl); })
-                .AddTypedClient(c => RestClient.For<IBooksClient>(c));
+
+            services.AddHttpClient();
+            services.AddScoped<IBooksClient>(x => new BooksClient(apiUrl, x.GetService<IHttpClientFactory>()));
+            //services
+            //    .AddHttpClient("books", c => { c.BaseAddress = new Uri(apiUrl); })
+            //    .AddTypedClient(c => RestClient.For<IBooksClient>(c));
             
             services.AddSignalR();
             services.AddMvc()

@@ -53,6 +53,13 @@ namespace Library.Api
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            services.AddAuthentication()
+                .AddJwtBearer("Bearer", config =>
+                {
+                    config.Authority = "https://localhost:44338/";
+                    config.Audience = "MyApi2";
+                });
+
             services.AddMediatR();
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped<IEventDispatcher, EventDispatcher>();
