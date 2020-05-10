@@ -20,7 +20,7 @@ namespace Library.IdentityService
                 {
                     ClientId = "my_client1_id",
                     ClientSecrets = { new Secret("my_client1_secret".ToSha256()) },
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowedGrantTypes = GrantTypes.Code,
                     AllowedScopes = { "MyApi1", "MyApi2" }
                 }
             };

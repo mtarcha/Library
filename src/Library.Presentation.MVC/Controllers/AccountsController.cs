@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Library.Infrastructure;
 using Library.Messaging.Contracts;
@@ -6,6 +7,7 @@ using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,9 +60,11 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Login(string returnUrl = null)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return Redirect(returnUrl);
+            //return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
         [HttpPost]

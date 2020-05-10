@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using AutoMapper;
 using Library.Infrastructure.Messaging.RabbitMq;
 using Library.Presentation.MVC.Accounts;
@@ -29,19 +28,30 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
-            //services.AddDbContext<AccountContext>(cfg =>
-            //                {
-            //                    cfg.UseSqlServer(connectionString);
-            //                });
+            //todo: delete
+            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
+            services.AddDbContext<AccountContext>(cfg =>
+                            {
+                                cfg.UseSqlServer(connectionString);
+                            });
 
-            //services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+            services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+            
+            var identityServiceUrl = _configuration["IdentityServiceUrl"];
 
-            services.AddAuthentication()
-                .AddJwtBearer("Bearer", config =>
+            services.AddAuthentication(config =>
                 {
-                    config.Authority = "https://localhost:44338/";
-                    config.Audience = "MyApi1";
+                    config.DefaultScheme = "Cookie";
+                    config.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookie")
+                .AddOpenIdConnect("oidc", config =>
+                {
+                    config.ClientId = "my_client1_id";
+                    config.ClientSecret = "my_client1_secret";
+                    config.Authority = identityServiceUrl;
+                    config.SaveTokens = true;
+                    config.ResponseType = "code";
                 });
 
             services.AddTransient<AccountContext>();
@@ -62,12 +72,9 @@ namespace Library.Presentation.MVC
             services.AddSingleton(mapper);
 
             var apiUrl = _configuration["ApiUrl"];
-
-            services.AddHttpClient();
-            services.AddScoped<IBooksClient>(x => new BooksClient(apiUrl, x.GetService<IHttpClientFactory>()));
-            //services
-            //    .AddHttpClient("books", c => { c.BaseAddress = new Uri(apiUrl); })
-            //    .AddTypedClient(c => RestClient.For<IBooksClient>(c));
+            services
+                .AddHttpClient("books", c => { c.BaseAddress = new Uri(apiUrl); })
+                .AddTypedClient(c => RestClient.For<IBooksClient>(c));
             
             services.AddSignalR();
             services.AddMvc()
@@ -83,6 +90,7 @@ namespace Library.Presentation.MVC
             }
 
             app.UseAuthentication();
+           
             app.UseStaticFiles();
 
             app.UseSignalR(routes =>
