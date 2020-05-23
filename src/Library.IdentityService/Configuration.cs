@@ -34,7 +34,8 @@ namespace Library.IdentityService
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServer4.IdentityServerConstants.StandardScopes.Profile,
                     },
-                    RedirectUris = { "http://localhost:7777/signin-oidc" }
+                    RedirectUris = { "http://localhost:7777/signin-oidc" },
+                    RequireConsent = false
                 }
             };
     }

@@ -30,13 +30,13 @@ namespace Library.Presentation.MVC
         public void ConfigureServices(IServiceCollection services)
         {
             //todo: delete
-            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
-            services.AddDbContext<AccountContext>(cfg =>
-                            {
-                                cfg.UseSqlServer(connectionString);
-                            });
+            //var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
+            //services.AddDbContext<AccountContext>(cfg =>
+            //                {
+            //                    cfg.UseSqlServer(connectionString);
+            //                });
 
-            services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
+            //services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
             
             var identityServiceUrl = _configuration["IdentityServiceUrl"];
             
@@ -57,8 +57,8 @@ namespace Library.Presentation.MVC
                     config.RequireHttpsMetadata = false;
                 });
 
-            services.AddTransient<AccountContext>();
-            services.AddTransient<AccountsSeeder>();
+            //services.AddTransient<AccountContext>();
+            //services.AddTransient<AccountsSeeder>();
 
             var rabbitMqConnectionString = _configuration["RabbitMqConnectionString"];
             services.AddRabbitMq(rabbitMqConnectionString);
