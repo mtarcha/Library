@@ -14,9 +14,11 @@ namespace Library.IdentityService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddIdentityServer()
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources)
                 .AddInMemoryApiResources(Configuration.GetApis)
                 .AddInMemoryClients(Configuration.GetClients)
                 .AddDeveloperSigningCredential();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

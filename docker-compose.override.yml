@@ -16,23 +16,16 @@ services:
       - cache.web
 
   library.identity.service:
-    ports:
-      - "8566:80"
-      - "44349:443"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=123asdQ
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/identityserver.pfx
-      - ASPNETCORE_HTTPS_PORT=44349
-    volumes:
-      - ~/.aspnet/https:/https:ro
+    ports:
+      - "5000:5000"
        
   library.presentation.mvc:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ApiUrl=http://library.api/api/    
-      - IdentityServiceUrl=https://library.identity.service/
+      - IdentityServiceUrl=http://library.identity.service:5000/
       - ConnectionStrings__AccountsDBConnectionString=Server=sql;Database=accountsdb;User Id=sa;Password=123asdQ!
       - RabbitMqConnectionString=host=rabbit
     ports:

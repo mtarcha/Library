@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using AutoMapper;
 using Library.Infrastructure.Messaging.RabbitMq;
 using Library.Presentation.MVC.Accounts;
@@ -38,7 +39,7 @@ namespace Library.Presentation.MVC
             services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
             
             var identityServiceUrl = _configuration["IdentityServiceUrl"];
-
+            
             services.AddAuthentication(config =>
                 {
                     config.DefaultScheme = "Cookie";
@@ -50,8 +51,10 @@ namespace Library.Presentation.MVC
                     config.ClientId = "my_client1_id";
                     config.ClientSecret = "my_client1_secret";
                     config.Authority = identityServiceUrl;
+                    
                     config.SaveTokens = true;
                     config.ResponseType = "code";
+                    config.RequireHttpsMetadata = false;
                 });
 
             services.AddTransient<AccountContext>();
