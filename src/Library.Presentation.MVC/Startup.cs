@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Net.Http;
 using AutoMapper;
+using IdentityModel;
 using Library.Infrastructure.Messaging.RabbitMq;
-using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
 using Library.Presentation.MVC.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -29,15 +26,6 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //todo: delete
-            //var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
-            //services.AddDbContext<AccountContext>(cfg =>
-            //                {
-            //                    cfg.UseSqlServer(connectionString);
-            //                });
-
-            //services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
-            
             var identityServiceUrl = _configuration["IdentityServiceUrl"];
             
             services.AddAuthentication(config =>
@@ -55,10 +43,8 @@ namespace Library.Presentation.MVC
                     config.SaveTokens = true;
                     config.ResponseType = "code";
                     config.RequireHttpsMetadata = false;
+                    config.Scope.Add(JwtClaimTypes.Role);
                 });
-
-            //services.AddTransient<AccountContext>();
-            //services.AddTransient<AccountsSeeder>();
 
             var rabbitMqConnectionString = _configuration["RabbitMqConnectionString"];
             services.AddRabbitMq(rabbitMqConnectionString);

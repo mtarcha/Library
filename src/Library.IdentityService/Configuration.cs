@@ -10,7 +10,13 @@ namespace Library.IdentityService
             new IdentityResource[]
             {
                 new IdentityResources.OpenId(), 
-                new IdentityResources.Profile(), 
+                new IdentityResources.Profile(),
+                new IdentityResource
+                {
+                    Name = JwtClaimTypes.Role,
+                    DisplayName = JwtClaimTypes.Role,
+                    UserClaims = { JwtClaimTypes.Role }
+                }
             };
 
         public static IEnumerable<ApiResource> GetApis =>
@@ -33,8 +39,10 @@ namespace Library.IdentityService
                         "MyApi1", "MyApi2",
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServer4.IdentityServerConstants.StandardScopes.Profile,
+                        JwtClaimTypes.Role,
                     },
                     RedirectUris = { "http://localhost:7777/signin-oidc" },
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     RequireConsent = false
                 }
             };

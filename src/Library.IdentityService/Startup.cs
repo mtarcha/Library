@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
+using IdentityServer4.AspNetIdentity;
 using Library.IdentityService.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Library.IdentityService
 {
@@ -48,6 +53,8 @@ namespace Library.IdentityService
                 .AddInMemoryClients(Configuration.GetClients)
                 .AddDeveloperSigningCredential();
 
+            services.AddTransient<IUserClaimsPrincipalFactory<UserAccount>, ClaimsFactory>();
+            
             services.AddMvc();
         }
 
@@ -57,15 +64,13 @@ namespace Library.IdentityService
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseIdentityServer();
 
             app.UseMvc(configuration =>
             {
                 configuration.MapRoute("Default", "{controller}/{action}/{id?}");
             });
-
-            //app.UseMvcWithDefaultRoute();
         }
     }
 }
