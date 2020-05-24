@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Library.IdentityService.Models;
 using Library.IdentityService.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +39,40 @@ namespace Library.IdentityService.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Failed to log in");
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Register(string returnUrl)
+        {
+            return View(new RegisterViewModel
+            {
+                ReturnUrl = returnUrl
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var account = new UserAccount { PhoneNumber = model.PhoneNumber, UserName = model.UserName, DateOfBirth = model.DateOfBirth };
+
+                var result = await _userManager.CreateAsync(account, model.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(account, false);
+                    return Redirect(model.ReturnUrl);
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
 
