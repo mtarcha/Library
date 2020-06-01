@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4.Models;
+using Library.IdentityService.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Library.IdentityService
 {
@@ -19,32 +21,29 @@ namespace Library.IdentityService
                 }
             };
 
-        public static IEnumerable<ApiResource> GetApis =>
-            new[]
-            {
-                new ApiResource("MyApi1"),
-                new ApiResource("MyApi2"),
-            };
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
+        {
+            var mvcClientConfig = new LibraryMvcClientConfiguration();
+            configuration.GetSection(nameof(LibraryMvcClientConfiguration)).Bind(mvcClientConfig);
 
-        public static IEnumerable<Client> GetClients =>
-            new[]
+            return new[]
             {
                 new Client
                 {
-                    ClientId = "my_client1_id",
-                    ClientSecrets = { new Secret("my_client1_secret".ToSha256()) },
+                    ClientId = mvcClientConfig.ClientName,
+                    ClientSecrets = { new Secret(mvcClientConfig.ClientSecret.ToSha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
                     AllowedScopes =
                     {
-                        "MyApi1", "MyApi2",
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServer4.IdentityServerConstants.StandardScopes.Profile,
                         JwtClaimTypes.Role,
                     },
-                    RedirectUris = { "http://localhost:7777/signin-oidc" },
+                    RedirectUris = { $"{mvcClientConfig.RedirectBaseUrl}signin-oidc" },
                     AlwaysIncludeUserClaimsInIdToken = true,
                     RequireConsent = false
                 }
             };
+        }
     }
 }

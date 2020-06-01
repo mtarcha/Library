@@ -4,6 +4,7 @@ using IdentityModel;
 using Library.Infrastructure.Messaging.RabbitMq;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
+using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,8 +27,9 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var identityServiceUrl = _configuration["IdentityServiceUrl"];
-            
+            var identityServerConfig = new IdentityServerConfiguration();
+            _configuration.GetSection(nameof(IdentityServerConfiguration)).Bind(identityServerConfig);
+
             services.AddAuthentication(config =>
                 {
                     config.DefaultScheme = "Cookie";
@@ -36,9 +38,9 @@ namespace Library.Presentation.MVC
                 .AddCookie("Cookie")
                 .AddOpenIdConnect("oidc", config =>
                 {
-                    config.ClientId = "my_client1_id";
-                    config.ClientSecret = "my_client1_secret";
-                    config.Authority = identityServiceUrl;
+                    config.ClientId = identityServerConfig.ClientId;
+                    config.ClientSecret = identityServerConfig.ClientSecret;
+                    config.Authority = identityServerConfig.IdentityServiceUrl;
                     
                     config.SaveTokens = true;
                     config.ResponseType = "code";

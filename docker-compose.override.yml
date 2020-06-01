@@ -18,16 +18,21 @@ services:
   library.identity.service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - LibraryMvcClientConfiguration__ClientName=LibraryMvcClient
+      - LibraryMvcClientConfiguration__ClientSecret=LibraryMvcClientSecret
+      - LibraryMvcClientConfiguration__RedirectBaseUrl=http://localhost:7777/
+      - ConnectionStrings__AccountsDBConnectionString=Server=sql;Database=accountsdb;User Id=sa;Password=123asdQ!
     ports:
       - "5000:5000"
        
   library.presentation.mvc:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ApiUrl=http://library.api/api/    
-      - IdentityServiceUrl=http://library.identity.service:5000/
-      - ConnectionStrings__AccountsDBConnectionString=Server=sql;Database=accountsdb;User Id=sa;Password=123asdQ!
+      - ApiUrl=http://library.api/api/      
       - RabbitMqConnectionString=host=rabbit
+      - IdentityServerConfiguration__IdentityServiceUrl=http://library.identity.service:5000/
+      - IdentityServerConfiguration__ClientId=LibraryMvcClient
+      - IdentityServerConfiguration__ClientSecret=LibraryMvcClientSecret
     ports:
       - "7777:80"
     depends_on:    

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -19,11 +20,19 @@ namespace Library.IdentityService
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AccountContext>(config =>
+            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
+            services.AddDbContext<AccountContext>(cfg =>
             {
-                config.UseInMemoryDatabase("IdentityServerMemoryDB");
+                cfg.UseSqlServer(connectionString);
             });
 
             services.AddIdentity<UserAccount, IdentityRole>(config =>
@@ -49,8 +58,7 @@ namespace Library.IdentityService
             services.AddIdentityServer()
                 .AddAspNetIdentity<UserAccount>()
                 .AddInMemoryIdentityResources(Configuration.GetIdentityResources)
-                .AddInMemoryApiResources(Configuration.GetApis)
-                .AddInMemoryClients(Configuration.GetClients)
+                .AddInMemoryClients(Configuration.GetClients(_configuration))
                 .AddDeveloperSigningCredential();
 
             services.AddTransient<IUserClaimsPrincipalFactory<UserAccount>, ClaimsFactory>();
