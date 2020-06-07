@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Library.Api.Handlers.MessageHandlers;
 using Library.Api.ViewModels;
 using Library.Application.Commands.AddUser;
 using Library.Application.Commands.CreateBook;

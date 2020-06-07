@@ -40,6 +40,7 @@ namespace Library.IdentityService
                         JwtClaimTypes.Role,
                     },
                     RedirectUris = { $"{mvcClientConfig.RedirectBaseUrl}signin-oidc" },
+                    PostLogoutRedirectUris = { $"{mvcClientConfig.RedirectBaseUrl}Books/Search" },
                     AlwaysIncludeUserClaimsInIdToken = true,
                     RequireConsent = false
                 }

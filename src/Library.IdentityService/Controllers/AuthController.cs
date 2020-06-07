@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using IdentityServer4.Services;
 using Library.IdentityService.Models;
 using Library.IdentityService.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -10,11 +11,13 @@ namespace Library.IdentityService.Controllers
     {
         private readonly UserManager<UserAccount> _userManager;
         private readonly SignInManager<UserAccount> _signInManager;
+        private readonly IIdentityServerInteractionService _interactionService;
 
-        public AuthController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager)
+        public AuthController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, IIdentityServerInteractionService interactionService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _interactionService = interactionService;
         }
 
         [HttpGet]
@@ -62,8 +65,10 @@ namespace Library.IdentityService.Controllers
                 var account = new UserAccount { PhoneNumber = model.PhoneNumber, UserName = model.UserName, DateOfBirth = model.DateOfBirth };
 
                 var result = await _userManager.CreateAsync(account, model.Password);
+                
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(account, Constants.UserRoleName);
                     await _signInManager.SignInAsync(account, false);
                     return Redirect(model.ReturnUrl);
                 }
@@ -77,6 +82,16 @@ namespace Library.IdentityService.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId)
+        {
+            await _signInManager.SignOutAsync();
+
+            var context = await _interactionService.GetLogoutContextAsync(logoutId);
+
+            return Redirect(context.PostLogoutRedirectUri);
         }
     }
 }

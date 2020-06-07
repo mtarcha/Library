@@ -41,7 +41,7 @@ namespace Library.Presentation.MVC
                     config.ClientId = identityServerConfig.ClientId;
                     config.ClientSecret = identityServerConfig.ClientSecret;
                     config.Authority = identityServerConfig.IdentityServiceUrl;
-                    
+                    config.SignedOutCallbackPath = "/Books/Search";
                     config.SaveTokens = true;
                     config.ResponseType = "code";
                     config.RequireHttpsMetadata = false;

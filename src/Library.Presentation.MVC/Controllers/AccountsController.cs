@@ -18,11 +18,12 @@ namespace Library.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOff()
+        [Authorize]
+        public IActionResult LogOff()
         {
-            //await _signInManager.SignOutAsync();
-            return RedirectToAction("Search", "Books");
+            return SignOut("Cookie", "oidc");
+            ////await _signInManager.SignOutAsync();
+            //return RedirectToAction("Search", "Books");
         }
     }
 }

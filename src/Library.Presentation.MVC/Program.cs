@@ -1,8 +1,5 @@
-﻿using System.Threading.Tasks;
-using Library.Presentation.MVC.Utility;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Presentation.MVC
 {
