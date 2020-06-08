@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.Presentation.MVC.Accounts
+namespace Library.IdentityService.Models
 {
     public class AccountContext : IdentityDbContext<UserAccount>
     {

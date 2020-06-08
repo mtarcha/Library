@@ -1,10 +1,10 @@
-﻿@model Library.Presentation.MVC.ViewModels.RegisterViewModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@model Library.IdentityService.ViewModels.RegisterViewModel
 
 <div class="row">
     <div class="col-md-4 col-lg-6 offset-lg-3">
         <form asp-action="Register" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ReturnUrl" />
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
@@ -32,6 +32,9 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Register" class="btn btn-primary" />
+            </div>
+            <div>
+                <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">Back to Login</a>
             </div>
         </form>
     </div>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Library.Presentation.MVC.ViewModels
+namespace Library.IdentityService.ViewModels
 {
     public class RegisterViewModel
     {
@@ -27,5 +27,7 @@ namespace Library.Presentation.MVC.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
         public string PasswordConfirm { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

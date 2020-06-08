@@ -13,5 +13,11 @@ services:
       context: .
       dockerfile: src/Library.Presentation.MVC/Dockerfile   
 
+  library.identity.service:
+    image: ${DOCKER_REGISTRY-}libraryidenityservice
+    build:
+      context: .
+      dockerfile: src/Library.IdentityService/Dockerfile   
+
   rabbit: 
     image: rabbitmq:3-management

@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Domain.UnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure.Messaging.RabbitMq", "Library.Infrastructure.Messaging.RabbitMq\Library.Infrastructure.Messaging.RabbitMq.csproj", "{75783587-498D-42E3-B999-FE6DB0E9F1F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Messaging.Contracts", "src\Library.Messaging.Contracts\Library.Messaging.Contracts.csproj", "{14B09C87-6B60-4538-8729-1C2D831E22CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Messaging.Contracts", "src\Library.Messaging.Contracts\Library.Messaging.Contracts.csproj", "{14B09C87-6B60-4538-8729-1C2D831E22CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.IdentityService", "src\Library.IdentityService\Library.IdentityService.csproj", "{D269B8FA-FF7C-4050-87E5-FBBBED70C382}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{14B09C87-6B60-4538-8729-1C2D831E22CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14B09C87-6B60-4538-8729-1C2D831E22CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14B09C87-6B60-4538-8729-1C2D831E22CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D269B8FA-FF7C-4050-87E5-FBBBED70C382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D269B8FA-FF7C-4050-87E5-FBBBED70C382}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D269B8FA-FF7C-4050-87E5-FBBBED70C382}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D269B8FA-FF7C-4050-87E5-FBBBED70C382}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
