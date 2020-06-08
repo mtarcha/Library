@@ -9,7 +9,7 @@ Task("Build")
 	{
 		Files = new []{ "docker-compose.yml", "docker-compose.override.yml" }
 	};
-	DockerComposeBuild("library.presentation.mvc", "library.api");
+	DockerComposeBuild("library.presentation.mvc", "library.api", "library.identity.service");
 });
 
 Task("Run")

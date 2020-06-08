@@ -42,6 +42,7 @@ Next command will build application, create docker images and run docker-compose
 * Dapper
 * EF
 * MS SQL Server
+* IdentityServer4
 * Redis
 * Redis-commander
 * Cake
