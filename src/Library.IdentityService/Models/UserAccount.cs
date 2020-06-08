@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Presentation.MVC.Accounts
+namespace Library.IdentityService.Models
 {
     public class UserAccount : IdentityUser
     {

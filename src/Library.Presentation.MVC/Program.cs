@@ -1,8 +1,5 @@
-﻿using System.Threading.Tasks;
-using Library.Presentation.MVC.Utility;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Presentation.MVC
 {
@@ -12,7 +9,7 @@ namespace Library.Presentation.MVC
         {
             var host = CreateWebHostBuilder(args).Build();
 
-            RunSeed(host).Wait();
+            //RunSeed(host).Wait();
 
             host.Run();
         }
@@ -21,14 +18,14 @@ namespace Library.Presentation.MVC
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
 
-        private static async Task RunSeed(IWebHost host)
-        {
-            var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
-            using (var scope = scopeFactory.CreateScope())
-            {
-                var seeder = scope.ServiceProvider.GetService<AccountsSeeder>();
-                await seeder.SeedAsync();
-            }
-        }
+        //private static async Task RunSeed(IWebHost host)
+        //{
+        //    var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
+        //    using (var scope = scopeFactory.CreateScope())
+        //    {
+        //        var seeder = scope.ServiceProvider.GetService<AccountsSeeder>();
+        //        await seeder.SeedAsync();
+        //    }
+        //}
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Library.Application.Commands.AddUser;
 using Library.Infrastructure;
 using Library.Messaging.Contracts;

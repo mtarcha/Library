@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Library.Presentation.MVC.Accounts;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Presentation.MVC.Utility
+namespace Library.IdentityService.Models
 {
     public class AccountsSeeder
     {
@@ -33,7 +32,7 @@ namespace Library.Presentation.MVC.Utility
                 }
             }
 
-            var name = "AdminMyroslava";
+            var name = "admin";
             var user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
@@ -44,7 +43,7 @@ namespace Library.Presentation.MVC.Utility
                     DateOfBirth = new DateTime(1993, 5, 5)
                 };
 
-                var createPowerUser = await _userManager.CreateAsync(powerUser, "K.,k. ;bnnz1");
+                var createPowerUser = await _userManager.CreateAsync(powerUser, "1234");
                 if (createPowerUser.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(powerUser, Constants.AdminRoleName);

@@ -1,15 +1,14 @@
 ﻿using System;
 using AutoMapper;
+using IdentityModel;
 using Library.Infrastructure.Messaging.RabbitMq;
-using Library.Presentation.MVC.Accounts;
 using Library.Presentation.MVC.Clients;
 using Library.Presentation.MVC.EventHandlers;
+using Library.Presentation.MVC.Models;
 using Library.Presentation.MVC.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -28,16 +27,26 @@ namespace Library.Presentation.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = _configuration.GetConnectionString("AccountsDBConnectionString");
-            services.AddDbContext<AccountContext>(cfg =>
-                            {
-                                cfg.UseSqlServer(connectionString);
-                            });
+            var identityServerConfig = new IdentityServerConfiguration();
+            _configuration.GetSection(nameof(IdentityServerConfiguration)).Bind(identityServerConfig);
 
-            services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<AccountContext>();
-
-            services.AddTransient<AccountContext>();
-            services.AddTransient<AccountsSeeder>();
+            services.AddAuthentication(config =>
+                {
+                    config.DefaultScheme = "Cookie";
+                    config.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookie")
+                .AddOpenIdConnect("oidc", config =>
+                {
+                    config.ClientId = identityServerConfig.ClientId;
+                    config.ClientSecret = identityServerConfig.ClientSecret;
+                    config.Authority = identityServerConfig.IdentityServiceUrl;
+                    config.SignedOutCallbackPath = "/Books/Search";
+                    config.SaveTokens = true;
+                    config.ResponseType = "code";
+                    config.RequireHttpsMetadata = false;
+                    config.Scope.Add(JwtClaimTypes.Role);
+                });
 
             var rabbitMqConnectionString = _configuration["RabbitMqConnectionString"];
             services.AddRabbitMq(rabbitMqConnectionString);
@@ -72,6 +81,7 @@ namespace Library.Presentation.MVC
             }
 
             app.UseAuthentication();
+           
             app.UseStaticFiles();
 
             app.UseSignalR(routes =>

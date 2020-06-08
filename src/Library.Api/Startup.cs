@@ -14,7 +14,6 @@ using Library.Application.Queries.Sql;
 using Library.Domain;
 using Library.Domain.Common;
 using Library.Infrastructure;
-using Library.Infrastructure.Cache;
 using Library.Infrastructure.Cache.Redis;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Messaging.RabbitMq;
